@@ -41,6 +41,12 @@ export class Utilities {
     return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
   }
 
+  public static getSign(input: number): number {
+    if (input < 0) return -1
+    if (input > 0) return 1
+    return 0
+  }
+
   public static getValue(
     rawValue: Range | number,
     getAsInteger?: boolean
