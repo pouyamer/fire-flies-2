@@ -1,6 +1,6 @@
 import { Firefly } from "../models";
 
 export interface Service {
-  execute: () => void,
-  fireflies: Firefly[];
+  set: (firefly: Firefly) => void,
+  execute: (firefly: Firefly) => void,
 }
