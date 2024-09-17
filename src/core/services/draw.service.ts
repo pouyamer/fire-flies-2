@@ -1,19 +1,16 @@
 import { Service } from "../interfaces";
-import { Firefly, FireflyCanvas } from "../models";
+import { Color, Firefly, FireflyCanvas } from "../models";
 import { Utilities } from "../utilities";
 
 export class DrawService
   implements Service {
   fireflyCanvas: FireflyCanvas;
-  fireflies: Firefly[];
 
 
   constructor(
     fireflyCanvas: FireflyCanvas,
-    fireflies: Firefly[]
   ) {
     this.fireflyCanvas = fireflyCanvas;
-    this.fireflies = fireflies;
   }
 
   private drawFirefly(firefly: Firefly, ctx: CanvasRenderingContext2D): void {
@@ -21,12 +18,12 @@ export class DrawService
     switch (firefly.shape) {
       case "circle":
         ctx.beginPath()
-        ctx.arc(x, y, size, 0, 2 * Math.PI)
+        ctx.arc(x, y, size.value, 0, 2 * Math.PI)
         ctx.moveTo(x, y)
         ctx.fill()
         break;
       case "square":
-        ctx.fillRect(x, y, size, size);
+        ctx.fillRect(x, y, size.value, size.value);
         break;
       case "regularPolygon":
         break;
@@ -37,17 +34,22 @@ export class DrawService
     }
   }
 
-  public execute = (): void => {
+  public set(firefly: Firefly): void {
+
+  }
+
+  public execute(firefly: Firefly): void {
     const { renderingContext: ctx } = this.fireflyCanvas
     if (ctx) {
-      ctx.clearRect(0, 0, this.fireflyCanvas.width, this.fireflyCanvas.height)
-      this.fireflies.forEach(
-        firefly => {
-          ctx.fillStyle = Utilities.hslColorToString(firefly.color);
-          this.drawFirefly(firefly, ctx)
-        }
 
-      )
+      ctx.fillStyle = Utilities.hslColorToString(new Color({
+        hue: firefly.hue.value,
+        saturation: firefly.saturation.value,
+        lightness: firefly.lightness.value,
+        alpha: firefly.alpha.value,
+      }));
+      this.drawFirefly(firefly, ctx)
+
     }
   }
 }

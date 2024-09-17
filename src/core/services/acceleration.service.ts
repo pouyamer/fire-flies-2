@@ -6,28 +6,13 @@ import { Utilities } from "../utilities";
 
 export class AccelerationService
   implements Service {
-  fireflies: Firefly[];
   private config: AccelerationConfig;
 
 
   constructor(
-    fireFlies: Firefly[],
     config: AccelerationConfig,
   ) {
-    this.fireflies = fireFlies;
     this.config = config
-
-    this.initializeFireflies();
-  }
-
-  private initializeFireflies(): void {
-    this.fireflies.forEach(
-      firefly => {
-        const [accelerationX, accelerationY] = this.getAccelerations(this.config, firefly)
-        firefly.accelerationX = accelerationX;
-        firefly.accelerationY = accelerationY;
-      }
-    )
   }
 
   private getAccelerations(config: AccelerationConfig, firefly: Firefly): [number, number] {
@@ -60,12 +45,14 @@ export class AccelerationService
     }
   }
 
-  public execute = (): void => {
-    this.fireflies.forEach(
-      firefly => {
-        firefly.speedX += firefly.accelerationX;
-        firefly.speedY += firefly.accelerationY;
-      }
-    );
+  public set(firefly: Firefly): void {
+    const [accelerationX, accelerationY] = this.getAccelerations(this.config, firefly)
+    firefly.accelerationX = accelerationX;
+    firefly.accelerationY = accelerationY;
+  }
+
+  public execute(firefly: Firefly): void {
+    firefly.speedX += firefly.accelerationX;
+    firefly.speedY += firefly.accelerationY;
   };
 }
