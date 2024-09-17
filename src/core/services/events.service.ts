@@ -1,8 +1,7 @@
-import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
 
-export class EventsService
-  implements Service {
+export class EventsService {
+
   fireflies: Firefly[];
   canvas: FireflyCanvas;
 
@@ -15,12 +14,13 @@ export class EventsService
     this.canvas = canvas;
   }
 
-  public execute() {
+  public execute(firefly: Firefly, onEventHandler?: (firefly: Firefly) => void) {
     this.fireflies.forEach(
       firefly => {
-        if (firefly.x >= this.canvas.width + firefly.size) {
-          console.log("right reached!")
-          firefly.x = Math.random() * this.canvas.width;
+        if (firefly.x >= this.canvas.width + firefly.size.value) {
+          if (onEventHandler) {
+            onEventHandler(firefly);
+          }
         }
       }
     )

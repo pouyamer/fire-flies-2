@@ -6,28 +6,12 @@ import { Utilities } from "../utilities";
 
 export class SpeedService
   implements Service {
-  fireflies: Firefly[];
   private config: SpeedConfig;
 
   constructor(
-    fireflies: Firefly[],
     config: SpeedConfig,
   ) {
-    this.fireflies = fireflies;
     this.config = config;
-    this.initializeFireflies();
-  }
-
-  private initializeFireflies(): void {
-    this.fireflies.forEach(
-      firefly => {
-        const speedsAndAngle = this.getSpeedsAndAngle(this.config);
-        firefly.speedX = speedsAndAngle.speeds[0];
-        firefly.speedY = speedsAndAngle.speeds[1];
-        // see movingAngle in firefly model
-        firefly.movingAngle = speedsAndAngle.angle ?? 0;
-      }
-    )
   }
 
   private getSpeedsAndAngle(config: SpeedConfig): {
@@ -58,12 +42,16 @@ export class SpeedService
     }
   }
 
-  public execute = (): void => {
-    this.fireflies.forEach(
-      firefly => {
-        firefly.x += firefly.speedX;
-        firefly.y += firefly.speedY;
-      }
-    )
+  public set(firefly: Firefly): void {
+    const speedsAndAngle = this.getSpeedsAndAngle(this.config);
+    firefly.speedX = speedsAndAngle.speeds[0];
+    firefly.speedY = speedsAndAngle.speeds[1];
+    // see movingAngle in firefly model
+    firefly.movingAngle = speedsAndAngle.angle ?? 0;
+  }
+
+  public execute(firefly: Firefly): void {
+    firefly.x += firefly.speedX;
+    firefly.y += firefly.speedY;
   };
 }
