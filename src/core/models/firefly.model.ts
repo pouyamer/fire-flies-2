@@ -1,7 +1,5 @@
-import { ChangeType } from "../enums";
-import { Shape } from "../types/shape.type";
+import { Shape } from "../enums";
 import { ChangingNumericalValueItem } from "./changing-numerical-value-item.model";
-import { Color } from "./color.model";
 
 export class Firefly {
   accelerationX: number;
@@ -13,6 +11,8 @@ export class Firefly {
   lightness: ChangingNumericalValueItem;
   alpha: ChangingNumericalValueItem;
   shape: Shape;
+  sideCount: number;
+  pointCount: number;
   speedX: number;
   speedY: number;
   x: number;
@@ -26,7 +26,9 @@ export class Firefly {
     this.accelerationY = model.accelerationY ?? 0;
     this.key = model.key ?? null;
     this.movingAngle = model.movingAngle ?? 0;
-    this.shape = model.shape ?? "circle";
+    this.shape = model.shape ?? Shape.Circle;
+    this.sideCount = model.sideCount ?? 3;
+    this.pointCount = model.pointCount ?? 3;
     this.size = model.size ?? new ChangingNumericalValueItem();
     this.hue = model.size ?? new ChangingNumericalValueItem();
     this.saturation = model.saturation ?? new ChangingNumericalValueItem();
@@ -36,7 +38,6 @@ export class Firefly {
     this.speedY = model.speedY ?? 0;
     this.x = model.x ?? 0;
     this.y = model.y ?? 0;
-
   }
 
 }

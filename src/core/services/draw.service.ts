@@ -1,3 +1,4 @@
+import { Shape } from "../enums";
 import { Service } from "../interfaces";
 import { Color, Firefly, FireflyCanvas } from "../models";
 import { Utilities } from "../utilities";
@@ -13,7 +14,11 @@ export class DrawService
     this.fireflyCanvas = fireflyCanvas;
   }
 
-  private drawFirefly(firefly: Firefly, ctx: CanvasRenderingContext2D): void {
+  private drawFirefly(
+    firefly: Firefly,
+    ctx: CanvasRenderingContext2D
+  ): void {
+
     const { x, y, size } = firefly;
     switch (firefly.shape) {
       case "circle":
@@ -25,11 +30,50 @@ export class DrawService
       case "square":
         ctx.fillRect(x, y, size.value, size.value);
         break;
-      case "regularPolygon":
+      case Shape.RegularPolygram:
+        const angle = ((firefly.pointCount - 2) * Math.PI) / (2 * firefly.pointCount)
+
+        const innerRadius = firefly.size.value / 2
+        const outerRadius = firefly.size.value
+
+        ctx.beginPath()
+        for (let i = 0; i < firefly.pointCount; i++) {
+          let dx = outerRadius * Math.cos((i * 2 * Math.PI) / firefly.pointCount + angle)
+          let dy = outerRadius * Math.sin((i * 2 * Math.PI) / firefly.pointCount + angle)
+          let outerX = x + dx
+          let outerY = y + dy
+
+          dx = innerRadius * Math.cos(((i + 0.5) * 2 * Math.PI) / firefly.pointCount + angle)
+          dy = innerRadius * Math.sin(((i + 0.5) * 2 * Math.PI) / firefly.pointCount + angle)
+          let innerX = x + dx
+          let innerY = y + dy
+
+          ctx.lineTo(outerX, outerY)
+          ctx.lineTo(innerX, innerY)
+        }
+        ctx.fill()
+
         break;
-      case "regularPolygram":
+      case Shape.RegularPolygon:
+        const halfSize = firefly.size.value
+
+        ctx.beginPath()
+        for (let i = 0; i < firefly.sideCount; i++) {
+          const angle = ((firefly.sideCount - 2) * Math.PI) / (2 * firefly.sideCount)
+          let dx = halfSize * Math.cos((i * 2 * Math.PI) / firefly.sideCount + angle)
+          let dy = halfSize * Math.sin((i * 2 * Math.PI) / firefly.sideCount + angle)
+          let outerX = x + +dx
+          let outerY = y + dy
+          if (i === 0) {
+            ctx.moveTo(outerX, outerY)
+          } else {
+            ctx.lineTo(outerX, outerY)
+          }
+        }
+        ctx.closePath()
+        ctx.fill()
         break;
-      case "quarterCircle":
+      case Shape.QuarterCircle:
         break;
     }
   }

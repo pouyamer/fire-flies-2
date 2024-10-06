@@ -78,6 +78,11 @@ export class ChangingValueService
             break;
         }
         break;
+      case ChangeType.ChangeCallback:
+        fireflyProp.value = this.config.type === ChangeType.ChangeCallback
+          ? this.config.changer(firefly)
+          : fireflyProp.value
+        break
       case ChangeType.NoChange:
         break;
     }

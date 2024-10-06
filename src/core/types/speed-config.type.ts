@@ -1,5 +1,5 @@
 import { SpeedType } from "../enums"
-import { Range } from "../models"
+import { Firefly, Range } from "../models"
 
 export type SpeedConfig = {
   type: SpeedType.Cartesian,
@@ -10,4 +10,9 @@ export type SpeedConfig = {
   type: SpeedType.Polar,
   angle_PI: Range | number,
   speed: Range | number,
+} |
+{
+  type: SpeedType.ChangerCallback,
+  changerX: (value: Firefly) => number,
+  changerY: (value: Firefly) => number,
 }

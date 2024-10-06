@@ -6,15 +6,16 @@ import { Utilities } from "../utilities";
 
 export class SpeedService
   implements Service {
-  private config: SpeedConfig;
 
   constructor(
-    config: SpeedConfig,
+    private readonly config: SpeedConfig,
   ) {
-    this.config = config;
   }
 
-  private getSpeedsAndAngle(config: SpeedConfig): {
+  private getSpeedsAndAngle(
+    config: SpeedConfig,
+    firefly: Firefly,
+  ): {
     speeds: [number, number],
     angle?: number,
   } {
@@ -39,11 +40,22 @@ export class SpeedService
           angle
         }
 
+      case SpeedType.ChangerCallback:
+        return {
+          speeds: [
+            config.changerX(firefly),
+            config.changerY(firefly),
+          ]
+        }
+
     }
   }
 
   public set(firefly: Firefly): void {
-    const speedsAndAngle = this.getSpeedsAndAngle(this.config);
+    const speedsAndAngle = this.getSpeedsAndAngle(
+      this.config,
+      firefly
+    );
     firefly.speedX = speedsAndAngle.speeds[0];
     firefly.speedY = speedsAndAngle.speeds[1];
     // see movingAngle in firefly model

@@ -1,5 +1,5 @@
 import { ChangeType, ChangingValueMethod } from "../enums"
-import { Range } from "../models"
+import { Firefly, Range } from "../models"
 
 export type ChangingValueConfig = {
   type: ChangeType.NoChange;
@@ -23,4 +23,8 @@ export type ChangingValueConfig = {
   decrement: number | Range,
   minPossibleValue: number | Range;
   maxPossibleValue: number | Range;
+} | {
+  type: ChangeType.ChangeCallback;
+  value: number | Range;
+  changer: (value: Firefly) => number;
 }

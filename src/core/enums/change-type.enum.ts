@@ -2,5 +2,6 @@ export enum ChangeType {
   Incremental = "incremental",
   Decremental = "decremental",
   NoChange = "no-change",
-  FlipFlop = "flip-flop"
+  FlipFlop = "flip-flop",
+  ChangeCallback = "change-callback",
 }

@@ -58,4 +58,13 @@ export class Utilities {
       return Utilities.getRandomNumberBetween(rawValue, getAsInteger)
     }
   }
+
+  public static chooseBetweenMultipleValues<T>(values: T[]): T {
+    const index = Utilities.getRandomNumberBetween({
+      min: 0,
+      max: values.length - 1
+    }, true)
+
+    return values[index]
+  }
 }
