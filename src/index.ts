@@ -1,7 +1,7 @@
 import { App } from "./core";
-import { accelerationConfig, alphaConfig, hueConfig, lightnessConfig, locationConfig, saturationConfig, sizeConfig, speedConfig } from "./core/configs";
+import { accelerationConfig, alphaConfig, hueConfig, lightnessConfig, locationConfig, saturationConfig, shapeConfig, sizeConfig, speedConfig } from "./core/configs";
 import { Color, Firefly, FireflyCanvas } from "./core/models";
-import { AccelerationService, ChangingValueService, DrawService, LocationService, SpeedService } from "./core/services";
+import { AccelerationService, ChangingValueService, DrawService, LocationService, ShapeService, SpeedService } from "./core/services";
 
 const canvasElement: HTMLCanvasElement | null = document.querySelector(".canvas");
 
@@ -17,8 +17,7 @@ const canvas = new FireflyCanvas({
   viewElement: canvasElement,
 })
 
-const fireflies = Array(1200).fill(0).map(_ => new Firefly({
-  shape: "circle",
+const fireflies = Array(2000).fill(0).map(_ => new Firefly({
   key: Math.floor(
     Math.random() * 10000
   ) + "-" + Math.random() * 2000
@@ -27,13 +26,18 @@ const fireflies = Array(1200).fill(0).map(_ => new Firefly({
 
 if (canvas) {
 
+  const shape = new ShapeService(
+    canvas,
+    shapeConfig
+  )
+
   const location = new LocationService(
     canvas,
     locationConfig,
   )
 
   const speed = new SpeedService(
-    speedConfig
+    speedConfig,
   )
 
   const accelerate = new AccelerationService(
@@ -76,6 +80,7 @@ if (canvas) {
   //   canvas
   // )
   const app = new App(canvas, fireflies, [
+    shape,
     location,
     hue,
     saturation,
