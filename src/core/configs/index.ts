@@ -6,3 +6,4 @@ export * from "./saturation.config";
 export * from "./lightness.config";
 export * from "./alpha.config";
 export * from "./location.config";
+export * from "./shape.config";
