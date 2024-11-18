@@ -1,5 +1,6 @@
 import { LocationSetMethod } from "../enums";
-import { Range } from "../models";
+import { Firefly, FireflyCanvas, Range } from "../models";
+import { EventCallBack } from "./event-callback.type";
 
 export type LocationConfig =
   | {
@@ -46,3 +47,4 @@ export type LocationConfig =
       y: number | Range
     ]
   }
+

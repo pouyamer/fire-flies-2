@@ -1,6 +1,6 @@
 import { ChangeType, ChangingValueMethod } from "../enums";
 import { Service } from "../interfaces";
-import { Firefly } from "../models";
+import { Firefly, FireflyCanvas } from "../models";
 import { ChangingValueConfig, ChangingValueKey } from "../types";
 import { Utilities } from "../utilities";
 
@@ -9,10 +9,10 @@ export class ChangingValueService
 
   constructor(
     private readonly key: ChangingValueKey<Firefly>,
+    private readonly canvas: FireflyCanvas,
+    private readonly fireflies: Firefly[],
     private readonly config: ChangingValueConfig,
   ) {
-    this.config = config;
-    this.key = key;
   }
 
   public set(firefly: Firefly) {

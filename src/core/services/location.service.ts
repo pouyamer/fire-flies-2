@@ -9,6 +9,7 @@ export class LocationService
 
   constructor(
     private readonly canvas: FireflyCanvas,
+    private readonly fireflies: Firefly[],
     private readonly config: LocationConfig,
   ) { }
 

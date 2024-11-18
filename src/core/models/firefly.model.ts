@@ -17,8 +17,10 @@ export class Firefly {
   speedY: number;
   x: number;
   y: number;
+  initialFireflySnapshot: Firefly | null;
   // moving angle gets cached to be used in acceleration service
   movingAngle: number;
+  servicesSet: boolean;
 
 
   constructor(model: Partial<Firefly> = {}) {
@@ -38,6 +40,11 @@ export class Firefly {
     this.speedY = model.speedY ?? 0;
     this.x = model.x ?? 0;
     this.y = model.y ?? 0;
+    this.initialFireflySnapshot = {
+      ...this,
+      initialFireflySnapshot: null,
+    }
+    this.servicesSet = false;
   }
 
 }

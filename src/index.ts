@@ -1,5 +1,6 @@
 import { App } from "./core";
 import { accelerationConfig, alphaConfig, hueConfig, lightnessConfig, locationConfig, saturationConfig, shapeConfig, sizeConfig, speedConfig } from "./core/configs";
+import { DEFAULT_SERVICE_MAP } from "./core/constants";
 import { Color, Firefly, FireflyCanvas } from "./core/models";
 import { AccelerationService, ChangingValueService, DrawService, LocationService, ShapeService, SpeedService } from "./core/services";
 
@@ -17,7 +18,7 @@ const canvas = new FireflyCanvas({
   viewElement: canvasElement,
 })
 
-const fireflies = Array(2000).fill(0).map(_ => new Firefly({
+const fireflies = Array(100).fill(0).map(_ => new Firefly({
   key: Math.floor(
     Math.random() * 10000
   ) + "-" + Math.random() * 2000
@@ -26,70 +27,18 @@ const fireflies = Array(2000).fill(0).map(_ => new Firefly({
 
 if (canvas) {
 
-  const shape = new ShapeService(
-    canvas,
-    shapeConfig
-  )
-
-  const location = new LocationService(
-    canvas,
-    locationConfig,
-  )
-
-  const speed = new SpeedService(
-    speedConfig,
-  )
-
-  const accelerate = new AccelerationService(
-    accelerationConfig
-  )
-
-  const drawer = new DrawService(
-    canvas
-  )
-
-  const sizeSetter = new ChangingValueService(
-    "size",
-    sizeConfig
-  )
-
-  const hue = new ChangingValueService(
-    "hue",
-    hueConfig
-  )
-
-  const saturation = new ChangingValueService(
-    "saturation",
-    saturationConfig,
-  )
-
-  const alpha = new ChangingValueService(
-    "alpha",
-    alphaConfig,
-  )
-
-  const lightness = new ChangingValueService(
-    "lightness",
-    lightnessConfig,
-  );
-
-
-
-  // const eventHandler = new EventsService(
-  //   fireflies,
-  //   canvas
-  // )
   const app = new App(canvas, fireflies, [
-    shape,
-    location,
-    hue,
-    saturation,
-    lightness,
-    alpha,
-    sizeSetter,
-    speed,
-    accelerate,
-    drawer
+    DEFAULT_SERVICE_MAP.hue,
+    DEFAULT_SERVICE_MAP.saturation,
+    DEFAULT_SERVICE_MAP.alpha,
+    DEFAULT_SERVICE_MAP.lightness,
+    DEFAULT_SERVICE_MAP.location,
+    DEFAULT_SERVICE_MAP.bound,
+    DEFAULT_SERVICE_MAP.speed,
+    DEFAULT_SERVICE_MAP.acceleration,
+    DEFAULT_SERVICE_MAP.size,
+    DEFAULT_SERVICE_MAP.shape,
+    DEFAULT_SERVICE_MAP.draw,
   ])
 
   app.run()

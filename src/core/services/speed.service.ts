@@ -1,6 +1,6 @@
 import { SpeedType } from "../enums";
 import { Service } from "../interfaces";
-import { Firefly } from "../models";
+import { Firefly, FireflyCanvas } from "../models";
 import { SpeedConfig } from "../types";
 import { Utilities } from "../utilities";
 
@@ -8,6 +8,8 @@ export class SpeedService
   implements Service {
 
   constructor(
+    private readonly canvas: FireflyCanvas,
+    private readonly fireflies: Firefly[],
     private readonly config: SpeedConfig,
   ) {
   }

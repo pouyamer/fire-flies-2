@@ -8,6 +8,10 @@ export class FireflyCanvas {
   color: Color;
   viewElement: HTMLCanvasElement | null;
   renderingContext: CanvasRenderingContext2D | null;
+  leftBound: number | null;
+  rightBound: number | null;
+  topBound: number | null;
+  bottomBound: number | null;
 
   constructor(model: Omit<Partial<FireflyCanvas>, "renderingContext"> = {}) {
     this.height = model.height ?? DEFAULT_VALUE.CanvasHeight;
@@ -17,6 +21,11 @@ export class FireflyCanvas {
     if (!model.viewElement) console.warn(MESSAGE.CanvasElementDoesNotExist);
     this.renderingContext = model.viewElement?.getContext("2d") ?? null;
     if (!this.renderingContext) console.warn(MESSAGE.CanvasRenderingContextDoesNotExist)
+    this.leftBound = model.leftBound ?? null;
+    this.rightBound = model.rightBound ?? null;
+    this.topBound = model.topBound ?? null;
+    this.bottomBound = model.bottomBound ?? null;
+
 
     this.setWidthAndHeight(this.width, this.height)
     this.setColor(this.color)

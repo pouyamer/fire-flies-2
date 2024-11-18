@@ -7,3 +7,5 @@ export * from "./lightness.config";
 export * from "./alpha.config";
 export * from "./location.config";
 export * from "./shape.config";
+export * from "./event.config";
+export * from "./bounds.config"

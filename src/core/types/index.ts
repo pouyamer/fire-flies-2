@@ -6,3 +6,8 @@ export * from "./app-services.type";
 export * from "./changing-value-key.type";
 export * from "./location-config.type";
 export * from "./shape-config.type";
+export * from "./event-config.type";
+export * from "./service-map.type";
+export * from "./event-callback.type";
+export * from "./genarator-callback.type";
+export * from "./bounds-config.type";

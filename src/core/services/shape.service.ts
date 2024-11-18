@@ -9,6 +9,7 @@ export class ShapeService
 
   constructor(
     private readonly canvas: FireflyCanvas,
+    private readonly fireflies: Firefly[],
     private readonly config: ShapeConfig,
   ) { }
 

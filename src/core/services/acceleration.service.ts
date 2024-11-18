@@ -1,18 +1,18 @@
 import { AccelerationType } from "../enums";
 import { Service } from "../interfaces";
-import { Firefly } from "../models";
+import { Firefly, FireflyCanvas } from "../models";
 import { AccelerationConfig } from "../types";
 import { Utilities } from "../utilities";
 
 export class AccelerationService
   implements Service {
-  private config: AccelerationConfig;
 
 
   constructor(
-    config: AccelerationConfig,
+    private readonly canvas: FireflyCanvas,
+    private readonly fireflies: Firefly[],
+    private readonly config: AccelerationConfig,
   ) {
-    this.config = config
   }
 
   private getAccelerations(config: AccelerationConfig, firefly: Firefly): [number, number] {

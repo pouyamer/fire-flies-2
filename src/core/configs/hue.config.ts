@@ -1,11 +1,18 @@
 import { ChangeType, ChangingValueMethod } from "../enums";
-import { Firefly } from "../models";
 import { ChangingValueConfig } from "../types";
 
 export const hueConfig: ChangingValueConfig = {
-  type: ChangeType.ChangeCallback,
-  changer: (firefly: Firefly) => {
-    return firefly.hue.value + .5
+  type: ChangeType.FlipFlop,
+  value: 330,
+  increment: {
+    min: .1,
+    max: .4
   },
-  value: 1
+  maxPossibleValue: 360,
+  decrement: {
+    min: .2,
+    max: .8
+  },
+  minPossibleValue: 330,
+  startingMethod: ChangingValueMethod.Increment
 }

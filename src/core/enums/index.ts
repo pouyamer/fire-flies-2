@@ -5,3 +5,4 @@ export * from "./changing-value-method.enum";
 export * from "./location-set-method.enum";
 export * from "./shape.enum";
 export * from "./shape-set-method.enum";
+export * from "./service-name.enum";

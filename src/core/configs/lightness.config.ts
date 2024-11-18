@@ -4,7 +4,7 @@ import { ChangingValueConfig } from "../types";
 export const lightnessConfig: ChangingValueConfig = {
   type: ChangeType.NoChange,
   value: {
-    min: 40,
-    max: 70
+    min: 20,
+    max: 60
   },
 }

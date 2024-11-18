@@ -3,5 +3,5 @@ import { ChangingValueConfig } from "../types";
 
 export const saturationConfig: ChangingValueConfig = {
   type: ChangeType.NoChange,
-  value: 80,
+  value: 65,
 }
