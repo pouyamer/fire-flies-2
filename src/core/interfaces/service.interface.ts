@@ -1,6 +1,9 @@
+import { ServiceName } from "../enums";
 import { Firefly } from "../models";
 
-export interface Service {
-  set: (firefly: Firefly) => void,
-  execute: (firefly: Firefly) => void,
+export declare interface Service {
+  name: ServiceName;
+  setOnSingleFirefly (firefly: Firefly): void;
+  setOnEveryFirefly (): void;
+  onFramePass ():void;
 }

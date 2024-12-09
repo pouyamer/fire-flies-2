@@ -1,4 +1,5 @@
 import { Shape } from "../enums";
+import { Service } from "../interfaces";
 import { ChangingNumericalValueItem } from "./changing-numerical-value-item.model";
 
 export class Firefly {
@@ -18,9 +19,9 @@ export class Firefly {
   x: number;
   y: number;
   initialFireflySnapshot: Firefly | null;
+  activeServices: Service[];
   // moving angle gets cached to be used in acceleration service
   movingAngle: number;
-  servicesSet: boolean;
 
 
   constructor(model: Partial<Firefly> = {}) {
@@ -44,7 +45,7 @@ export class Firefly {
       ...this,
       initialFireflySnapshot: null,
     }
-    this.servicesSet = false;
+    this.activeServices = model.activeServices ?? [];
   }
 
 }

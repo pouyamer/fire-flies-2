@@ -1,6 +1,7 @@
+import { ServiceName } from "./enums";
 import { Service } from "./interfaces";
 import { Firefly, FireflyCanvas } from "./models";
-import { AccelerationService, BoundService, ChangingValueService, DrawService, LocationService, ShapeService, SpeedService } from "./services";
+import { AccelerationService, BoundService, ChangingValueService, DrawService, LocationService, ShapeService, SpeedService, WindowService } from "./services";
 import { AccelerationConfig, BoundsConfig, ChangingValueConfig, LocationConfig, ServiceMap, ShapeConfig, SpeedConfig } from "./types";
 
 export class App {
@@ -13,6 +14,7 @@ export class App {
   constructor(
     canvas: FireflyCanvas,
     fireflies: Firefly[],
+    private readonly windowContext: Window & typeof globalThis,
     serviceMaps: ServiceMap[],
   ) {
     this.canvas = canvas;
@@ -77,23 +79,23 @@ export class App {
       switch (serviceMap.name) {
         case "hue":
           if (this.isChangingValueConfig(serviceMap.config))
-            this.services.push(new ChangingValueService("hue", this.canvas, this.fireflies, serviceMap.config));
+            this.services.push(new ChangingValueService("hue", this.canvas, this.fireflies, serviceMap.config, ServiceName.Hue));
           break;
         case "saturation":
           if (this.isChangingValueConfig(serviceMap.config))
-            this.services.push(new ChangingValueService("saturation", this.canvas, this.fireflies, serviceMap.config));
+            this.services.push(new ChangingValueService("saturation", this.canvas, this.fireflies, serviceMap.config, ServiceName.Saturation));
           break;
         case "lightness":
           if (this.isChangingValueConfig(serviceMap.config))
-            this.services.push(new ChangingValueService("lightness", this.canvas, this.fireflies, serviceMap.config));
+            this.services.push(new ChangingValueService("lightness", this.canvas, this.fireflies, serviceMap.config, ServiceName.Lightness));
           break;
         case "alpha":
           if (this.isChangingValueConfig(serviceMap.config))
-            this.services.push(new ChangingValueService("alpha", this.canvas, this.fireflies, serviceMap.config));
+            this.services.push(new ChangingValueService("alpha", this.canvas, this.fireflies, serviceMap.config, ServiceName.Alpha));
           break;
         case "size":
           if (this.isChangingValueConfig(serviceMap.config))
-            this.services.push(new ChangingValueService("size", this.canvas, this.fireflies, serviceMap.config));
+            this.services.push(new ChangingValueService("size", this.canvas, this.fireflies, serviceMap.config, ServiceName.Size));
           break;
         case "speed":
           if (this.isSpeedConfig(serviceMap.config))
@@ -115,41 +117,43 @@ export class App {
           this.services.push(new BoundService(this.canvas, this.fireflies, serviceMap.config as any));
           break;
         case "draw":
-          this.services.push(new DrawService(this.canvas));
+          this.services.push(new DrawService(this.canvas, this.fireflies));
           break;
-
+        case "window":
+          this.services.push(new WindowService(
+            this.canvas,
+            this.fireflies,
+            serviceMap.config,
+            this.windowContext
+          ))
+          break;
       }
     })
   }
 
   private resetServices(firefly: Firefly) {
     for (let service of this.services) {
-      service.set(firefly)
+      service.setOnSingleFirefly(firefly)
     }
   }
 
   public setServices() {
-    for (let firefly of this.fireflies) {
-      for (let service of this.services) {
-        service.set(firefly)
-      }
+    for (let service of this.services) {
+      service.setOnEveryFirefly()
     }
+    this.fireflies.forEach(
+      ff => ff.initialFireflySnapshot = {
+        ...ff,
+        initialFireflySnapshot: null
+      }
+    )
   }
 
   public run = (): void => {
     requestAnimationFrame(this.run)
     this.canvas.renderingContext?.clearRect(0, 0, this.canvas.width, this.canvas.height)
-
-    for (let firefly of this.fireflies) {
-      if (!firefly.servicesSet) {
-        firefly.servicesSet = true
-        this.resetServices(firefly)
+      for (let service of this.services) {
+        service.onFramePass();
       }
-      else {
-        for (let service of this.services) {
-          service.execute(firefly)
-        }
-      }
-    }
   }
 }

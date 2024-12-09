@@ -1,4 +1,4 @@
-import { SpeedType } from "../enums";
+import { ServiceName, SpeedType } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
 import { SpeedConfig } from "../types";
@@ -6,6 +6,8 @@ import { Utilities } from "../utilities";
 
 export class SpeedService
   implements Service {
+
+  name = ServiceName.Speed;
 
   constructor(
     private readonly canvas: FireflyCanvas,
@@ -49,11 +51,14 @@ export class SpeedService
             config.changerY(firefly),
           ]
         }
-
     }
   }
 
-  public set(firefly: Firefly): void {
+  public setOnSingleFirefly(firefly: Firefly): void {
+    if (!firefly.activeServices?.some(service => service.name === this.name)) {
+      firefly.activeServices?.push(this)
+    }
+    
     const speedsAndAngle = this.getSpeedsAndAngle(
       this.config,
       firefly
@@ -64,8 +69,16 @@ export class SpeedService
     firefly.movingAngle = speedsAndAngle.angle ?? 0;
   }
 
-  public execute(firefly: Firefly): void {
-    firefly.x += firefly.speedX;
-    firefly.y += firefly.speedY;
+  public setOnEveryFirefly(): void {
+    for (let ff of this.fireflies) {
+      this.setOnSingleFirefly(ff)
+    }
+  }
+
+  public onFramePass(): void {
+    for (let ff of this.fireflies) {
+      ff.x += ff.speedX;
+      ff.y += ff.speedY;
+    }
   };
 }

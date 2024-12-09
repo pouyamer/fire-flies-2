@@ -1,4 +1,4 @@
-import { ChangeType, ChangingValueMethod } from "../enums";
+import { ChangeType, ChangingValueMethod, ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
 import { ChangingValueConfig, ChangingValueKey } from "../types";
@@ -7,15 +7,23 @@ import { Utilities } from "../utilities";
 export class ChangingValueService
   implements Service {
 
+  name;
+
   constructor(
     private readonly key: ChangingValueKey<Firefly>,
     private readonly canvas: FireflyCanvas,
     private readonly fireflies: Firefly[],
     private readonly config: ChangingValueConfig,
+    name: ServiceName,
   ) {
+    this.name = name;
   }
 
-  public set(firefly: Firefly) {
+  public setOnSingleFirefly(firefly: Firefly) {
+    if (!firefly.activeServices?.some(service => service.name === this.name)) {
+      firefly.activeServices?.push(this)
+    }
+    
     firefly[this.key].value = Utilities.getValue(this.config.value);
 
     firefly[this.key].changeType = this.config.type
@@ -43,7 +51,13 @@ export class ChangingValueService
     }
   }
 
-  public execute(firefly: Firefly): void {
+  public setOnEveryFirefly(): void {
+    for(let ff of this.fireflies) {
+      this.setOnSingleFirefly(ff)
+    }
+  }
+
+  public onFramePassOnSingleFirefly(firefly: Firefly): void {
     const fireflyProp = firefly[this.key];
 
     switch (fireflyProp.changeType) {
@@ -85,6 +99,12 @@ export class ChangingValueService
         break
       case ChangeType.NoChange:
         break;
+    }
+  }
+
+  public onFramePass(): void {
+    for (let ff of this.fireflies) {
+      this.onFramePassOnSingleFirefly(ff)
     }
   }
 }

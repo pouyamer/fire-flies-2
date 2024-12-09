@@ -1,4 +1,4 @@
-import { LocationSetMethod } from "../enums";
+import { LocationSetMethod, ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
 import { LocationConfig } from "../types";
@@ -7,13 +7,19 @@ import { Utilities } from "../utilities";
 export class LocationService
   implements Service {
 
+  name = ServiceName.Location;
+
   constructor(
     private readonly canvas: FireflyCanvas,
     private readonly fireflies: Firefly[],
     private readonly config: LocationConfig,
   ) { }
 
-  set(firefly: Firefly) {
+  public setOnSingleFirefly(firefly: Firefly) {
+    if (!firefly.activeServices?.some(service => service.name === this.name)) {
+      firefly.activeServices?.push(this)
+    }
+    
     switch (this.config.type) {
       case LocationSetMethod.Set:
         firefly.x = Utilities.getValue(this.config.x)
@@ -94,5 +100,12 @@ export class LocationService
         break;
     }
   }
-  execute() { }
+
+  public setOnEveryFirefly(): void {
+    for(let ff of this.fireflies) {
+      this.setOnSingleFirefly(ff)
+    }
+  }
+  
+  public onFramePass() { }
 }

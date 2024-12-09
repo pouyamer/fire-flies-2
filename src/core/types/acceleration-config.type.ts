@@ -1,7 +1,8 @@
 import { AccelerationType } from "../enums";
 import { Range } from "../models"
+import { BaseConfig } from "./base-config.type";
 
-export type AccelerationConfig = {
+export type AccelerationConfig = BaseConfig &( {
   type: AccelerationType.Cartesian;
   accX: number | Range;
   accY: number | Range;
@@ -21,4 +22,4 @@ export type AccelerationConfig = {
 {
   type: AccelerationType.PolarInDirection;
   acc: number | Range
-}
+})

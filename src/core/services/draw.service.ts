@@ -1,17 +1,17 @@
-import { Shape } from "../enums";
+import { ServiceName, Shape } from "../enums";
 import { Service } from "../interfaces";
 import { Color, Firefly, FireflyCanvas } from "../models";
 import { Utilities } from "../utilities";
 
 export class DrawService
   implements Service {
-  fireflyCanvas: FireflyCanvas;
 
+  name = ServiceName.Draw;
 
   constructor(
-    fireflyCanvas: FireflyCanvas,
+    private readonly fireflyCanvas: FireflyCanvas,
+    private readonly fireflies: Firefly[],
   ) {
-    this.fireflyCanvas = fireflyCanvas;
   }
 
   private drawFirefly(
@@ -78,21 +78,31 @@ export class DrawService
     }
   }
 
-  public set(firefly: Firefly): void {
-
+  public setOnEveryFirefly(): void {
+    for(let ff of this.fireflies) {
+      this.setOnSingleFirefly(ff);
+    }
   }
 
-  public execute(firefly: Firefly): void {
+  public setOnSingleFirefly(firefly: Firefly): void {
+    if (!firefly.activeServices?.some(service => service.name === this.name)) {
+      firefly.activeServices?.push(this)
+    }
+  }
+
+
+  public onFramePass(): void {
     const { renderingContext: ctx } = this.fireflyCanvas
     if (ctx) {
-
-      ctx.fillStyle = Utilities.hslColorToString(new Color({
-        hue: firefly.hue.value,
-        saturation: firefly.saturation.value,
-        lightness: firefly.lightness.value,
-        alpha: firefly.alpha.value,
-      }));
-      this.drawFirefly(firefly, ctx)
+      for (let ff of this.fireflies) {
+        ctx.fillStyle = Utilities.hslColorToString(new Color({
+          hue: ff.hue.value,
+          saturation: ff.saturation.value,
+          lightness: ff.lightness.value,
+          alpha: ff.alpha.value,
+        }));
+        this.drawFirefly(ff, ctx)
+      }
 
     }
   }

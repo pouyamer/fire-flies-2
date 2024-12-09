@@ -1,3 +1,4 @@
+import { BaseConfig } from "./base-config.type";
 import { EventCallBack } from "./event-callback.type";
 import { GenerateValueCallback, GeneratorValueOnCanvasCallback } from "./genarator-callback.type";
 
@@ -19,7 +20,7 @@ type BoundOnlySetterCallBack = BoundSetter & {
 
 type BoundCallbacks = BoundSetter & BaseBoundCallBacks;
 
-export type BoundsConfig = {
+export type BoundsConfig = BaseConfig & {
   left?: BoundCallbacks | BoundOnlySetterCallBack,
   right?: BoundCallbacks | BoundOnlySetterCallBack,
   top?: BoundCallbacks | BoundOnlySetterCallBack,

@@ -18,7 +18,7 @@ const canvas = new FireflyCanvas({
   viewElement: canvasElement,
 })
 
-const fireflies = Array(100).fill(0).map(_ => new Firefly({
+const fireflies = Array(200).fill(0).map(_ => new Firefly({
   key: Math.floor(
     Math.random() * 10000
   ) + "-" + Math.random() * 2000
@@ -27,7 +27,7 @@ const fireflies = Array(100).fill(0).map(_ => new Firefly({
 
 if (canvas) {
 
-  const app = new App(canvas, fireflies, [
+  const app = new App(canvas, fireflies, window, [
     DEFAULT_SERVICE_MAP.hue,
     DEFAULT_SERVICE_MAP.saturation,
     DEFAULT_SERVICE_MAP.alpha,
@@ -39,7 +39,8 @@ if (canvas) {
     DEFAULT_SERVICE_MAP.size,
     DEFAULT_SERVICE_MAP.shape,
     DEFAULT_SERVICE_MAP.draw,
-  ])
+    DEFAULT_SERVICE_MAP.window,
+  ]);
 
   app.run()
 }

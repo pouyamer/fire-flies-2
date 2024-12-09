@@ -10,4 +10,5 @@ export enum ServiceName {
   Acceleration = "acceleration",
   Draw = "draw",
   Bound = "bound",
-}
+  Window = "window",
+};

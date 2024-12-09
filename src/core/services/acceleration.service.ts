@@ -1,4 +1,4 @@
-import { AccelerationType } from "../enums";
+import { AccelerationType, ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
 import { AccelerationConfig } from "../types";
@@ -7,6 +7,7 @@ import { Utilities } from "../utilities";
 export class AccelerationService
   implements Service {
 
+  name = ServiceName.Acceleration;
 
   constructor(
     private readonly canvas: FireflyCanvas,
@@ -45,14 +46,26 @@ export class AccelerationService
     }
   }
 
-  public set(firefly: Firefly): void {
+  public setOnSingleFirefly(firefly: Firefly): void {
+    if (!firefly.activeServices?.some(service => service.name === this.name)) {
+      firefly.activeServices?.push(this)
+    }
+    
     const [accelerationX, accelerationY] = this.getAccelerations(this.config, firefly)
     firefly.accelerationX = accelerationX;
     firefly.accelerationY = accelerationY;
   }
 
-  public execute(firefly: Firefly): void {
-    firefly.speedX += firefly.accelerationX;
-    firefly.speedY += firefly.accelerationY;
+  public setOnEveryFirefly(): void {
+    for (let ff of this.fireflies) {
+      this.setOnSingleFirefly(ff);
+    }
+  }
+
+  public onFramePass(): void {
+    for (let ff of this.fireflies) {
+      ff.speedX += ff.accelerationX;
+      ff.speedY += ff.accelerationY;
+    }
   };
 }

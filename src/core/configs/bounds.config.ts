@@ -1,3 +1,4 @@
+import { ServiceName } from "../enums";
 import { Color, FireflyCanvas } from "../models";
 import { BoundsConfig } from "../types";
 
@@ -9,6 +10,7 @@ const DEFAULT_SETTER = {
 }
 
 export const boundsConfig: BoundsConfig = {
+  name: ServiceName.Bound,
   bottom: {
     type: "only-setter",
     setter: DEFAULT_SETTER.bottom,
@@ -30,8 +32,9 @@ export const boundsConfig: BoundsConfig = {
     onOutOfBounds: (ff, canvas) => {
       ff.x = canvas.width * Math.random();
       ff.y = canvas.height * Math.random();
-      ff.speedY = ff.initialFireflySnapshot?.speedY ?? 0
-      ff.speedX = ff.initialFireflySnapshot?.speedX ?? 0
+
+      ff.speedX = ff.initialFireflySnapshot?.speedX ?? 0;
+      ff.speedY = ff.initialFireflySnapshot?.speedY ?? 0;
     }
   }
 }

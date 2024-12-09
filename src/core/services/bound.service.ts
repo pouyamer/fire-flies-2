@@ -1,8 +1,11 @@
+import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
 import { BoundsConfig } from "../types";
 
 export class BoundService implements Service {
+
+  name = ServiceName.Bound;
 
   constructor(
     private readonly canvas: FireflyCanvas,
@@ -218,46 +221,58 @@ export class BoundService implements Service {
     }
   }
 
-  public set() {
-        const {
-          bottom,
-          left,
-          right,
-          top
-        } = this.config;
-
-        this.canvas.leftBound = left
-          ? left.setter(this.canvas)
-          : null;
-
-        this.canvas.rightBound = right
-          ? right.setter(this.canvas)
-          : null;
-
-        this.canvas.topBound = top
-          ? top.setter(this.canvas)
-          : null;
-
-        this.canvas.bottomBound = bottom
-          ? bottom.setter(this.canvas)
-          : null;
+  public setOnSingleFirefly(firefly: Firefly): void {
+    if (!firefly.activeServices?.some(service => service.name === this.name)) {
+      firefly.activeServices?.push(this)
+    }
   }
 
-  public execute(firefly: Firefly) {
-      this.handleTouchedBoundsGeneral(firefly);
-      this.handleOutOfBoundsGeneral(firefly);
+  public setOnEveryFirefly() {
+    const {
+      bottom,
+      left,
+      right,
+      top
+    } = this.config;
+
+    this.canvas.leftBound = left
+      ? left.setter(this.canvas)
+      : null;
+
+    this.canvas.rightBound = right
+      ? right.setter(this.canvas)
+      : null;
+
+    this.canvas.topBound = top
+      ? top.setter(this.canvas)
+      : null;
+
+    this.canvas.bottomBound = bottom
+      ? bottom.setter(this.canvas)
+      : null;
+
+    for(let ff of this.fireflies) {
+      this.setOnSingleFirefly(ff)
+    }
+  }
+
+  public onFramePass() {
+    for(let ff of this.fireflies) {
+      this.handleTouchedBoundsGeneral(ff);
+      this.handleOutOfBoundsGeneral(ff);
       
-      this.handleTouchedTopBound(firefly);
-      this.handleOutOfTopBound(firefly);
+      this.handleTouchedTopBound(ff);
+      this.handleOutOfTopBound(ff);
 
-      this.handleTouchedLeftBound(firefly);
-      this.handleOutOfLeftBound(firefly);
+      this.handleTouchedLeftBound(ff);
+      this.handleOutOfLeftBound(ff);
 
-      this.handleTouchedBottomBound(firefly);
-      this.handleOutOfBottomBound(firefly);
+      this.handleTouchedBottomBound(ff);
+      this.handleOutOfBottomBound(ff);
 
-      this.handleTouchedRightBound(firefly);
-      this.handleOutOfRightBound(firefly);
+      this.handleTouchedRightBound(ff);
+      this.handleOutOfRightBound(ff);
+    }
   }
 
 }

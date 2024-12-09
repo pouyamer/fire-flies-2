@@ -1,4 +1,4 @@
-import { Shape, ShapeSetMethod } from "../enums";
+import { ServiceName, Shape, ShapeSetMethod } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
 import { ShapeConfig, ShapeValue } from "../types";
@@ -7,13 +7,19 @@ import { Utilities } from "../utilities";
 export class ShapeService
   implements Service {
 
+  name = ServiceName.Shape;
+
   constructor(
     private readonly canvas: FireflyCanvas,
     private readonly fireflies: Firefly[],
     private readonly config: ShapeConfig,
   ) { }
 
-  set(firefly: Firefly) {
+  public setOnSingleFirefly(firefly: Firefly) {
+    if (!firefly.activeServices?.some(service => service.name === this.name)) {
+      firefly.activeServices?.push(this)
+    }
+    
     switch (this.config.setMethod) {
       case ShapeSetMethod.SingleShape:
         firefly.shape = this.config.value;
@@ -36,5 +42,12 @@ export class ShapeService
         break;
     }
   }
-  execute() { }
+
+  public setOnEveryFirefly(): void {
+    for (let ff of this.fireflies) {
+      this.setOnSingleFirefly(ff);
+    }
+  }
+  
+  onFramePass() { }
 }

@@ -1,7 +1,8 @@
 import { ChangeType, ChangingValueMethod } from "../enums"
 import { Firefly, Range } from "../models"
+import { BaseConfig } from "./base-config.type";
 
-export type ChangingValueConfig = {
+export type ChangingValueConfig = BaseConfig & ({
   type: ChangeType.NoChange;
   value: number | Range;
 } | {
@@ -27,4 +28,4 @@ export type ChangingValueConfig = {
   type: ChangeType.ChangeCallback;
   value: number | Range;
   changer: (value: Firefly) => number;
-}
+}) 
