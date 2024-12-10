@@ -3,10 +3,7 @@ import { SpeedConfig } from "../types";
 
 export const speedConfig: SpeedConfig = {
   name: ServiceName.Speed,
-  type: SpeedType.Polar,
-  angle_PI: {
-    min: 0,
-    max: 2 * Math.PI,
-  },
-  speed: .5
+  type: SpeedType.Cartesian,
+  speedX: 0,
+  speedY: 0
 }

@@ -4,6 +4,9 @@ import { ChangingValueConfig } from "../types";
 export const hueConfig: ChangingValueConfig = {
   name: ServiceName.Hue,
   type: ChangeType.NoChange,
-  value: 350
+  value: {
+    min:0,
+    max: 30
+  }
   
 }

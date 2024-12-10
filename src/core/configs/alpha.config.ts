@@ -4,18 +4,24 @@ import { ChangingValueConfig } from "../types";
 
 export const alphaConfig: ChangingValueConfig = {
   name: ServiceName.Alpha,
-  type: ChangeType.FlipFlop,
-  increment: {
-    min: 0.001,
-    max: 0.003
-  },
-  maxPossibleValue: 1, 
-  value: 0,
+  type: ChangeType.Decremental,
   decrement: {
-    min: .003,
-    max: .006
+    min: .001,
+    max: .005
   },
-  minPossibleValue: .3,
-  startingMethod: ChangingValueMethod.Decrement
+  value: {
+    min: .0,
+    max: 1
+  },
+  minPossibleValue: 0,
 
+  onMinReached: (ff, c) => {
+    ff.alpha.value = 1;
+    ff.speedX = ff.initialFireflySnapshot?.speedX ?? 0;
+    ff.speedY = ff.initialFireflySnapshot?.speedY ?? 0;
+    ff.x = c.width * Math.random();
+    ff.y = c.height * Math.random();
+
+  }
+  
 }

@@ -6,7 +6,7 @@ export const sizeConfig: ChangingValueConfig = {
   name: ServiceName.Size,
   type: ChangeType.NoChange,
   value: {
-    min: 7,
-    max: 10
+    min: 20,
+    max: 30
   },
 }

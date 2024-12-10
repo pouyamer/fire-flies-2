@@ -1,6 +1,6 @@
 import { ChangeType, ChangingValueMethod, ServiceName } from "../enums";
 import { Service } from "../interfaces";
-import { Firefly, FireflyCanvas } from "../models";
+import { ChangingNumericalValueItem, Firefly, FireflyCanvas } from "../models";
 import { ChangingValueConfig, ChangingValueKey } from "../types";
 import { Utilities } from "../utilities";
 
@@ -57,6 +57,45 @@ export class ChangingValueService
     }
   }
 
+  private executeOnMaxCallBack(
+    firefly: Firefly,
+    fireflyProp: ChangingNumericalValueItem,
+  ): void {
+    if (
+      fireflyProp.value === fireflyProp.maxPossible &&
+      (
+        this.config.type === ChangeType.Incremental ||
+        this.config.type === ChangeType.FlipFlop
+      ) &&
+      this.config.onMaxReached
+    ) {
+      this.config.onMaxReached(
+        firefly,
+        this.canvas,
+        this.fireflies
+      )
+    }
+  }
+
+  private executeOnMinCallBack(
+    firefly: Firefly,
+    fireflyProp: ChangingNumericalValueItem,
+  ): void {
+    if (
+      fireflyProp.value === fireflyProp.minPossible && (
+        this.config.type === ChangeType.Decremental ||
+        this.config.type === ChangeType.FlipFlop
+      )  &&
+      this.config.onMinReached
+    ) {
+      this.config.onMinReached(
+        firefly,
+        this.canvas,
+        this.fireflies
+      )
+    }
+  }
+
   public onFramePassOnSingleFirefly(firefly: Firefly): void {
     const fireflyProp = firefly[this.key];
 
@@ -66,11 +105,22 @@ export class ChangingValueService
           fireflyProp.value + fireflyProp.increment,
           fireflyProp.maxPossible ?? 0
         )
+
+        this.executeOnMaxCallBack(
+          firefly,
+          fireflyProp,
+        )
+        
         break;
       case ChangeType.Decremental:
         fireflyProp.value = Math.max(
           fireflyProp.value - fireflyProp.decrement,
           fireflyProp.minPossible ?? 0
+        )
+
+        this.executeOnMinCallBack(
+          firefly,
+          fireflyProp,
         )
         break;
       case ChangeType.FlipFlop:
@@ -89,6 +139,16 @@ export class ChangingValueService
             )
 
             if (fireflyProp.value === fireflyProp.minPossible) fireflyProp.method = ChangingValueMethod.Increment
+            
+            this.executeOnMaxCallBack(
+              firefly,
+              fireflyProp,
+            )
+
+            this.executeOnMinCallBack(
+              firefly,
+              fireflyProp,
+            )
             break;
         }
         break;
