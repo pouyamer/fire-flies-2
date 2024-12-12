@@ -256,22 +256,35 @@ export class BoundService implements Service {
     }
   }
 
+  public onFramePassForSingleFirefly(firefly: Firefly): void {
+
+    const serviceExists = !!firefly.activeServices.find(
+      s => s.name === this.name
+    );
+    
+    if (serviceExists) {
+
+      this.handleTouchedBoundsGeneral(firefly);
+      this.handleOutOfBoundsGeneral(firefly);
+      
+      this.handleTouchedTopBound(firefly);
+      this.handleOutOfTopBound(firefly);
+
+      this.handleTouchedLeftBound(firefly);
+      this.handleOutOfLeftBound(firefly);
+
+      this.handleTouchedBottomBound(firefly);
+      this.handleOutOfBottomBound(firefly);
+
+      this.handleTouchedRightBound(firefly);
+      this.handleOutOfRightBound(firefly);
+
+    }
+  }
+
   public onFramePass() {
     for(let ff of this.fireflies) {
-      this.handleTouchedBoundsGeneral(ff);
-      this.handleOutOfBoundsGeneral(ff);
-      
-      this.handleTouchedTopBound(ff);
-      this.handleOutOfTopBound(ff);
-
-      this.handleTouchedLeftBound(ff);
-      this.handleOutOfLeftBound(ff);
-
-      this.handleTouchedBottomBound(ff);
-      this.handleOutOfBottomBound(ff);
-
-      this.handleTouchedRightBound(ff);
-      this.handleOutOfRightBound(ff);
+      this.onFramePassForSingleFirefly(ff);
     }
   }
 

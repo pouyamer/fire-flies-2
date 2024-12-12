@@ -101,6 +101,10 @@ export class LocationService
     }
   }
 
+  public onFramePassForSingleFirefly(firefly: Firefly): void {
+    
+  }
+
   public setOnEveryFirefly(): void {
     for(let ff of this.fireflies) {
       this.setOnSingleFirefly(ff)

@@ -96,75 +96,83 @@ export class ChangingValueService
     }
   }
 
-  public onFramePassOnSingleFirefly(firefly: Firefly): void {
+  public onFramePassForSingleFirefly(firefly: Firefly): void {
     const fireflyProp = firefly[this.key];
 
-    switch (fireflyProp.changeType) {
-      case ChangeType.Incremental:
-        fireflyProp.value = Math.min(
-          fireflyProp.value + fireflyProp.increment,
-          fireflyProp.maxPossible ?? 0
-        )
+    const serviceExists = !!firefly.activeServices.find(
+      s => s.name === this.name
+    )
 
-        this.executeOnMaxCallBack(
-          firefly,
-          fireflyProp,
-        )
-        
-        break;
-      case ChangeType.Decremental:
-        fireflyProp.value = Math.max(
-          fireflyProp.value - fireflyProp.decrement,
-          fireflyProp.minPossible ?? 0
-        )
-
-        this.executeOnMinCallBack(
-          firefly,
-          fireflyProp,
-        )
-        break;
-      case ChangeType.FlipFlop:
-        switch (fireflyProp.method) {
-          case ChangingValueMethod.Increment:
-            fireflyProp.value = Math.min(
-              fireflyProp.value + fireflyProp.increment,
-              fireflyProp.maxPossible ?? 0
-            )
-            if (fireflyProp.value === fireflyProp.maxPossible) fireflyProp.method = ChangingValueMethod.Decrement
-            break;
-          case ChangingValueMethod.Decrement:
-            fireflyProp.value = Math.max(
-              fireflyProp.value - fireflyProp.decrement,
-              fireflyProp.minPossible ?? 0
-            )
-
-            if (fireflyProp.value === fireflyProp.minPossible) fireflyProp.method = ChangingValueMethod.Increment
-            
-            this.executeOnMaxCallBack(
-              firefly,
-              fireflyProp,
-            )
-
-            this.executeOnMinCallBack(
-              firefly,
-              fireflyProp,
-            )
-            break;
-        }
-        break;
-      case ChangeType.ChangeCallback:
-        fireflyProp.value = this.config.type === ChangeType.ChangeCallback
-          ? this.config.changer(firefly)
-          : fireflyProp.value
-        break
-      case ChangeType.NoChange:
-        break;
+    if (serviceExists) {
+      switch (fireflyProp.changeType) {
+        case ChangeType.Incremental:
+          fireflyProp.value = Math.min(
+            fireflyProp.value + fireflyProp.increment,
+            fireflyProp.maxPossible ?? 0
+          )
+  
+          this.executeOnMaxCallBack(
+            firefly,
+            fireflyProp,
+          )
+          
+          break;
+        case ChangeType.Decremental:
+          fireflyProp.value = Math.max(
+            fireflyProp.value - fireflyProp.decrement,
+            fireflyProp.minPossible ?? 0
+          )
+  
+          this.executeOnMinCallBack(
+            firefly,
+            fireflyProp,
+          )
+          break;
+        case ChangeType.FlipFlop:
+          switch (fireflyProp.method) {
+            case ChangingValueMethod.Increment:
+              fireflyProp.value = Math.min(
+                fireflyProp.value + fireflyProp.increment,
+                fireflyProp.maxPossible ?? 0
+              )
+              if (fireflyProp.value === fireflyProp.maxPossible) fireflyProp.method = ChangingValueMethod.Decrement
+              break;
+            case ChangingValueMethod.Decrement:
+              fireflyProp.value = Math.max(
+                fireflyProp.value - fireflyProp.decrement,
+                fireflyProp.minPossible ?? 0
+              )
+  
+              if (fireflyProp.value === fireflyProp.minPossible) fireflyProp.method = ChangingValueMethod.Increment
+              
+              this.executeOnMaxCallBack(
+                firefly,
+                fireflyProp,
+              )
+  
+              this.executeOnMinCallBack(
+                firefly,
+                fireflyProp,
+              )
+              break;
+          }
+          break;
+        case ChangeType.ChangeCallback:
+          fireflyProp.value = this.config.type === ChangeType.ChangeCallback
+            ? this.config.changer(firefly)
+            : fireflyProp.value
+          break
+        case ChangeType.NoChange:
+          break;
+      }
     }
+
+
   }
 
   public onFramePass(): void {
     for (let ff of this.fireflies) {
-      this.onFramePassOnSingleFirefly(ff)
+      this.onFramePassForSingleFirefly(ff)
     }
   }
 }

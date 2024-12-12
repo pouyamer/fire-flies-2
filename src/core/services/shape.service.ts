@@ -48,6 +48,10 @@ export class ShapeService
       this.setOnSingleFirefly(ff);
     }
   }
+
+  onFramePassForSingleFirefly(firefly: Firefly): void {
+    
+  }
   
   onFramePass() { }
 }

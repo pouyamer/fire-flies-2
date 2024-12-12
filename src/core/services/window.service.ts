@@ -35,6 +35,10 @@ export class WindowService
       this.setResizeEventListener();
     }
 
+    onFramePassForSingleFirefly(firefly: Firefly): void {
+      
+    }
+
     setOnSingleFirefly(firefly: Firefly): void {
       if (!firefly.activeServices?.some(service => service.name === this.name)) {
         firefly.activeServices?.push(this)

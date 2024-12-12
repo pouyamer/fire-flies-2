@@ -90,20 +90,29 @@ export class DrawService
     }
   }
 
-
-  public onFramePass(): void {
+  public onFramePassForSingleFirefly(firefly: Firefly): void {
     const { renderingContext: ctx } = this.fireflyCanvas
-    if (ctx) {
-      for (let ff of this.fireflies) {
-        ctx.fillStyle = Utilities.hslColorToString(new Color({
-          hue: ff.hue.value,
-          saturation: ff.saturation.value,
-          lightness: ff.lightness.value,
-          alpha: ff.alpha.value,
-        }));
-        this.drawFirefly(ff, ctx)
-      }
 
+    const serviceExists = !!firefly.activeServices.find(
+      s => s.name === ServiceName.Draw
+    )
+
+    if (ctx && serviceExists) {
+      ctx.fillStyle = Utilities.hslColorToString(new Color({
+        hue: firefly.hue.value,
+        saturation: firefly.saturation.value,
+        lightness: firefly.lightness.value,
+        alpha: firefly.alpha.value,
+      }));
+      this.drawFirefly(firefly, ctx)
     }
   }
+
+
+  public onFramePass(): void {
+      for (let ff of this.fireflies) {
+        this.onFramePassForSingleFirefly(ff);
+      }
+  }
+
 }

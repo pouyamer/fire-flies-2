@@ -5,5 +5,6 @@ export declare interface Service {
   name: ServiceName;
   setOnSingleFirefly (firefly: Firefly): void;
   setOnEveryFirefly (): void;
+  onFramePassForSingleFirefly (firefly: Firefly): void;
   onFramePass ():void;
 }

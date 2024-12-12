@@ -75,10 +75,22 @@ export class SpeedService
     }
   }
 
+  public onFramePassForSingleFirefly(firefly: Firefly): void {
+    const serviceExists: boolean = !!firefly.activeServices.find(
+      s => s.name === this.name
+    )
+
+    if (serviceExists) {
+      firefly.x += firefly.speedX;
+      firefly.y += firefly.speedY
+    }
+
+  }
+
+
   public onFramePass(): void {
     for (let ff of this.fireflies) {
-      ff.x += ff.speedX;
-      ff.y += ff.speedY;
+      this.onFramePassForSingleFirefly(ff);
     }
   };
 }
