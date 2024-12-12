@@ -1,6 +1,8 @@
+import { FireflyApp } from "../app";
 import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
+import { WindowConfig } from "../types";
 
 export class WindowService
   implements Service {
@@ -12,9 +14,10 @@ export class WindowService
       private readonly fireflies: Firefly[],
       private readonly config: unknown,
       private readonly windowContext: Window,
+      private readonly fireflyApp: FireflyApp
     ) {}
 
-    public setResizeEventListener(): void {
+    private setResizeEventListener(): void {
       this.windowContext.addEventListener("resize", (e: Event) => {
         this.canvas.setWidthAndHeight(this.windowContext.innerWidth, this.windowContext.innerHeight)
         for( let ff of this.fireflies) {
@@ -28,11 +31,25 @@ export class WindowService
       })
     }
 
+    private setMouseClickEventListener(): void {
+      this.windowContext.addEventListener("click", (e: MouseEvent) => {
+        const newFirefly = new Firefly();
+
+        this.fireflies.push(newFirefly)
+        
+        this.fireflyApp.setServicesOnSingleFirefly(newFirefly)
+
+        newFirefly.x = e.clientX;
+        newFirefly.y = e.clientY
+      })
+    }
+
     setOnEveryFirefly(): void {
       for(let ff of this.fireflies) {
         this.setOnSingleFirefly(ff)
       }
       this.setResizeEventListener();
+      this.setMouseClickEventListener();
     }
 
     onFramePassForSingleFirefly(firefly: Firefly): void {

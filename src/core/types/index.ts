@@ -12,4 +12,5 @@ export * from "./event-callback.type";
 export * from "./genarator-callback.type";
 export * from "./bounds-config.type";
 export * from "./base-config.type";
-export * from "./window-config-type";
+export * from "./window-config.type";
+export * from "./general-firefly-config.type";

@@ -2,27 +2,33 @@ import { ServiceName } from "./enums";
 import { Service } from "./interfaces";
 import { Firefly, FireflyCanvas } from "./models";
 import { AccelerationService, BoundService, ChangingValueService, DrawService, LocationService, ShapeService, SpeedService, WindowService } from "./services";
-import { AccelerationConfig, BoundsConfig, ChangingValueConfig, LocationConfig, ServiceMap, ShapeConfig, SpeedConfig } from "./types";
+import { AccelerationConfig, BoundsConfig, ChangingValueConfig, GeneralFireflyConfig, LocationConfig, ServiceMap, ShapeConfig, SpeedConfig } from "./types";
 
-export class App {
+export class FireflyApp {
 
   private canvas: FireflyCanvas
-  private fireflies: Firefly[];
+  private fireflies: Firefly[] = [];
   private serviceMaps: ServiceMap[] = [];
   private services: Service[] = [];
 
   constructor(
     canvas: FireflyCanvas,
-    fireflies: Firefly[],
     private readonly windowContext: Window & typeof globalThis,
+    private readonly generalFireflyConfig: GeneralFireflyConfig,
     serviceMaps: ServiceMap[],
   ) {
     this.canvas = canvas;
-    this.fireflies = fireflies;
     this.serviceMaps = serviceMaps;
+    this.createFireflies();
     // services will execute here
     this.buildServices();
     this.setServices();
+  }
+
+  private createFireflies(): void {
+    this.fireflies = Array(this.generalFireflyConfig.count).fill(0).map(
+      _ => new Firefly()
+    )
   }
 
   private isChangingValueConfig(config: unknown): config is ChangingValueConfig {
@@ -124,14 +130,15 @@ export class App {
             this.canvas,
             this.fireflies,
             serviceMap.config,
-            this.windowContext
+            this.windowContext,
+            this
           ))
           break;
       }
     })
   }
 
-  private resetServices(firefly: Firefly) {
+  public setServicesOnSingleFirefly(firefly: Firefly) {
     for (let service of this.services) {
       service.setOnSingleFirefly(firefly)
     }
