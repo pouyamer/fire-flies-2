@@ -28,6 +28,7 @@ if (canvas) {
     DEFAULT_SERVICE_MAP.bound,
     DEFAULT_SERVICE_MAP.speed,
     DEFAULT_SERVICE_MAP.acceleration,
+    DEFAULT_SERVICE_MAP.rotation,
     DEFAULT_SERVICE_MAP.size,
     DEFAULT_SERVICE_MAP.shape,
     DEFAULT_SERVICE_MAP.draw,

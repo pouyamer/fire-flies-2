@@ -11,4 +11,5 @@ export enum ServiceName {
   Draw = "draw",
   Bound = "bound",
   Window = "window",
+  Rotation = "rotation"
 };

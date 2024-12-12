@@ -1,3 +1,4 @@
+import { FireflyApp } from "../app";
 import { ChangeType, ChangingValueMethod, ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { ChangingNumericalValueItem, Firefly, FireflyCanvas } from "../models";
@@ -15,6 +16,7 @@ export class ChangingValueService
     private readonly fireflies: Firefly[],
     private readonly config: ChangingValueConfig,
     name: ServiceName,
+    private readonly app: FireflyApp,
   ) {
     this.name = name;
   }
@@ -72,7 +74,8 @@ export class ChangingValueService
       this.config.onMaxReached(
         firefly,
         this.canvas,
-        this.fireflies
+        this.fireflies,
+        this.app
       )
     }
   }
@@ -91,7 +94,8 @@ export class ChangingValueService
       this.config.onMinReached(
         firefly,
         this.canvas,
-        this.fireflies
+        this.fireflies,
+        this.app
       )
     }
   }

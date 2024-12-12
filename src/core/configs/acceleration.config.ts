@@ -5,5 +5,5 @@ export const accelerationConfig: AccelerationConfig = {
   name: ServiceName.Acceleration,
   type: AccelerationType.Cartesian,
   accX: 0,
-  accY: .001
+  accY: 0
 }

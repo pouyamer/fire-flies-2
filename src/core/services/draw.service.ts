@@ -31,7 +31,7 @@ export class DrawService
         ctx.fillRect(x, y, size.value, size.value);
         break;
       case Shape.RegularPolygram:
-        const angle = ((firefly.pointCount - 2) * Math.PI) / (2 * firefly.pointCount)
+        const angle = ((firefly.pointCount - 2) * Math.PI) / (2 * firefly.pointCount) + firefly.rotatedAngle
 
         const innerRadius = firefly.size.value / 2
         const outerRadius = firefly.size.value
@@ -59,7 +59,7 @@ export class DrawService
 
         ctx.beginPath()
         for (let i = 0; i < firefly.sideCount; i++) {
-          const angle = ((firefly.sideCount - 2) * Math.PI) / (2 * firefly.sideCount)
+          const angle = ((firefly.sideCount - 2) * Math.PI) / (2 * firefly.sideCount) + firefly.rotatedAngle
           let dx = halfSize * Math.cos((i * 2 * Math.PI) / firefly.sideCount + angle)
           let dy = halfSize * Math.sin((i * 2 * Math.PI) / firefly.sideCount + angle)
           let outerX = x + +dx

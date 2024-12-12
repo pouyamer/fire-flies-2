@@ -1,7 +1,7 @@
 import { ServiceName } from "./enums";
 import { Service } from "./interfaces";
 import { Firefly, FireflyCanvas } from "./models";
-import { AccelerationService, BoundService, ChangingValueService, DrawService, LocationService, ShapeService, SpeedService, WindowService } from "./services";
+import { AccelerationService, BoundService, ChangingValueService, DrawService, LocationService, RotationService, ShapeService, SpeedService, WindowService } from "./services";
 import { AccelerationConfig, BoundsConfig, ChangingValueConfig, GeneralFireflyConfig, LocationConfig, ServiceMap, ShapeConfig, SpeedConfig } from "./types";
 
 export class FireflyApp {
@@ -52,7 +52,7 @@ export class FireflyApp {
     return (
       config !== null &&
       typeof config === "object" &&
-      "type" in config
+      "setMethod" in config
     )
   }
 
@@ -85,23 +85,32 @@ export class FireflyApp {
       switch (serviceMap.name) {
         case "hue":
           if (this.isChangingValueConfig(serviceMap.config))
-            this.services.push(new ChangingValueService("hue", this.canvas, this.fireflies, serviceMap.config, ServiceName.Hue));
+            this.services.push(
+              new ChangingValueService(
+                "hue", 
+                this.canvas,
+                this.fireflies,
+                serviceMap.config,
+                ServiceName.Hue,
+                this
+              )
+            );
           break;
         case "saturation":
           if (this.isChangingValueConfig(serviceMap.config))
-            this.services.push(new ChangingValueService("saturation", this.canvas, this.fireflies, serviceMap.config, ServiceName.Saturation));
+            this.services.push(new ChangingValueService("saturation", this.canvas, this.fireflies, serviceMap.config, ServiceName.Saturation, this));
           break;
         case "lightness":
           if (this.isChangingValueConfig(serviceMap.config))
-            this.services.push(new ChangingValueService("lightness", this.canvas, this.fireflies, serviceMap.config, ServiceName.Lightness));
+            this.services.push(new ChangingValueService("lightness", this.canvas, this.fireflies, serviceMap.config, ServiceName.Lightness, this));
           break;
         case "alpha":
           if (this.isChangingValueConfig(serviceMap.config))
-            this.services.push(new ChangingValueService("alpha", this.canvas, this.fireflies, serviceMap.config, ServiceName.Alpha));
+            this.services.push(new ChangingValueService("alpha", this.canvas, this.fireflies, serviceMap.config, ServiceName.Alpha, this));
           break;
         case "size":
           if (this.isChangingValueConfig(serviceMap.config))
-            this.services.push(new ChangingValueService("size", this.canvas, this.fireflies, serviceMap.config, ServiceName.Size));
+            this.services.push(new ChangingValueService("size", this.canvas, this.fireflies, serviceMap.config, ServiceName.Size, this));
           break;
         case "speed":
           if (this.isSpeedConfig(serviceMap.config))
@@ -120,7 +129,7 @@ export class FireflyApp {
             this.services.push(new LocationService(this.canvas, this.fireflies, serviceMap.config));
           break;
         case "bound":
-          this.services.push(new BoundService(this.canvas, this.fireflies, serviceMap.config as any));
+          this.services.push(new BoundService(this.canvas, this.fireflies, serviceMap.config as any, this));
           break;
         case "draw":
           this.services.push(new DrawService(this.canvas, this.fireflies));
@@ -133,6 +142,17 @@ export class FireflyApp {
             this.windowContext,
             this
           ))
+          break;
+        case ServiceName.Rotation:
+          this.services.push(
+            new RotationService(
+              this.canvas,
+              this.fireflies,
+              serviceMap.config as any,
+              this
+            )
+          );
+
           break;
       }
     })

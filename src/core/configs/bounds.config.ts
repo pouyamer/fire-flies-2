@@ -1,4 +1,4 @@
-import { ServiceName } from "../enums";
+import { ServiceName, Shape } from "../enums";
 import { Color, FireflyCanvas } from "../models";
 import { BoundsConfig } from "../types";
 
@@ -29,12 +29,11 @@ export const boundsConfig: BoundsConfig = {
   },
   general: {
     type: "out-of-bounds",
-    onOutOfBounds: (ff, canvas) => {
-      ff.x = canvas.width * Math.random();
-      ff.y = canvas.height * Math.random();
+    onOutOfBounds: (ff, canvas, ffs, app) => {
 
-      ff.speedX = ff.initialFireflySnapshot?.speedX ?? 0;
-      ff.speedY = ff.initialFireflySnapshot?.speedY ?? 0;
+      app.setServicesOnSingleFirefly(ff)
+
+
     }
   }
 }

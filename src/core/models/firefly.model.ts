@@ -20,6 +20,9 @@ export class Firefly {
   y: number;
   initialFireflySnapshot: Firefly | null;
   activeServices: Service[];
+  rotatedAngle: number;
+  rotateSpeed: number;
+  rotateAcceleration: number;
   // moving angle gets cached to be used in acceleration service
   movingAngle: number;
 
@@ -45,6 +48,10 @@ export class Firefly {
       ...this,
       initialFireflySnapshot: null,
     }
+
+  this.rotatedAngle = model.rotatedAngle ?? 0;
+  this.rotateSpeed = model.rotateSpeed ?? 0;
+  this.rotateAcceleration = model.rotateAcceleration ?? 0;
     this.activeServices = model.activeServices ?? [];
   }
 

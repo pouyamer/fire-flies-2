@@ -6,3 +6,4 @@ export * from "./location.service";
 export * from "./shape.service";
 export * from "./bound.service";
 export * from "./window.service";
+export * from "./rotation.service";

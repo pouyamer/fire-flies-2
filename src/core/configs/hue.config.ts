@@ -5,8 +5,8 @@ export const hueConfig: ChangingValueConfig = {
   name: ServiceName.Hue,
   type: ChangeType.NoChange,
   value: {
-    min:0,
-    max: 30
+    min:100,
+    max: 160
   }
   
 }

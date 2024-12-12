@@ -7,7 +7,7 @@ export * from "./lightness.config";
 export * from "./alpha.config";
 export * from "./location.config";
 export * from "./shape.config";
-export * from "./event.config";
 export * from "./bounds.config";
 export * from "./window.config";
 export * from "./general-firefly.config";
+export * from "./rotation.config"

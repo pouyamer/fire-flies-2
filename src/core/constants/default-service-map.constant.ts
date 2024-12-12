@@ -1,4 +1,4 @@
-import { accelerationConfig, alphaConfig, boundsConfig, hueConfig, lightnessConfig, locationConfig, saturationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "../configs";
+import { accelerationConfig, alphaConfig, boundsConfig, hueConfig, lightnessConfig, locationConfig, rotationConfig, saturationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "../configs";
 import { ServiceName } from "../enums";
 import { ServiceMap } from "../types";
 
@@ -51,5 +51,9 @@ export const DEFAULT_SERVICE_MAP: {
   window: {
     name: "window" as ServiceName,
     config: windowConfig,
+  },
+  rotation: {
+    name: "rotation" as ServiceName,
+    config: rotationConfig
   }
 }
