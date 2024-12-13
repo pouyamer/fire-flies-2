@@ -1,5 +1,5 @@
 import { FireflyApp } from "./core";
-import { generalFireflyConfig } from "./core/configs";
+import { generalFireflyConfig, jitterConfig } from "./core/configs";
 import { DEFAULT_SERVICE_MAP } from "./core/constants";
 import { Color, FireflyCanvas } from "./core/models";
 
@@ -27,6 +27,7 @@ if (canvas) {
     DEFAULT_SERVICE_MAP.location,
     DEFAULT_SERVICE_MAP.bound,
     DEFAULT_SERVICE_MAP.speed,
+    DEFAULT_SERVICE_MAP.jitter,
     DEFAULT_SERVICE_MAP.acceleration,
     DEFAULT_SERVICE_MAP.rotation,
     DEFAULT_SERVICE_MAP.size,

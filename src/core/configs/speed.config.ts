@@ -6,7 +6,7 @@ export const speedConfig: SpeedConfig = {
   type: SpeedType.Polar,
   angle_PI: {
     min: 0,
-    max: Math.PI * 2,
+    max: Math.PI,
   },
-  speed: 1
+  speed: .5
 }

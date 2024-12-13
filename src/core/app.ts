@@ -1,7 +1,7 @@
 import { ServiceName } from "./enums";
 import { Service } from "./interfaces";
 import { Firefly, FireflyCanvas } from "./models";
-import { AccelerationService, BoundService, ChangingValueService, DrawService, LocationService, RotationService, ShapeService, SpeedService, WindowService } from "./services";
+import { AccelerationService, BoundService, ChangingValueService, DrawService, JitterService, LocationService, RotationService, ShapeService, SpeedService, WindowService } from "./services";
 import { AccelerationConfig, BoundsConfig, ChangingValueConfig, GeneralFireflyConfig, LocationConfig, ServiceMap, ShapeConfig, SpeedConfig } from "./types";
 
 export class FireflyApp {
@@ -82,6 +82,7 @@ export class FireflyApp {
 
   private buildServices() {
     this.serviceMaps.forEach((serviceMap) => {
+
       switch (serviceMap.name) {
         case "hue":
           if (this.isChangingValueConfig(serviceMap.config))
@@ -152,8 +153,19 @@ export class FireflyApp {
               this
             )
           );
-
           break;
+
+          case ServiceName.Jitter:
+            this.services.push(
+              new JitterService(
+                this.canvas,
+                this.fireflies,
+                serviceMap.config as any,
+                this
+              )
+            )
+
+            break;
       }
     })
   }

@@ -1,4 +1,4 @@
-import { accelerationConfig, alphaConfig, boundsConfig, hueConfig, lightnessConfig, locationConfig, rotationConfig, saturationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "../configs";
+import { accelerationConfig, alphaConfig, boundsConfig, hueConfig, jitterConfig, lightnessConfig, locationConfig, rotationConfig, saturationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "../configs";
 import { ServiceName } from "../enums";
 import { ServiceMap } from "../types";
 
@@ -55,5 +55,9 @@ export const DEFAULT_SERVICE_MAP: {
   rotation: {
     name: "rotation" as ServiceName,
     config: rotationConfig
+  },
+  jitter: {
+    name: ServiceName.Jitter as ServiceName,
+    config: jitterConfig,
   }
 }

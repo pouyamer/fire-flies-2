@@ -2,6 +2,7 @@ import { ChangeType, ChangingValueMethod } from "../enums"
 import { Firefly, Range } from "../models"
 import { BaseConfig } from "./base-config.type";
 import { EventCallBack } from "./event-callback.type";
+import { GenerateValueCallback } from "./genarator-callback.type";
 
 export type ChangingValueConfig = BaseConfig & ({
   type: ChangeType.NoChange;
@@ -32,5 +33,5 @@ export type ChangingValueConfig = BaseConfig & ({
 } | {
   type: ChangeType.ChangeCallback;
   value: number | Range;
-  changer: (value: Firefly) => number;
+  changer: GenerateValueCallback<number>;
 }) 

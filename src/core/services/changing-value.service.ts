@@ -163,7 +163,12 @@ export class ChangingValueService
           break;
         case ChangeType.ChangeCallback:
           fireflyProp.value = this.config.type === ChangeType.ChangeCallback
-            ? this.config.changer(firefly)
+            ? this.config.changer(
+              firefly,
+              this.canvas,
+              this.fireflies,
+              this.app
+            )
             : fireflyProp.value
           break
         case ChangeType.NoChange:
