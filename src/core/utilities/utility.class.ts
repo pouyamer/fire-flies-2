@@ -1,6 +1,18 @@
-import { Color, Range } from "../models";
+import { FireflyApp } from "../app";
+import { Color, Firefly, FireflyCanvas, Range } from "../models";
+import { PossibleValue, ValueGenerator } from "../types";
 
 export class Utilities {
+
+  public static isRange(target: unknown): target is Range {
+    const emptyRange = new Range();
+    return (
+      target !== null &&
+      typeof target === "object" &&
+      "min" in target &&
+      "max" in target
+    )
+  }
 
   public static hslColorToString = (color: Color): string => {
     const { hue, lightness, saturation, alpha } = color;
@@ -48,14 +60,33 @@ export class Utilities {
   }
 
   public static getValue(
-    rawValue: Range | number,
-    getAsInteger?: boolean
+    rawValue: number | Range,
+  ): number
+  public static getValue(
+    rawValue: Range,
+    getAsInteger: boolean,
+  ): number
+  public static getValue(
+    rawValue: ValueGenerator<number>,
+    valueGeneratorArgs: [Firefly, FireflyCanvas, Array<Firefly>, FireflyApp]
+  ): number;
+  public static getValue(
+    rawValue: PossibleValue,
+    secondArgument?: boolean | [Firefly, FireflyCanvas, Array<Firefly>, FireflyApp]
   ): number {
     if (typeof rawValue === "number") {
       return rawValue;
     }
+    else if (this.isRange(rawValue) && typeof secondArgument === "boolean") {
+      return Utilities.getRandomNumberBetween(rawValue, secondArgument)
+    }
+    else if (!this.isRange(rawValue) && secondArgument && typeof secondArgument !== "boolean") {
+      return rawValue(
+        ...secondArgument
+      )
+    }
     else {
-      return Utilities.getRandomNumberBetween(rawValue, getAsInteger)
+      return 0;
     }
   }
 

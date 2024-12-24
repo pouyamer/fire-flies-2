@@ -17,6 +17,7 @@ export class FireflyApp {
     private readonly generalFireflyConfig: GeneralFireflyConfig,
     serviceMaps: ServiceMap[],
   ) {
+
     this.canvas = canvas;
     this.serviceMaps = serviceMaps;
     this.createFireflies();
@@ -32,12 +33,7 @@ export class FireflyApp {
   }
 
   private isChangingValueConfig(config: unknown): config is ChangingValueConfig {
-    return (
-      config !== null &&
-      typeof config === "object" &&
-      "type" in config &&
-      "value" in config
-    )
+    return true
   }
 
   private isSpeedConfig(config: unknown): config is SpeedConfig {
@@ -67,8 +63,7 @@ export class FireflyApp {
   private isLocationConfig(config: unknown): config is LocationConfig {
     return (
       config !== null &&
-      typeof config === "object" &&
-      "type" in config
+      typeof config === "object"
     )
   }
 
@@ -115,19 +110,19 @@ export class FireflyApp {
           break;
         case "speed":
           if (this.isSpeedConfig(serviceMap.config))
-            this.services.push(new SpeedService(this.canvas, this.fireflies, serviceMap.config));
+            this.services.push(new SpeedService(this.canvas, this.fireflies, serviceMap.config, this));
           break;
         case "acceleration":
           if (this.isAccelerationConfig(serviceMap.config))
-            this.services.push(new AccelerationService(this.canvas, this.fireflies, serviceMap.config));
+            this.services.push(new AccelerationService(this.canvas, this.fireflies, serviceMap.config, this));
           break;
         case "shape":
           if (this.isShapeConfig(serviceMap.config))
-            this.services.push(new ShapeService(this.canvas, this.fireflies, serviceMap.config));
+            this.services.push(new ShapeService(this.canvas, this.fireflies, serviceMap.config, this));
           break;
         case "location":
           if (this.isLocationConfig(serviceMap.config))
-            this.services.push(new LocationService(this.canvas, this.fireflies, serviceMap.config));
+            this.services.push(new LocationService(this.canvas, this.fireflies, serviceMap.config, this));
           break;
         case "bound":
           this.services.push(new BoundService(this.canvas, this.fireflies, serviceMap.config as any, this));

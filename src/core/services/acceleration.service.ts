@@ -1,11 +1,12 @@
+import { FireflyApp } from "../app";
 import { AccelerationType, ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
-import { AccelerationConfig } from "../types";
+import { AccelerationConfig, PossibleValue } from "../types";
 import { Utilities } from "../utilities";
 
 export class AccelerationService
-  implements Service {
+  implements Service  {
 
   name = ServiceName.Acceleration;
 
@@ -13,25 +14,62 @@ export class AccelerationService
     private readonly canvas: FireflyCanvas,
     private readonly fireflies: Firefly[],
     private readonly config: AccelerationConfig,
+    private readonly app: FireflyApp
   ) {
   }
 
-  private getAccelerations(config: AccelerationConfig, firefly: Firefly): [number, number] {
-    switch (config.type) {
+  // the inner get value sets args for Utilities.getValue in valueGenerator mode
+  private getValue(firefly: Firefly, value: PossibleValue) {
+    if (
+      Utilities.isRange(value) ||
+      typeof value === "number"
+    ) {
+      return Utilities.getValue(value);
+    }
+    else {
+      return Utilities.getValue(value(
+        firefly,
+        this.canvas,
+        this.fireflies,
+        this.app
+      ));
+    }
+  }
+
+  private getAccelerations(firefly: Firefly): [number, number] {
+    switch (this.config.type) {
       case AccelerationType.Cartesian:
         return [
-          Utilities.getValue(config.accX),
-          Utilities.getValue(config.accY),
+          this.getValue(
+            firefly,
+            this.config.accX
+          ),
+          this.getValue(
+            firefly,
+            this.config.accY
+          ),
         ]
       case AccelerationType.CartesianInDirection:
         return [
-          Utilities.getSign(firefly.speedX) * Math.abs(Utilities.getValue(config.accX)),
-          Utilities.getSign(firefly.speedY) * Math.abs(Utilities.getValue(config.accY))
+          Utilities.getSign(firefly.speedX) * Math.abs(this.getValue(
+            firefly,
+            this.config.accX
+          )),
+          Utilities.getSign(firefly.speedY) * Math.abs(this.getValue(
+            firefly,
+            this.config.accY
+          ))
         ]
 
       case AccelerationType.Polar:
-        const angle = Utilities.getValue(config.angle_PI);
-        const acc = Utilities.getValue(config.acc)
+        const angle = this.getValue(
+          firefly,
+          this.config.angle_PI
+        );
+        const acc = this.getValue(
+          firefly,
+          this.config.acc
+        )
         return [
           Math.cos(angle) * acc,
           Math.sin(angle) * acc,
@@ -39,8 +77,14 @@ export class AccelerationService
 
       case AccelerationType.PolarInDirection:
         return [
-          Math.cos(firefly.movingAngle) * Utilities.getValue(config.acc),
-          Math.sin(firefly.movingAngle) * Utilities.getValue(config.acc),
+          Math.cos(firefly.movingAngle) * this.getValue(
+            firefly,
+            this.config.acc
+          ),
+          Math.sin(firefly.movingAngle) * this.getValue(
+            firefly,
+            this.config.acc
+          ),
         ]
 
     }
@@ -51,7 +95,7 @@ export class AccelerationService
       firefly.activeServices?.push(this)
     }
     
-    const [accelerationX, accelerationY] = this.getAccelerations(this.config, firefly)
+    const [accelerationX, accelerationY] = this.getAccelerations(firefly)
     firefly.accelerationX = accelerationX;
     firefly.accelerationY = accelerationY;
   }

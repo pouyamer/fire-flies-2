@@ -1,7 +1,12 @@
-import { LocationSetMethod, ServiceName } from "../enums";
+import { ServiceName } from "../enums";
 import { LocationConfig } from "../types";
 
 export const locationConfig: LocationConfig = {
   name: ServiceName.Location,
-  type: LocationSetMethod.Random
+  x: (ff, c, ffs, a) => {
+    return Math.random() * c.width;
+  },
+  y: (ff, c, ffs, a) => {
+    return Math.random() * c.height;
+  }
 }

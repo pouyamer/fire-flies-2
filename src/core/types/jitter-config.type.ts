@@ -1,6 +1,6 @@
-import { Range } from "../models"
+import { PossibleValue } from "./possible-value.type";
 
 export type JitterConfig = {
-  jitterX: number | Range;
-  jitterY: number | Range
+  jitterX: PossibleValue;
+  jitterY: PossibleValue
 }

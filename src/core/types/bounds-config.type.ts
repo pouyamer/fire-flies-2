@@ -1,6 +1,6 @@
 import { BaseConfig } from "./base-config.type";
 import { EventCallBack } from "./event-callback.type";
-import { GenerateValueCallback, GeneratorValueOnCanvasCallback } from "./genarator-callback.type";
+import { GeneratorValueOnCanvasCallback } from "./genarator-callback.type";
 
 type BoundSetter = {
   setter: GeneratorValueOnCanvasCallback<number | null>;

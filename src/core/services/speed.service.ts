@@ -1,7 +1,8 @@
+import { FireflyApp } from "../app";
 import { ServiceName, SpeedType } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
-import { SpeedConfig } from "../types";
+import { PossibleValue, SpeedConfig } from "../types";
 import { Utilities } from "../utilities";
 
 export class SpeedService
@@ -13,28 +14,46 @@ export class SpeedService
     private readonly canvas: FireflyCanvas,
     private readonly fireflies: Firefly[],
     private readonly config: SpeedConfig,
+    private readonly app: FireflyApp
   ) {
   }
 
+  // the inner get value sets args for Utilities.getValue in valueGenerator mode
+  private getValue(firefly: Firefly, value: PossibleValue) {
+    if (
+      Utilities.isRange(value) ||
+      typeof value === "number"
+    ) {
+      return Utilities.getValue(value);
+    }
+    else {
+      return Utilities.getValue(value(
+        firefly,
+        this.canvas,
+        this.fireflies,
+        this.app
+      ));
+    }
+  }
+
   private getSpeedsAndAngle(
-    config: SpeedConfig,
     firefly: Firefly,
   ): {
     speeds: [number, number],
     angle?: number,
   } {
 
-    switch (config.type) {
+    switch (this.config.type) {
       case SpeedType.Cartesian:
         return {
           speeds: [
-            Utilities.getValue(config.speedX),
-            Utilities.getValue(config.speedY)
+            this.getValue(firefly, this.config.speedX),
+            this.getValue(firefly, this.config.speedY)
           ]
         }
       case SpeedType.Polar:
-        const angle = Utilities.getValue(config.angle_PI);
-        const speed = Utilities.getValue(config.speed);
+        const angle = this.getValue(firefly, this.config.angle_PI);
+        const speed = this.getValue(firefly, this.config.speed);
 
         return {
           speeds: [
@@ -42,14 +61,6 @@ export class SpeedService
             Math.sin(angle) * speed,
           ],
           angle
-        }
-
-      case SpeedType.ChangerCallback:
-        return {
-          speeds: [
-            config.changerX(firefly),
-            config.changerY(firefly),
-          ]
         }
     }
   }
@@ -60,7 +71,6 @@ export class SpeedService
     }
     
     const speedsAndAngle = this.getSpeedsAndAngle(
-      this.config,
       firefly
     );
     firefly.speedX = speedsAndAngle.speeds[0];

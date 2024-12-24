@@ -3,7 +3,7 @@ import { Firefly, FireflyCanvas } from "../models";
 
 export type GeneratorValueOnCanvasCallback<T> = (canvas: FireflyCanvas) => T;
 
-export type GenerateValueCallback<T> = (
+export type ValueGenerator<T> = (
   currentFirefly: Firefly,
   canvas: FireflyCanvas,
   fireflies: Firefly[],

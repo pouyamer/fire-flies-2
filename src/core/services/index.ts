@@ -7,4 +7,4 @@ export * from "./shape.service";
 export * from "./bound.service";
 export * from "./window.service";
 export * from "./rotation.service";
-export * from "./jitter.service"
+export * from "./jitter.service";

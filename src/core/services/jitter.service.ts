@@ -2,7 +2,7 @@ import { FireflyApp } from "../app";
 import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
-import { BoundsConfig, JitterConfig } from "../types";
+import { BoundsConfig, JitterConfig, PossibleValue } from "../types";
 import { Utilities } from "../utilities";
 
 export class JitterService implements Service {
@@ -17,13 +17,33 @@ export class JitterService implements Service {
   ) {
   }
 
+  // the inner get value sets args for Utilities.getValue in valueGenerator mode
+  private getValue(firefly: Firefly, value: PossibleValue) {
+    if (
+      Utilities.isRange(value) ||
+      typeof value === "number"
+    ) {
+      return Utilities.getValue(value);
+    }
+    else {
+      return Utilities.getValue(value(
+        firefly,
+        this.canvas,
+        this.fireflies,
+        this.app
+      ));
+    }
+  }
+
   public setOnSingleFirefly(firefly: Firefly): void {
     if (!firefly.activeServices?.some(service => service.name === this.name)) {
       firefly.activeServices?.push(this)
     }
-    
-    firefly.jitterX = Utilities.getValue(this.config.jitterX);
-    firefly.jitterY = Utilities.getValue(this.config.jitterY)
+
+    const {jitterX, jitterY} = this.config
+
+    firefly.jitterX = this.getValue(firefly, jitterX)
+    firefly.jitterY = this.getValue(firefly, jitterY)
     
   }
 

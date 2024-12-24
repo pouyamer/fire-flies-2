@@ -2,7 +2,7 @@ import { FireflyApp } from "../app";
 import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
-import { BoundsConfig, RotationConfig } from "../types";
+import { BoundsConfig, PossibleValue, RotationConfig } from "../types";
 import { Utilities } from "../utilities";
 
 export class RotationService
@@ -17,14 +17,32 @@ export class RotationService
     private readonly app: FireflyApp
   ) {}
 
+  // the inner get value sets args for Utilities.getValue in valueGenerator mode
+  private getValue(firefly: Firefly, value: PossibleValue) {
+    if (
+      Utilities.isRange(value) ||
+      typeof value === "number"
+    ) {
+      return Utilities.getValue(value);
+    }
+    else {
+      return Utilities.getValue(value(
+        firefly,
+        this.canvas,
+        this.fireflies,
+        this.app
+      ));
+    }
+  }
+
   public setOnSingleFirefly(firefly: Firefly): void {
     if (!firefly.activeServices?.some(service => service.name === this.name)) {
       firefly.activeServices?.push(this)
     }
 
-    firefly.rotatedAngle = Utilities.getValue(this.config.startingAngle,);
-    firefly.rotateSpeed = Utilities.getValue(this.config.speed_PI);
-    firefly.rotateAcceleration = Utilities.getValue(this.config.acceleration_PI);
+    firefly.rotatedAngle = this.getValue(firefly, this.config.startingAngle);
+    firefly.rotateSpeed = this.getValue(firefly, this.config.speed_PI);
+    firefly.rotateAcceleration = this.getValue(firefly, this.config.acceleration_PI);
   }
 
   public onFramePassForSingleFirefly(firefly: Firefly): void {

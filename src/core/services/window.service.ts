@@ -1,8 +1,9 @@
 import { FireflyApp } from "../app";
-import { ServiceName } from "../enums";
+import { ServiceName, Shape } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
 import { WindowConfig } from "../types";
+import { Utilities } from "../utilities";
 
 export class WindowService
   implements Service {
@@ -44,12 +45,30 @@ export class WindowService
       })
     }
 
+
+    private setMouseMoveEventListener(): void {
+      this.windowContext.addEventListener("mousemove", (e: MouseEvent) => {
+        this.fireflies.forEach(
+          ff => {
+            const distanceToFireFly = Utilities.calculateDistance(ff.x, ff.y, e.clientX, e.clientY)
+            if (distanceToFireFly < 100) {
+
+              ff.alpha.value = 0
+              ff.rotateSpeed = 0
+            }
+
+          }
+        )
+      })
+    }
+
     setOnEveryFirefly(): void {
       for(let ff of this.fireflies) {
         this.setOnSingleFirefly(ff)
       }
       this.setResizeEventListener();
       this.setMouseClickEventListener();
+      this.setMouseMoveEventListener();
     }
 
     onFramePassForSingleFirefly(firefly: Firefly): void {

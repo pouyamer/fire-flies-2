@@ -1,7 +1,8 @@
-import { LocationSetMethod, ServiceName } from "../enums";
+import { FireflyApp } from "../app";
+import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
-import { LocationConfig } from "../types";
+import { LocationConfig, PossibleValue } from "../types";
 import { Utilities } from "../utilities";
 
 export class LocationService
@@ -13,92 +14,38 @@ export class LocationService
     private readonly canvas: FireflyCanvas,
     private readonly fireflies: Firefly[],
     private readonly config: LocationConfig,
+    private readonly app: FireflyApp
   ) { }
+
+    // the inner get value sets args for Utilities.getValue in valueGenerator mode
+    private getValue(firefly: Firefly, value: PossibleValue) {
+      if (
+        Utilities.isRange(value) ||
+        typeof value === "number"
+      ) {
+        return Utilities.getValue(value);
+      }
+      else {
+        return Utilities.getValue(value(
+          firefly,
+          this.canvas,
+          this.fireflies,
+          this.app
+        ));
+      }
+    }
+
+    
 
   public setOnSingleFirefly(firefly: Firefly) {
     if (!firefly.activeServices?.some(service => service.name === this.name)) {
       firefly.activeServices?.push(this)
     }
-    
-    switch (this.config.type) {
-      case LocationSetMethod.Set:
-        firefly.x = Utilities.getValue(this.config.x)
-        firefly.y = Utilities.getValue(this.config.y)
-        break;
-      case LocationSetMethod.Random:
-        firefly.x = Utilities.getValue({
-          min: 0,
-          max: this.canvas.width,
-        })
 
-        firefly.y = Utilities.getValue({
-          min: 0,
-          max: this.canvas.height,
-        })
-        break;
-      case LocationSetMethod.RandomX:
-        firefly.x = Utilities.getValue({
-          min: 0,
-          max: this.canvas.width,
-        })
+    const {x, y} = this.config;
 
-        firefly.y = Utilities.getValue(this.config.y)
-        break;
-      case LocationSetMethod.RandomY:
-        firefly.x = Utilities.getValue(this.config.x)
-
-        firefly.y = Utilities.getValue({
-          min: 0,
-          max: this.canvas.height,
-        })
-        break;
-      case LocationSetMethod.CenterOfCanvas:
-        firefly.x = this.canvas.width / 2;
-        firefly.y = this.canvas.height / 2;
-        break;
-      case LocationSetMethod.CenterX:
-        firefly.x = this.canvas.width / 2;
-        firefly.y = Utilities.getValue(this.config.y)
-        break;
-      case LocationSetMethod.CenterY:
-        firefly.x = Utilities.getValue(this.config.x)
-        firefly.y = this.canvas.height / 2;
-        break;
-      case LocationSetMethod.FromXToCanvasWidth:
-        firefly.x = Utilities.getValue({
-          min: this.config.x,
-          max: this.canvas.width
-        })
-        firefly.y = Utilities.getValue(this.config.y)
-        break;
-      case LocationSetMethod.FromYToCanvasHeight:
-        firefly.x = Utilities.getValue(this.config.x)
-
-        firefly.y = Utilities.getValue({
-          min: this.config.y,
-          max: this.canvas.height
-        })
-        break;
-      case LocationSetMethod.FromXandYToCanvasSize:
-        firefly.x = Utilities.getValue({
-          min: this.config.x,
-          max: this.canvas.width
-        })
-        firefly.y = Utilities.getValue({
-          min: this.config.y,
-          max: this.canvas.height
-        })
-        break;
-      case LocationSetMethod.CanvasRelativeCallback:
-        const valueFromCallback = this.config.locationSetter(
-          this.canvas.width,
-          this.canvas.height
-        )
-
-        firefly.x = Utilities.getValue(valueFromCallback[0]);
-        firefly.y = Utilities.getValue(valueFromCallback[1])
-        break;
-    }
+    firefly.x = this.getValue(firefly, x);
+    firefly.y = this.getValue(firefly, y);
   }
 
   public onFramePassForSingleFirefly(firefly: Firefly): void {

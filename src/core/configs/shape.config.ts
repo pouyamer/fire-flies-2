@@ -3,5 +3,6 @@ import { ShapeConfig } from "../types";
 
 export const shapeConfig: ShapeConfig = {
   setMethod: ShapeSetMethod.SingleShape,
-  value: Shape.Circle,
+  value: Shape.RegularPolygram,
+  pointCount: 5,
 }

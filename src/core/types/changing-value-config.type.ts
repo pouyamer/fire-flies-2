@@ -1,37 +1,33 @@
 import { ChangeType, ChangingValueMethod } from "../enums"
-import { Firefly, Range } from "../models"
+import { Range } from "../models"
 import { BaseConfig } from "./base-config.type";
 import { EventCallBack } from "./event-callback.type";
-import { GenerateValueCallback } from "./genarator-callback.type";
+import { PossibleValue } from "./possible-value.type";
 
 export type ChangingValueConfig = BaseConfig & ({
   type: ChangeType.NoChange;
-  value: number | Range;
+  value: PossibleValue;
 } | {
   type: ChangeType.Incremental;
-  value: number | Range;
-  increment: number | Range;
-  maxPossibleValue: number | Range;
+  value: PossibleValue;
+  increment: PossibleValue;
+  maxPossibleValue: PossibleValue;
   onMaxReached?: EventCallBack;
 } | {
   type: ChangeType.Decremental;
-  value: number | Range;
-  decrement: number | Range;
-  minPossibleValue: number | Range;
+  value: PossibleValue;
+  decrement: PossibleValue;
+  minPossibleValue: PossibleValue;
   onMinReached?: EventCallBack;
 } |
 {
   type: ChangeType.FlipFlop;
-  value: number | Range,
+  value: PossibleValue,
   startingMethod: ChangingValueMethod;
-  increment: number | Range;
-  decrement: number | Range,
-  minPossibleValue: number | Range;
-  maxPossibleValue: number | Range;
+  increment: PossibleValue;
+  decrement: PossibleValue,
+  minPossibleValue: PossibleValue;
+  maxPossibleValue: PossibleValue;
   onMaxReached?: EventCallBack;
   onMinReached?: EventCallBack;
-} | {
-  type: ChangeType.ChangeCallback;
-  value: number | Range;
-  changer: GenerateValueCallback<number>;
-}) 
+})

@@ -1,12 +1,8 @@
-import { ChangeType, ChangingValueMethod, ServiceName } from "../enums";
-import { Firefly } from "../models";
+import { ChangeType, ServiceName } from "../enums";
 import { ChangingValueConfig } from "../types";
 
 export const sizeConfig: ChangingValueConfig = {
   name: ServiceName.Size,
   type: ChangeType.NoChange,
-  value: {
-    min: 10,
-    max: 15
-  },
+  value: 10,
 }

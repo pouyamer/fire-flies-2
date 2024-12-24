@@ -2,7 +2,7 @@ import { FireflyApp } from "../app";
 import { ChangeType, ChangingValueMethod, ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { ChangingNumericalValueItem, Firefly, FireflyCanvas } from "../models";
-import { ChangingValueConfig, ChangingValueKey } from "../types";
+import { ChangingValueConfig, ChangingValueKey, PossibleValue } from "../types";
 import { Utilities } from "../utilities";
 
 export class ChangingValueService
@@ -21,29 +21,83 @@ export class ChangingValueService
     this.name = name;
   }
 
+    // the inner get value sets args for Utilities.getValue in valueGenerator mode
+    private getValue(firefly: Firefly, value: PossibleValue) {
+      if (
+        Utilities.isRange(value) ||
+        typeof value === "number"
+      ) {
+        return Utilities.getValue(value);
+      }
+      else {
+        return Utilities.getValue(value(
+          firefly,
+          this.canvas,
+          this.fireflies,
+          this.app
+        ));
+      }
+    }
+
   public setOnSingleFirefly(firefly: Firefly) {
     if (!firefly.activeServices?.some(service => service.name === this.name)) {
       firefly.activeServices?.push(this)
     }
     
-    firefly[this.key].value = Utilities.getValue(this.config.value);
+    firefly[this.key].value = this.getValue(
+      firefly,
+      this.config.value
+    );
 
     firefly[this.key].changeType = this.config.type
 
     switch (this.config.type) {
       case ChangeType.Incremental:
-        firefly[this.key].maxPossible = Utilities.getValue(this.config.maxPossibleValue);
-        firefly[this.key].increment = Utilities.getValue(this.config.increment);
+        firefly[this.key].maxPossible = this.getValue(
+          firefly,
+          this.config.maxPossibleValue
+        );
+
+        firefly[this.key].increment = this.getValue(
+          firefly,
+          this.config.increment
+        );
+
         break;
       case ChangeType.Decremental:
-        firefly[this.key].minPossible = Utilities.getValue(this.config.minPossibleValue);
-        firefly[this.key].decrement = Utilities.getValue(this.config.decrement);
+        firefly[this.key].minPossible = this.getValue(
+          firefly,
+          this.config.minPossibleValue
+        );
+
+        firefly[this.key].decrement = this.getValue(
+          firefly,
+          this.config.decrement
+        );
+
         break;
+        
       case ChangeType.FlipFlop:
-        firefly[this.key].maxPossible = Utilities.getValue(this.config.maxPossibleValue);
-        firefly[this.key].increment = Utilities.getValue(this.config.increment);
-        firefly[this.key].minPossible = Utilities.getValue(this.config.minPossibleValue);
-        firefly[this.key].decrement = Utilities.getValue(this.config.decrement);
+        firefly[this.key].maxPossible = this.getValue(
+          firefly,
+          this.config.maxPossibleValue
+        );
+
+        firefly[this.key].increment = this.getValue(
+          firefly,
+          this.config.increment
+        );
+
+        firefly[this.key].minPossible = this.getValue(
+          firefly,
+          this.config.minPossibleValue
+        );
+
+        firefly[this.key].decrement = this.getValue(
+          firefly,
+          this.config.decrement
+        );
+
         firefly[this.key].method = this.config.startingMethod === ChangingValueMethod.Random
           ? Math.random() < .5
             ? ChangingValueMethod.Increment
@@ -161,16 +215,6 @@ export class ChangingValueService
               break;
           }
           break;
-        case ChangeType.ChangeCallback:
-          fireflyProp.value = this.config.type === ChangeType.ChangeCallback
-            ? this.config.changer(
-              firefly,
-              this.canvas,
-              this.fireflies,
-              this.app
-            )
-            : fireflyProp.value
-          break
         case ChangeType.NoChange:
           break;
       }

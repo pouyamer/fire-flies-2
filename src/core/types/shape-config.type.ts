@@ -1,6 +1,7 @@
 import { Shape, ShapeSetMethod } from "../enums"
 import { Firefly, FireflyCanvas, Range } from "../models"
 import { BaseConfig } from "./base-config.type";
+import { PossibleValue } from "./possible-value.type";
 export type ShapeConfig =
   | SingleShapeConfig
   | RandomShapeConfig
@@ -18,12 +19,12 @@ type BasicShapeValue = {
 
 type PolygonValue = {
   value: Shape.RegularPolygon;
-  sideCount: number | Range;
+  sideCount: PossibleValue;
 }
 
 type PolygramValue = {
   value: Shape.RegularPolygram;
-  pointCount: number | Range;
+  pointCount: PossibleValue;
 }
 
 type BasicShapeConfig = BaseSingleShapeConfig & BasicShapeValue;
@@ -60,9 +61,9 @@ type CallbackShapeConfig = {
 type ComplexShapeConfig =
   | {
     value: Shape.RegularPolygon;
-    sideCount: number | Range;
+    sideCount: PossibleValue;
   }
   | {
     value: Shape.RegularPolygram;
-    pointCount: number | Range;
+    pointCount: PossibleValue;
   };
