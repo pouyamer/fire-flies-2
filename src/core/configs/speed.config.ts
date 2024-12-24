@@ -8,5 +8,5 @@ export const speedConfig: SpeedConfig = {
     min: 0,
     max: 2* Math.PI,
   },
-  speed: () => Math.random() * 3
+  speed: 3
 }

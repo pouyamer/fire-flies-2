@@ -34,6 +34,7 @@ if (canvas) {
     DEFAULT_SERVICE_MAP.shape,
     DEFAULT_SERVICE_MAP.draw,
     DEFAULT_SERVICE_MAP.window,
+    DEFAULT_SERVICE_MAP.globalFireflyModifier
   ]);
 
   app.run()

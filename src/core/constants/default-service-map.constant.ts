@@ -1,4 +1,5 @@
 import { accelerationConfig, alphaConfig, boundsConfig, hueConfig, jitterConfig, lightnessConfig, locationConfig, rotationConfig, saturationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "../configs";
+import { globalFireflyModifier } from "../configs/global-firefly-modifier.config";
 import { ServiceName } from "../enums";
 import { ServiceMap } from "../types";
 
@@ -59,5 +60,9 @@ export const DEFAULT_SERVICE_MAP: {
   jitter: {
     name: ServiceName.Jitter as ServiceName,
     config: jitterConfig,
+  },
+  globalFireflyModifier: {
+    name: ServiceName.GlobalFireflyModifier as ServiceName,
+    config: globalFireflyModifier,
   }
 }

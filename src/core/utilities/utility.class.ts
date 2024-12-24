@@ -77,8 +77,14 @@ export class Utilities {
     if (typeof rawValue === "number") {
       return rawValue;
     }
-    else if (this.isRange(rawValue) && typeof secondArgument === "boolean") {
-      return Utilities.getRandomNumberBetween(rawValue, secondArgument)
+    else if (this.isRange(rawValue)) {
+      // Range
+      if (secondArgument && typeof secondArgument === "boolean") {
+        return Utilities.getRandomNumberBetween(rawValue, secondArgument)
+      }
+      else {
+        return Utilities.getRandomNumberBetween(rawValue)
+      }
     }
     else if (!this.isRange(rawValue) && secondArgument && typeof secondArgument !== "boolean") {
       return rawValue(
