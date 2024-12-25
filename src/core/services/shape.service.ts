@@ -18,12 +18,15 @@ export class ShapeService
   ) { }
 
     // the inner get value sets args for Utilities.getValue in valueGenerator mode
-    private getValue(firefly: Firefly, value: PossibleValue) {
+    private getValue(firefly: Firefly, value: PossibleValue): number {
       if (Utilities.isRange(value)) {
         return Utilities.getValue(value, true);
       }
-      else if (typeof value == "number") {
-        return value
+      else if (
+        typeof value == "number" ||
+        Array.isArray(value)
+      ) {
+        return Utilities.getValue(value)
       }
       else {
         return Utilities.getValue(value(

@@ -21,7 +21,8 @@ export class RotationService
   private getValue(firefly: Firefly, value: PossibleValue) {
     if (
       Utilities.isRange(value) ||
-      typeof value === "number"
+      typeof value === "number" ||
+      Array.isArray(value)
     ) {
       return Utilities.getValue(value);
     }

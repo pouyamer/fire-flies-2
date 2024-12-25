@@ -19,10 +19,11 @@ export class SpeedService
   }
 
   // the inner get value sets args for Utilities.getValue in valueGenerator mode
-  private getValue(firefly: Firefly, value: PossibleValue) {
+  private getValue(firefly: Firefly, value: PossibleValue): number {
     if (
       Utilities.isRange(value) ||
-      typeof value === "number"
+      typeof value === "number" ||
+      Array.isArray(value)
     ) {
       return Utilities.getValue(value);
     }

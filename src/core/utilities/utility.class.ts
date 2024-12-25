@@ -60,7 +60,7 @@ export class Utilities {
   }
 
   public static getValue(
-    rawValue: number | Range,
+    rawValue: number | Range | number[],
   ): number
   public static getValue(
     rawValue: Range,
@@ -85,6 +85,9 @@ export class Utilities {
       else {
         return Utilities.getRandomNumberBetween(rawValue)
       }
+    }
+    else if (Array.isArray(rawValue)) {
+      return Utilities.chooseBetweenMultipleValues(rawValue);
     }
     else if (!this.isRange(rawValue) && secondArgument && typeof secondArgument !== "boolean") {
       return rawValue(

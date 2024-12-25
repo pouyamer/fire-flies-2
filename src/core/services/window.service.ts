@@ -51,11 +51,8 @@ export class WindowService
         this.fireflies.forEach(
           ff => {
             const distanceToFireFly = Utilities.calculateDistance(ff.x, ff.y, e.clientX, e.clientY)
-            if (distanceToFireFly < 100) {
 
-              ff.alpha.value = 0
-              ff.rotateSpeed = 0
-            }
+
 
           }
         )

@@ -4,9 +4,9 @@ import { LocationConfig } from "../types";
 export const locationConfig: LocationConfig = {
   name: ServiceName.Location,
   x: (ff, c, ffs, a) => {
-    return Math.random() * c.width;
+    return c.width / 2 + 100;
   },
   y: (ff, c, ffs, a) => {
-    return Math.random() * c.height;
+    return c.height / 2;
   }
 }

@@ -13,27 +13,25 @@ export const boundsConfig: BoundsConfig = {
   name: ServiceName.Bound,
   bottom: {
     type: "only-setter",
-    setter: DEFAULT_SETTER.bottom,
-  },
-  left: {
-    type: "only-setter",
-    setter: DEFAULT_SETTER.left,
-  },
-  right: {
-    type: "only-setter",
-    setter: DEFAULT_SETTER.right,
+    setter: DEFAULT_SETTER.bottom
   },
   top: {
     type: "only-setter",
     setter: DEFAULT_SETTER.top
   },
+  right: {
+    type: "only-setter",
+    setter: DEFAULT_SETTER.right
+  },
+  left: {
+    type: "only-setter",
+    setter: DEFAULT_SETTER.left
+  },
   general: {
     type: "out-of-bounds",
-    onOutOfBounds: (ff, canvas, ffs, app) => {
-
-      app.setServicesOnSingleFirefly(ff)
-
-
+    onOutOfBounds: (ff,c,ffs, a) => {
+      a.setServicesOnSingleFirefly(ff)
     }
   }
+  
 }
