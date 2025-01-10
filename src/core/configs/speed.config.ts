@@ -4,8 +4,8 @@ import { SpeedConfig } from "../types";
 export const speedConfig: SpeedConfig = {
   name: ServiceName.Speed,
   type: SpeedType.Polar,
-  angle_PI: (ff) => {
-    return ((ff.hue.value) * 2 * Math.PI) / 360 + (new Date().getSeconds() / 60) * 360
+  angle_PI: ({currentFirefly}) => {
+    return ((currentFirefly.hue.value) * 2 * Math.PI) / 360 + (new Date().getSeconds() / 60) * 360
   },
   speed: 3
 }

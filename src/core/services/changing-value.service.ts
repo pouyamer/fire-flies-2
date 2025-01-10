@@ -21,22 +21,22 @@ export class ChangingValueService
     this.name = name;
   }
 
-    // the inner get value sets args for Utilities.getValue in valueGenerator mode
-    private getValue(firefly: Firefly, value: PossibleValue) {
+    // the inner get value sets args for Utilities.getNumericValue in valueGenerator mode
+    private getValue(firefly: Firefly, value: PossibleValue<number>) {
       if (
         Utilities.isRange(value) ||
         typeof value === "number" ||
         Array.isArray(value)
       ) {
-        return Utilities.getValue(value);
+        return Utilities.getNumericValue(value);
       }
       else {
-        return Utilities.getValue(value(
-          firefly,
-          this.canvas,
-          this.fireflies,
-          this.app
-        ));
+        return Utilities.getNumericValue(value({
+          currentFirefly: firefly,
+          canvas: this.canvas,
+          fireflies: this.fireflies,
+          app: this.app
+        }));
       }
     }
 

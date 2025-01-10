@@ -1,6 +1,6 @@
 import { FireflyApp } from "../app";
 import { Color, Firefly, FireflyCanvas, Range } from "../models";
-import { PossibleValue, ValueGenerator } from "../types";
+import { PossibleValue, ValueGenerator, ValueGeneratorParameters } from "../types";
 
 export class Utilities {
 
@@ -59,20 +59,50 @@ export class Utilities {
     return 0
   }
 
-  public static getValue(
+  public static isNumberArray(target: unknown):  target is number[] {
+    return (
+      target !== null &&
+      Array.isArray(target) &&
+      target.every(v => typeof v === "number")
+    );
+  }
+
+  public static getNonNumericValue<T>(
+    rawValue: T | T[]
+  ): T;
+  public static getNonNumericValue<T>(
+    rawValue: ValueGenerator<T>,
+    valueGeneratorArgs: ValueGeneratorParameters
+  ): T
+  public static getNonNumericValue<T>(
+    rawValue: PossibleValue<T>,
+    valueGeneratorArgs?: ValueGeneratorParameters
+  ): T {
+    if (Array.isArray(rawValue)) {
+      return Utilities.chooseBetweenMultipleValues(rawValue);
+    }
+   else if (typeof rawValue === "function") {
+      return rawValue(valueGeneratorArgs as ValueGeneratorParameters);
+   }
+   else {
+    return rawValue as T; 
+   }
+  }
+
+  public static getNumericValue(
     rawValue: number | Range | number[],
   ): number
-  public static getValue(
+  public static getNumericValue(
     rawValue: Range,
     getAsInteger: boolean,
   ): number
-  public static getValue(
+  public static getNumericValue(
     rawValue: ValueGenerator<number>,
-    valueGeneratorArgs: [Firefly, FireflyCanvas, Array<Firefly>, FireflyApp]
+    valueGeneratorArgs: ValueGeneratorParameters
   ): number;
-  public static getValue(
-    rawValue: PossibleValue,
-    secondArgument?: boolean | [Firefly, FireflyCanvas, Array<Firefly>, FireflyApp]
+  public static getNumericValue(
+    rawValue: PossibleValue<number>,
+    secondArgument?: boolean | ValueGeneratorParameters
   ): number {
     if (typeof rawValue === "number") {
       return rawValue;
@@ -91,7 +121,7 @@ export class Utilities {
     }
     else if (!this.isRange(rawValue) && secondArgument && typeof secondArgument !== "boolean") {
       return rawValue(
-        ...secondArgument
+        secondArgument
       )
     }
     else {

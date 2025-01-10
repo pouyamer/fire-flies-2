@@ -4,11 +4,11 @@ import { PossibleValue } from "./possible-value.type"
 
 export type SpeedConfig = BaseConfig & ({
   type: SpeedType.Cartesian,
-  speedX: PossibleValue,
-  speedY: PossibleValue,
+  speedX: PossibleValue<number>,
+  speedY: PossibleValue<number>,
 } |
 {
   type: SpeedType.Polar,
-  angle_PI: PossibleValue,
-  speed: PossibleValue,
+  angle_PI: PossibleValue<number>,
+  speed: PossibleValue<number>,
 })

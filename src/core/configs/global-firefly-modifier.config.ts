@@ -1,7 +1,7 @@
 import { GlobalFireflyModifierConfig } from "../types";
 
 export const globalFireflyModifier: GlobalFireflyModifierConfig = {
-    onFramePassModifier: (ff, c) => {
-        ff.size.value = (1 - ff.alpha.value) * 20
+    onFramePassModifier: ({currentFirefly}) => {
+        currentFirefly.size.value = (1 - currentFirefly.alpha.value) * 20
     }
 }

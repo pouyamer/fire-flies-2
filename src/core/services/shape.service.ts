@@ -17,24 +17,24 @@ export class ShapeService
     private readonly app: FireflyApp,
   ) { }
 
-    // the inner get value sets args for Utilities.getValue in valueGenerator mode
-    private getValue(firefly: Firefly, value: PossibleValue): number {
+    // the inner get value sets args for Utilities.getNumericValue in valueGenerator mode
+    private getValue(firefly: Firefly, value: PossibleValue<number>): number {
       if (Utilities.isRange(value)) {
-        return Utilities.getValue(value, true);
+        return Utilities.getNumericValue(value, true);
       }
       else if (
         typeof value == "number" ||
         Array.isArray(value)
       ) {
-        return Utilities.getValue(value)
+        return Utilities.getNumericValue(value)
       }
       else {
-        return Utilities.getValue(value(
-          firefly,
-          this.canvas,
-          this.fireflies,
-          this.app
-        ));
+        return Utilities.getNumericValue(value({
+          currentFirefly: firefly,
+          canvas: this.canvas,
+          fireflies: this.fireflies,
+          app: this.app
+        }));
       }
     }
 

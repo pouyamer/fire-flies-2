@@ -1,6 +1,6 @@
 import { PossibleValue } from "./possible-value.type";
 
 export type JitterConfig = {
-  jitterX: PossibleValue;
-  jitterY: PossibleValue
+  jitterX: PossibleValue<number>;
+  jitterY: PossibleValue<number>
 }

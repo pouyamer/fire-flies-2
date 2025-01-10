@@ -19,12 +19,12 @@ type BasicShapeValue = {
 
 type PolygonValue = {
   value: Shape.RegularPolygon;
-  sideCount: PossibleValue;
+  sideCount: PossibleValue<number>;
 }
 
 type PolygramValue = {
   value: Shape.RegularPolygram;
-  pointCount: PossibleValue;
+  pointCount: PossibleValue<number>;
 }
 
 type BasicShapeConfig = BaseSingleShapeConfig & BasicShapeValue;
@@ -61,9 +61,9 @@ type CallbackShapeConfig = {
 type ComplexShapeConfig =
   | {
     value: Shape.RegularPolygon;
-    sideCount: PossibleValue;
+    sideCount: PossibleValue<number>;
   }
   | {
     value: Shape.RegularPolygram;
-    pointCount: PossibleValue;
+    pointCount: PossibleValue<number>;
   };

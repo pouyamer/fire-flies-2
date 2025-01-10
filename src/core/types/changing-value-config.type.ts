@@ -6,28 +6,28 @@ import { PossibleValue } from "./possible-value.type";
 
 export type ChangingValueConfig = BaseConfig & ({
   type: ChangeType.NoChange;
-  value: PossibleValue;
+  value: PossibleValue<number>;
 } | {
   type: ChangeType.Incremental;
-  value: PossibleValue;
-  increment: PossibleValue;
-  maxPossibleValue: PossibleValue;
+  value: PossibleValue<number>;
+  increment: PossibleValue<number>;
+  maxPossibleValue: PossibleValue<number>;
   onMaxReached?: EventCallBack;
 } | {
   type: ChangeType.Decremental;
-  value: PossibleValue;
-  decrement: PossibleValue;
-  minPossibleValue: PossibleValue;
+  value: PossibleValue<number>;
+  decrement: PossibleValue<number>;
+  minPossibleValue: PossibleValue<number>;
   onMinReached?: EventCallBack;
 } |
 {
   type: ChangeType.FlipFlop;
-  value: PossibleValue,
+  value: PossibleValue<number>,
   startingMethod: ChangingValueMethod;
-  increment: PossibleValue;
-  decrement: PossibleValue,
-  minPossibleValue: PossibleValue;
-  maxPossibleValue: PossibleValue;
+  increment: PossibleValue<number>;
+  decrement: PossibleValue<number>,
+  minPossibleValue: PossibleValue<number>;
+  maxPossibleValue: PossibleValue<number>;
   onMaxReached?: EventCallBack;
   onMinReached?: EventCallBack;
 })
