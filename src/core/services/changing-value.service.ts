@@ -126,12 +126,12 @@ export class ChangingValueService
       ) &&
       this.config.onMaxReached
     ) {
-      this.config.onMaxReached(
-        firefly,
-        this.canvas,
-        this.fireflies,
-        this.app
-      )
+      this.config.onMaxReached({
+        currentFirefly: firefly,
+        canvas: this.canvas, 
+        fireflies: this.fireflies,
+        app: this.app
+      })
     }
   }
 
@@ -146,12 +146,12 @@ export class ChangingValueService
       )  &&
       this.config.onMinReached
     ) {
-      this.config.onMinReached(
-        firefly,
-        this.canvas,
-        this.fireflies,
-        this.app
-      )
+      this.config.onMinReached({
+        currentFirefly: firefly,
+        canvas: this.canvas, 
+        fireflies: this.fireflies,
+        app: this.app
+      })
     }
   }
 

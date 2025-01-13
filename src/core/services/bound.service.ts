@@ -80,12 +80,12 @@ export class BoundService implements Service {
       this.config.top.onOutOfBounds
     ) {
         // on out of top bound
-        this.config.top.onOutOfBounds(
-          firefly,
-          this.canvas,
-          this.fireflies,
-          this.app
-        )
+        this.config.top.onOutOfBounds({
+          currentFirefly: firefly,
+          canvas: this.canvas, 
+          fireflies: this.fireflies,
+          app: this.app
+        })
     }
   }
 
@@ -96,12 +96,12 @@ export class BoundService implements Service {
       this.config.top.onTouchedBounds
     ) {
     // on top bound
-      this.config.top.onTouchedBounds(
-        firefly,
-        this.canvas,
-        this.fireflies,
-        this.app
-      )
+      this.config.top.onTouchedBounds({
+        currentFirefly: firefly,
+        canvas: this.canvas, 
+        fireflies: this.fireflies,
+        app: this.app
+      })
     }
   }
 
@@ -112,12 +112,12 @@ export class BoundService implements Service {
       this.config.left.onOutOfBounds
     ) {
         // on out of top bound
-        this.config.left.onOutOfBounds(
-          firefly,
-          this.canvas,
-          this.fireflies,
-          this.app
-        )
+        this.config.left.onOutOfBounds({
+          currentFirefly: firefly,
+          canvas: this.canvas, 
+          fireflies: this.fireflies,
+          app: this.app
+        })
     }
   }
 
@@ -128,12 +128,12 @@ export class BoundService implements Service {
       this.config.left.onTouchedBounds
     ) {
     // on top bound
-      this.config.left.onTouchedBounds(
-        firefly,
-        this.canvas,
-        this.fireflies,
-        this.app
-      )
+      this.config.left.onTouchedBounds({
+        currentFirefly: firefly,
+        canvas: this.canvas, 
+        fireflies: this.fireflies,
+        app: this.app
+      })
     }
   }
 
@@ -144,12 +144,12 @@ export class BoundService implements Service {
       this.config.bottom.onOutOfBounds
     ) {
         // on out of top bound
-        this.config.bottom.onOutOfBounds(
-          firefly,
-          this.canvas,
-          this.fireflies,
-          this.app
-        )
+        this.config.bottom.onOutOfBounds({
+          currentFirefly: firefly,
+          canvas: this.canvas, 
+          fireflies: this.fireflies,
+          app: this.app
+        })
     }
   }
 
@@ -160,12 +160,12 @@ export class BoundService implements Service {
       this.config.bottom.onTouchedBounds
     ) {
     // on top bound
-      this.config.bottom.onTouchedBounds(
-        firefly,
-        this.canvas,
-        this.fireflies,
-        this.app
-      )
+      this.config.bottom.onTouchedBounds({
+        currentFirefly: firefly,
+        canvas: this.canvas, 
+        fireflies: this.fireflies,
+        app: this.app
+      })
     }
   }
 
@@ -176,12 +176,12 @@ export class BoundService implements Service {
       this.config.right.onOutOfBounds
     ) {
         // on out of top bound
-        this.config.right.onOutOfBounds(
-          firefly,
-          this.canvas,
-          this.fireflies,
-          this.app
-        )
+        this.config.right.onOutOfBounds({
+          currentFirefly: firefly,
+          canvas: this.canvas, 
+          fireflies: this.fireflies,
+          app: this.app
+        })
     }
   }
 
@@ -192,12 +192,12 @@ export class BoundService implements Service {
       this.config.right.onTouchedBounds
     ) {
     // on top bound
-      this.config.right.onTouchedBounds(
-        firefly,
-        this.canvas,
-        this.fireflies,
-        this.app
-      )
+      this.config.right.onTouchedBounds({
+        currentFirefly: firefly,
+        canvas: this.canvas, 
+        fireflies: this.fireflies,
+        app: this.app
+      })
     }
   }
 
@@ -212,7 +212,12 @@ export class BoundService implements Service {
       this.config.general?.type === "out-of-bounds" &&
       this.config.general.onOutOfBounds
     ) {
-      this.config.general.onOutOfBounds(firefly, this.canvas, this.fireflies, this.app)
+      this.config.general.onOutOfBounds({
+        currentFirefly: firefly,
+        canvas: this.canvas, 
+        fireflies: this.fireflies,
+        app: this.app
+      })
     }
   }
 
@@ -227,12 +232,12 @@ export class BoundService implements Service {
       this.config.general?.type === "touched-bounds" &&
       this.config.general.onTouchedBounds
     ) {
-      this.config.general.onTouchedBounds(
-        firefly,
-        this.canvas, 
-        this.fireflies,
-        this.app
-      )
+      this.config.general.onTouchedBounds({
+        currentFirefly: firefly,
+        canvas: this.canvas, 
+        fireflies: this.fireflies,
+        app: this.app
+      })
     }
   }
 

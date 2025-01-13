@@ -1,9 +1,3 @@
-import { FireflyApp } from "../app";
-import { Firefly, FireflyCanvas } from "../models";
+import { ValueGeneratorParameters } from "./genarator-callback.type";
 
-export type EventCallBack = (
-  firefly: Firefly,
-  canvas: FireflyCanvas,
-  fireflies: Firefly[],
-  app: FireflyApp
-) => void
+export type EventCallBack = (parameters: ValueGeneratorParameters) => void;

@@ -1,5 +1,5 @@
-import { ServiceName, Shape } from "../enums";
-import { Color, FireflyCanvas } from "../models";
+import { ServiceName } from "../enums";
+import { Firefly, FireflyCanvas } from "../models";
 import { BoundsConfig } from "../types";
 
 const DEFAULT_SETTER = {
@@ -29,8 +29,16 @@ export const boundsConfig: BoundsConfig = {
   },
   general: {
     type: "out-of-bounds",
-    onOutOfBounds: (ff,c,ffs, a) => {
-      a.setServicesOnSingleFirefly(ff)
+    onOutOfBounds: ({
+      currentFirefly, app, fireflies
+    }) => {
+      const newFirefly = new Firefly();
+      fireflies.push(newFirefly)
+      app.setServicesOnSingleFirefly(currentFirefly)
+      app.setServicesOnSingleFirefly(newFirefly)
+      if(Math.random() < 1 / (100 - fireflies.length)) {
+        fireflies.pop()
+      }
     }
   }
   

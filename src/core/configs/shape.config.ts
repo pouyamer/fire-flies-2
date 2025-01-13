@@ -3,6 +3,5 @@ import { ShapeConfig } from "../types";
 
 export const shapeConfig: ShapeConfig = {
   setMethod: ShapeSetMethod.SingleShape,
-  value: Shape.RegularPolygon,
-  sideCount: 5
+  value: Shape.Circle
 }
