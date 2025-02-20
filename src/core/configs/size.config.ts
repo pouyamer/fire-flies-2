@@ -4,5 +4,8 @@ import { ChangingValueConfig } from "../types";
 export const sizeConfig: ChangingValueConfig = {
   name: ServiceName.Size,
   type: ChangeType.NoChange,
-  value: 10,
+  value: {
+    min: 3,
+    max: 9
+  },
 }

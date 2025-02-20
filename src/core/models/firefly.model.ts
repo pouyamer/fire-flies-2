@@ -25,6 +25,7 @@ export class Firefly {
   rotateAcceleration: number;
   jitterX: number;
   jitterY: number;
+  firefliesInCollision: Firefly[];
   // moving angle gets cached to be used in acceleration service
   movingAngle: number;
 
@@ -56,7 +57,8 @@ export class Firefly {
   this.rotateAcceleration = model.rotateAcceleration ?? 0;
   this.jitterX = model.jitterX ?? 0;
   this.jitterY = model.jitterY ?? 0;
-    this.activeServices = model.activeServices ?? [];
+  this.activeServices = model.activeServices ?? [];
+  this.firefliesInCollision = model.firefliesInCollision ?? [];
   }
 
 }

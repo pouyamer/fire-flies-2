@@ -1,5 +1,6 @@
-import { ValueGenerator } from "./genarator-callback.type"
+import { EventCallBack } from "./event-callback.type"
 
 export type GlobalFireflyModifierConfig = {
-    onFramePassModifier: ValueGenerator<void>
+    onSetModifier?: EventCallBack,
+    onFramePassModifier: EventCallBack,
 }

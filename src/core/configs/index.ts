@@ -12,3 +12,4 @@ export * from "./window.config";
 export * from "./general-firefly.config";
 export * from "./rotation.config"
 export * from "./jitter.config";
+export * from "./collision.config";

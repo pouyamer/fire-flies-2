@@ -3,7 +3,6 @@ import { AccelerationConfig } from "../types";
 
 export const accelerationConfig: AccelerationConfig = {
   name: ServiceName.Acceleration,
-  type: AccelerationType.Cartesian,
-  accX: 0,
-  accY: 0.03
+  type: AccelerationType.PolarInDirection,
+  acc: 0.003
 }

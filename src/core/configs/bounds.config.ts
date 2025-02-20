@@ -29,16 +29,8 @@ export const boundsConfig: BoundsConfig = {
   },
   general: {
     type: "out-of-bounds",
-    onOutOfBounds: ({
-      currentFirefly, app, fireflies
-    }) => {
-      const newFirefly = new Firefly();
-      fireflies.push(newFirefly)
+    onOutOfBounds: ({currentFirefly, app}) => {
       app.setServicesOnSingleFirefly(currentFirefly)
-      app.setServicesOnSingleFirefly(newFirefly)
-      if(Math.random() < 1 / (100 - fireflies.length)) {
-        fireflies.pop()
-      }
     }
   }
   

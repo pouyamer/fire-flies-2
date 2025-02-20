@@ -9,3 +9,4 @@ export * from "./window.service";
 export * from "./rotation.service";
 export * from "./jitter.service";
 export * from "./global-firefly-modifier.service";
+export * from "./collision.service";

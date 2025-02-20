@@ -2,6 +2,7 @@ import { ServiceName } from "../enums";
 import { AccelerationConfig } from "./acceleration-config.type";
 import { BoundsConfig } from "./bounds-config.type";
 import { ChangingValueConfig } from "./changing-value-config.type";
+import { CollisionConfig } from "./collision-config.type";
 import { GlobalFireflyModifierConfig } from "./global-firefly-modifier-config.type";
 import { JitterConfig } from "./jitter-config.type";
 import { LocationConfig } from "./location-config.type";
@@ -22,5 +23,6 @@ export type ServiceMap = {
     | WindowConfig
     | RotationConfig
     | JitterConfig
-    | GlobalFireflyModifierConfig,
+    | GlobalFireflyModifierConfig
+    | CollisionConfig
 }

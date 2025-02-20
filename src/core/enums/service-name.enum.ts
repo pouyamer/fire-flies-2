@@ -14,4 +14,5 @@ export enum ServiceName {
   Rotation = "rotation",
   Jitter = "jitter",
   GlobalFireflyModifier = "global-firefly-modifier",
+  Collision = "collision"
 };

@@ -1,7 +1,7 @@
 import { ServiceName } from "./enums";
 import { Service } from "./interfaces";
 import { Firefly, FireflyCanvas } from "./models";
-import { AccelerationService, BoundService, ChangingValueService, DrawService, GlobalFireflyModifierService, JitterService, LocationService, RotationService, ShapeService, SpeedService, WindowService } from "./services";
+import { AccelerationService, BoundService, ChangingValueService, CollisionService, DrawService, GlobalFireflyModifierService, JitterService, LocationService, RotationService, ShapeService, SpeedService, WindowService } from "./services";
 import { AccelerationConfig, BoundsConfig, ChangingValueConfig, GeneralFireflyConfig, LocationConfig, ServiceMap, ShapeConfig, SpeedConfig } from "./types";
 
 export class FireflyApp {
@@ -10,6 +10,7 @@ export class FireflyApp {
   private fireflies: Firefly[] = [];
   private serviceMaps: ServiceMap[] = [];
   private services: Service[] = [];
+  private collision: Firefly[][] = [];
 
   constructor(
     canvas: FireflyCanvas,
@@ -161,6 +162,18 @@ export class FireflyApp {
             )
             break;
 
+          case ServiceName.Collision:
+            this.services.push(
+              new CollisionService(
+                this.canvas,
+                this.fireflies,
+                serviceMap.config as any,
+                this,
+                this.collision,
+              )
+            )
+            break;
+
           case ServiceName.GlobalFireflyModifier:
             this.services.push(
               new GlobalFireflyModifierService(
@@ -184,6 +197,7 @@ export class FireflyApp {
     for (let service of this.services) {
       service.setOnEveryFirefly()
     }
+    
     this.fireflies.forEach(
       ff => ff.initialFireflySnapshot = {
         ...ff,

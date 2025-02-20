@@ -10,5 +10,5 @@ export const speedConfig: SpeedConfig = {
   name: ServiceName.Speed,
   type: SpeedType.Polar,
   angle_PI: ALL_ANGLES,
-  speed: 0
+  speed: 1.1
 }
