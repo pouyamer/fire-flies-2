@@ -14,6 +14,12 @@ export class Utilities {
     )
   }
 
+  public static range(min: number, max: number): Range {
+    return {
+      min, max
+    }
+  }
+
   public static hslColorToString = (color: Color): string => {
     const { hue, lightness, saturation, alpha } = color;
 
@@ -67,6 +73,14 @@ export class Utilities {
     );
   }
 
+  public static isRangeArray(target: unknown): target is Range[] {
+    return (
+      target !== null &&
+      Array.isArray(target) &&
+      target.every(v => this.isRange(v))
+    )
+  }
+
   public static getNonNumericValue<T>(
     rawValue: T | T[]
   ): T;
@@ -90,7 +104,7 @@ export class Utilities {
   }
 
   public static getNumericValue(
-    rawValue: number | Range | number[],
+    rawValue: number | Range | number[] | Range[],
   ): number
   public static getNumericValue(
     rawValue: Range,
@@ -109,20 +123,25 @@ export class Utilities {
     }
     else if (this.isRange(rawValue)) {
       // Range
-      if (secondArgument && typeof secondArgument === "boolean") {
-        return Utilities.getRandomNumberBetween(rawValue, secondArgument)
-      }
-      else {
-        return Utilities.getRandomNumberBetween(rawValue)
-      }
+      return secondArgument && typeof secondArgument === "boolean"
+        ? Utilities.getRandomNumberBetween(rawValue, secondArgument)
+        : Utilities.getRandomNumberBetween(rawValue)
     }
     else if (Array.isArray(rawValue)) {
-      return Utilities.chooseBetweenMultipleValues(rawValue);
+      // if it is Range then it should be handled by Range mode
+      const chosenValue: Range | number =  this.chooseBetweenMultipleValues<Range | number>(rawValue)
+
+      return typeof chosenValue === "number"
+        ? chosenValue
+        : this.getNumericValue(chosenValue)
+        
     }
     else if (!this.isRange(rawValue) && secondArgument && typeof secondArgument !== "boolean") {
-      return rawValue(
+      const valueFromGenerator = rawValue(
         secondArgument
-      )
+      );
+
+      return typeof valueFromGenerator === "number" ? valueFromGenerator : this.getNumericValue(valueFromGenerator)
     }
     else {
       return 0;
