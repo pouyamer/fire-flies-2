@@ -1,5 +1,6 @@
 import { ServiceName, SpeedType } from "../enums";
 import { SpeedConfig } from "../types";
+import { Utilities } from "../utilities";
 
 const ALL_ANGLES = {
   min: 0,
@@ -8,7 +9,7 @@ const ALL_ANGLES = {
 
 export const speedConfig: SpeedConfig = {
   name: ServiceName.Speed,
-  type: SpeedType.Polar,
-  angle_PI: ALL_ANGLES,
-  speed: 1.1
+  type: SpeedType.Cartesian,
+  speedX:0,
+  speedY: 0
 }

@@ -6,5 +6,7 @@ import { Utilities } from "../utilities"
 export const hueConfig: ChangingValueConfig = {
   name: ServiceName.Hue,
   type: ChangeType.NoChange,
-  value: Utilities.range(0, 100)
+  value: () => {
+    return Math.random() < .01 ? 160 : 20
+  }
 }

@@ -8,7 +8,8 @@ export const globalFireflyModifier: GlobalFireflyModifierConfig = {
         // fireflies[0].speedX = 1;
     },
     onFramePassModifier: ({currentFirefly: ff}) => {
-        // ff.size.value = ff.size.value * .99
-        // ff.alpha.value = ff.alpha.value * .99
+        ff.size.value += Math.random() * .1
+
+        ff.speedY = -ff.size.value / 7
     }
 }

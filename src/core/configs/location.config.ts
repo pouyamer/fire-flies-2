@@ -1,10 +1,6 @@
+import { CONSTANTS } from "../constants/constants";
 import { LocationConfig } from "../types";
 
 export const locationConfig: LocationConfig = {
-  x: ({canvas}) => {
-    return Math.random() * canvas.width ;
-  },
-  y: ({canvas}) => {
-    return Math.random() * canvas.height;
-  }
+  ...CONSTANTS.randomCanvasLocationWithSegments(30, 10)
 }
