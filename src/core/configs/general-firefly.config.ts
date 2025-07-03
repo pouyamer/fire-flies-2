@@ -1,5 +1,5 @@
 import { GeneralFireflyConfig } from "../types";
 
 export const generalFireflyConfig: GeneralFireflyConfig = {
-    count: 200,
+    count: 300,
 }

@@ -1,10 +1,8 @@
 import { ChangeType, ChangingValueMethod } from "../enums"
-import { Range } from "../models"
-import { BaseConfig } from "./base-config.type";
 import { EventCallBack } from "./event-callback.type";
 import { PossibleValue } from "./possible-value.type";
 
-export type ChangingValueConfig = BaseConfig & ({
+export type ChangingValueConfig = {
   type: ChangeType.NoChange;
   value: PossibleValue<number>;
 } | {
@@ -30,4 +28,4 @@ export type ChangingValueConfig = BaseConfig & ({
   maxPossibleValue: PossibleValue<number>;
   onMaxReached?: EventCallBack;
   onMinReached?: EventCallBack;
-})
+}

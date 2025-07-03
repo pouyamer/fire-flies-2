@@ -1,5 +1,3 @@
-import { BaseConfig } from "./base-config.type";
-
-export type WindowConfig = BaseConfig & {
+export type WindowConfig = {
 
 }

@@ -1,4 +1,4 @@
-import { PossibleValue, ValueGenerator } from "../types";
+import { LocationConfig, PossibleValue, ValueGenerator } from "../types";
 
 export class CONSTANTS {
 
@@ -9,6 +9,11 @@ export class CONSTANTS {
   public static randomCanvasLocation = {
     x: this.randomXCanvasWidth,
     y: this.randomYCanvasHeight,
+  }
+
+  public static centerOfCanvas: LocationConfig = {
+    x: ({canvas}) => canvas.width / 2,
+    y: ({canvas}) => canvas.height / 2,
   }
 
   public static randomCanvasLocationWithSegments(

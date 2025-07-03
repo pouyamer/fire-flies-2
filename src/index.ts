@@ -1,6 +1,5 @@
 import { FireflyApp } from "./core";
-import { generalFireflyConfig, jitterConfig } from "./core/configs";
-import { DEFAULT_SERVICE_MAP } from "./core/constants";
+import { ChangeType } from "./core/enums";
 import { Color, FireflyCanvas } from "./core/models";
 
 const canvasElement: HTMLCanvasElement | null = document.querySelector(".canvas");
@@ -19,24 +18,9 @@ const canvas = new FireflyCanvas({
 
 if (canvas) {
 
-  const app = new FireflyApp(canvas, window, generalFireflyConfig, [
-    DEFAULT_SERVICE_MAP.hue,
-    DEFAULT_SERVICE_MAP.saturation,
-    DEFAULT_SERVICE_MAP.alpha,
-    DEFAULT_SERVICE_MAP.lightness,
-    DEFAULT_SERVICE_MAP.location,
-    DEFAULT_SERVICE_MAP.bound,
-    DEFAULT_SERVICE_MAP.speed,
-    DEFAULT_SERVICE_MAP.jitter,
-    DEFAULT_SERVICE_MAP.acceleration,
-    DEFAULT_SERVICE_MAP.rotation,
-    DEFAULT_SERVICE_MAP.size,
-    DEFAULT_SERVICE_MAP.shape,
-    DEFAULT_SERVICE_MAP.draw,
-    DEFAULT_SERVICE_MAP.window,
-    DEFAULT_SERVICE_MAP.collision,
-    DEFAULT_SERVICE_MAP.globalFireflyModifier
-  ]);
+  const app = new FireflyApp(canvas, window);
+
+  console.log(app)
 
   app.run()
 }

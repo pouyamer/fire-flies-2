@@ -1,6 +1,6 @@
 import { GlobalFireflyModifierConfig } from "../types";
 
-export const globalFireflyModifier: GlobalFireflyModifierConfig = {
+export const globalFireflyModifierConfig: GlobalFireflyModifierConfig = {
     onSetModifier: ({fireflies, canvas}) => {
         // fireflies[0].x = 200;
         // fireflies[1].x = canvas.width - 200;
@@ -8,8 +8,5 @@ export const globalFireflyModifier: GlobalFireflyModifierConfig = {
         // fireflies[0].speedX = 1;
     },
     onFramePassModifier: ({currentFirefly: ff}) => {
-        ff.size.value += Math.random() * .1
-
-        ff.speedY = -ff.size.value / 7
     }
 }

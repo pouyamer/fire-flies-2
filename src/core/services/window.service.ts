@@ -48,14 +48,15 @@ export class WindowService
 
     private setMouseMoveEventListener(): void {
       this.windowContext.addEventListener("mousemove", (e: MouseEvent) => {
-        this.fireflies.forEach(
-          ff => {
-            const distanceToFireFly = Utilities.calculateDistance(ff.x, ff.y, e.clientX, e.clientY)
+        this.fireflies[0].x = e.x
+        this.fireflies[0].y = e.y
+        // this.fireflies.forEach(
+        //   ff => {
 
 
 
-          }
-        )
+        //   }
+        // )
       })
     }
 

@@ -28,6 +28,8 @@ export class Firefly {
   firefliesInCollision: Firefly[];
   // moving angle gets cached to be used in acceleration service
   movingAngle: number;
+  neighboredBy: Firefly | null;
+  neighbors: Firefly[];
 
 
   constructor(model: Partial<Firefly> = {}) {
@@ -59,6 +61,8 @@ export class Firefly {
   this.jitterY = model.jitterY ?? 0;
   this.activeServices = model.activeServices ?? [];
   this.firefliesInCollision = model.firefliesInCollision ?? [];
+  this.neighboredBy = model.neighboredBy ?? null;
+  this.neighbors = model.neighbors ?? [];
   }
 
 }

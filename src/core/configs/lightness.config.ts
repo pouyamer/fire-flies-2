@@ -1,8 +1,7 @@
-import { ChangeType, ServiceName } from "../enums";
+import { ChangeType } from "../enums";
 import { ChangingValueConfig } from "../types";
 
 export const lightnessConfig: ChangingValueConfig = {
-  name: ServiceName.Lightness,
   type: ChangeType.NoChange,
-  value: 50,
+  value: 65,
 }

@@ -1,5 +1,4 @@
-import { ServiceName } from "../enums";
-import { Firefly, FireflyCanvas } from "../models";
+import { FireflyCanvas } from "../models";
 import { BoundsConfig } from "../types";
 
 const DEFAULT_SETTER = {
@@ -10,7 +9,6 @@ const DEFAULT_SETTER = {
 }
 
 export const boundsConfig: BoundsConfig = {
-  name: ServiceName.Bound,
   bottom: {
     type: "only-setter",
     setter: DEFAULT_SETTER.bottom

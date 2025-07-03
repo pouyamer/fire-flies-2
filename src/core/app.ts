@@ -1,26 +1,67 @@
+import { accelerationConfig, alphaConfig, boundsConfig, collisionConfig, generalFireflyConfig, globalFireflyModifierConfig, hueConfig, jitterConfig, lightnessConfig, locationConfig, rotationConfig, saturationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "./configs";
 import { ServiceName } from "./enums";
 import { Service } from "./interfaces";
 import { Firefly, FireflyCanvas } from "./models";
 import { AccelerationService, BoundService, ChangingValueService, CollisionService, DrawService, GlobalFireflyModifierService, JitterService, LocationService, RotationService, ShapeService, SpeedService, WindowService } from "./services";
-import { AccelerationConfig, BoundsConfig, ChangingValueConfig, GeneralFireflyConfig, LocationConfig, ServiceMap, ShapeConfig, SpeedConfig } from "./types";
+import { AccelerationConfig, BoundsConfig, ChangingValueConfig, CollisionConfig, GeneralFireflyConfig, GlobalFireflyModifierConfig, JitterConfig, LocationConfig, RotationConfig, ShapeConfig, SpeedConfig, WindowConfig } from "./types";
+import { Utilities } from "./utilities";
+
+interface Configs {
+  acceleration: AccelerationConfig;
+  alpha: ChangingValueConfig;
+  bound: BoundsConfig;
+  collision: CollisionConfig;
+  draw: null;
+  generalFireflyConfig: GeneralFireflyConfig;
+  globalFireflyModifier: GlobalFireflyModifierConfig;
+  hue: ChangingValueConfig;
+  jitter: JitterConfig;
+  lightness: ChangingValueConfig;
+  location:  LocationConfig;
+  rotation: RotationConfig;
+  saturation: ChangingValueConfig;
+  shape:  ShapeConfig;
+  size: ChangingValueConfig;
+  speed: SpeedConfig;
+  window: WindowConfig;
+}
 
 export class FireflyApp {
 
+  private readonly defaultConfigs: Configs = {
+    acceleration: accelerationConfig,
+    alpha: alphaConfig,
+    bound: boundsConfig,
+    collision: collisionConfig,
+    draw: null,
+    globalFireflyModifier: globalFireflyModifierConfig,
+    hue: hueConfig,
+    jitter: jitterConfig,
+    lightness: lightnessConfig,
+    location: locationConfig,
+    rotation: rotationConfig,
+    saturation: saturationConfig,
+    shape: shapeConfig,
+    size: sizeConfig,
+    speed: speedConfig,
+    window: windowConfig,
+    generalFireflyConfig: generalFireflyConfig
+  }
+
   private canvas: FireflyCanvas
   private fireflies: Firefly[] = [];
-  private serviceMaps: ServiceMap[] = [];
+  private configs: Configs = this.defaultConfigs;
   private services: Service[] = [];
   private collision: Firefly[][] = [];
 
   constructor(
     canvas: FireflyCanvas,
     private readonly windowContext: Window & typeof globalThis,
-    private readonly generalFireflyConfig: GeneralFireflyConfig,
-    serviceMaps: ServiceMap[],
+    configs: Partial<Configs> = this.defaultConfigs
   ) {
 
     this.canvas = canvas;
-    this.serviceMaps = serviceMaps;
+    this.configs = Utilities.deepMerge(this.defaultConfigs, configs);
     this.createFireflies();
     // services will execute here
     this.buildServices();
@@ -28,163 +69,30 @@ export class FireflyApp {
   }
 
   private createFireflies(): void {
-    this.fireflies = Array(this.generalFireflyConfig.count).fill(0).map(
+    this.fireflies = Array(this.configs.generalFireflyConfig.count).fill(0).map(
       _ => new Firefly()
     )
   }
 
-  private isChangingValueConfig(config: unknown): config is ChangingValueConfig {
-    return true
-  }
-
-  private isSpeedConfig(config: unknown): config is SpeedConfig {
-    return (
-      config !== null &&
-      typeof config === "object" &&
-      "type" in config
-    )
-  }
-
-  private isShapeConfig(config: unknown): config is ShapeConfig {
-    return (
-      config !== null &&
-      typeof config === "object" &&
-      "setMethod" in config
-    )
-  }
-
-  private isBoundsConfig(config: unknown): config is BoundsConfig {
-    return (
-      config !== null &&
-      typeof config === "object" &&
-      "type" in config
-    )
-  }
-
-  private isLocationConfig(config: unknown): config is LocationConfig {
-    return (
-      config !== null &&
-      typeof config === "object"
-    )
-  }
-
-  private isAccelerationConfig(config: unknown): config is AccelerationConfig {
-    return (
-      config !== null &&
-      typeof config === "object" &&
-      "type" in config
-    )
-  }
-
   private buildServices() {
-    this.serviceMaps.forEach((serviceMap) => {
-
-      switch (serviceMap.name) {
-        case "hue":
-          if (this.isChangingValueConfig(serviceMap.config))
-            this.services.push(
-              new ChangingValueService(
-                "hue", 
-                this.canvas,
-                this.fireflies,
-                serviceMap.config,
-                ServiceName.Hue,
-                this
-              )
-            );
-          break;
-        case "saturation":
-          if (this.isChangingValueConfig(serviceMap.config))
-            this.services.push(new ChangingValueService("saturation", this.canvas, this.fireflies, serviceMap.config, ServiceName.Saturation, this));
-          break;
-        case "lightness":
-          if (this.isChangingValueConfig(serviceMap.config))
-            this.services.push(new ChangingValueService("lightness", this.canvas, this.fireflies, serviceMap.config, ServiceName.Lightness, this));
-          break;
-        case "alpha":
-          if (this.isChangingValueConfig(serviceMap.config))
-            this.services.push(new ChangingValueService("alpha", this.canvas, this.fireflies, serviceMap.config, ServiceName.Alpha, this));
-          break;
-        case "size":
-          if (this.isChangingValueConfig(serviceMap.config))
-            this.services.push(new ChangingValueService("size", this.canvas, this.fireflies, serviceMap.config, ServiceName.Size, this));
-          break;
-        case "speed":
-          if (this.isSpeedConfig(serviceMap.config))
-            this.services.push(new SpeedService(this.canvas, this.fireflies, serviceMap.config, this));
-          break;
-        case "acceleration":
-          if (this.isAccelerationConfig(serviceMap.config))
-            this.services.push(new AccelerationService(this.canvas, this.fireflies, serviceMap.config, this));
-          break;
-        case "shape":
-          if (this.isShapeConfig(serviceMap.config))
-            this.services.push(new ShapeService(this.canvas, this.fireflies, serviceMap.config, this));
-          break;
-        case "location":
-          if (this.isLocationConfig(serviceMap.config))
-            this.services.push(new LocationService(this.canvas, this.fireflies, serviceMap.config, this));
-          break;
-        case "bound":
-          this.services.push(new BoundService(this.canvas, this.fireflies, serviceMap.config as any, this));
-          break;
-        case "draw":
-          this.services.push(new DrawService(this.canvas, this.fireflies));
-          break;
-        case "window":
-          this.services.push(new WindowService(
-            this.canvas,
-            this.fireflies,
-            serviceMap.config,
-            this.windowContext,
-            this
-          ))
-          break;
-        case ServiceName.Rotation:
-          this.services.push(
-            new RotationService(
-              this.canvas,
-              this.fireflies,
-              serviceMap.config as any,
-              this
-            )
-          );
-          break;
-
-          case ServiceName.Jitter:
-            this.services.push(
-              new JitterService(
-                this.canvas,
-                this.fireflies,
-                serviceMap.config as any,
-                this
-              )
-            )
-            break;
-
-          case ServiceName.Collision:
-            this.services.push(
-              new CollisionService(
-                this.canvas,
-                this.fireflies,
-                serviceMap.config as any,
-                this,
-                this.collision,
-              )
-            )
-            break;
-
-          case ServiceName.GlobalFireflyModifier:
-            this.services.push(
-              new GlobalFireflyModifierService(
-                this.canvas,
-                this.fireflies,
-                serviceMap.config as any,
-                this
-              )
-            )
-      }
-    })
+    this.services = [
+      new AccelerationService(this.canvas, this.fireflies, this.configs.acceleration, this),
+      new ChangingValueService("alpha", this.canvas, this.fireflies, this.configs.alpha, ServiceName.Alpha, this),
+      new BoundService(this.canvas, this.fireflies, this.configs.bound, this),
+      new CollisionService(this.canvas, this.fireflies, this.configs.collision, this, this.collision),
+      new GlobalFireflyModifierService(this.canvas, this.fireflies, this.configs.globalFireflyModifier, this),
+      new ChangingValueService("hue", this.canvas, this.fireflies, this.configs.hue, ServiceName.Alpha, this),
+      new ChangingValueService("saturation", this.canvas, this.fireflies, this.configs.saturation, ServiceName.Saturation, this),
+      new ChangingValueService("lightness", this.canvas, this.fireflies, this.configs.lightness, ServiceName.Lightness, this),
+      new ChangingValueService("size", this.canvas, this.fireflies, this.configs.size, ServiceName.Size, this),
+      new SpeedService(this.canvas, this.fireflies, this.configs.speed, this),
+      new ShapeService(this.canvas, this.fireflies, this.configs.shape, this),
+      new LocationService(this.canvas, this.fireflies, this.configs.location, this),
+      new WindowService(this.canvas, this.fireflies, this.configs.window, this.windowContext, this),
+      new RotationService(this.canvas, this.fireflies, this.configs.rotation, this),
+      new JitterService(this.canvas, this.fireflies, this.configs.jitter, this),
+      new DrawService(this.canvas, this.fireflies),
+    ]
   }
 
   public setServicesOnSingleFirefly(firefly: Firefly) {
@@ -206,11 +114,112 @@ export class FireflyApp {
     )
   }
 
+  private testFirefly: Firefly | null  = null; //TEST
+
   public run = (): void => {
-    requestAnimationFrame(this.run)
+
+    const distance = 100 //TEST
+
+    requestAnimationFrame(this.run);
+
+    if(this.testFirefly === null && this.fireflies[0]){this.testFirefly = this.fireflies[0]} //TEST
+
     this.canvas.renderingContext?.clearRect(0, 0, this.canvas.width, this.canvas.height)
-      for (let service of this.services) {
-        service.onFramePass();
-      }
+
+    
+     
+
+
+
+
+
+    for (let service of this.services) {
+      service.onFramePass();
+    }
+
+      if(this.testFirefly){
+      // this.canvas.renderingContext!.fillStyle = "yellow"
+      // this.canvas.renderingContext?.beginPath()
+      // this.canvas.renderingContext?.arc(this.testFirefly.x, this.testFirefly.y, distance, 0, 2 * Math.PI)
+      // this.canvas.renderingContext?.moveTo(this.testFirefly.x, this.testFirefly.y)
+      // this.canvas.renderingContext?.fill()
+
+      const nonNeighboredFireflies = this.fireflies.filter(
+        ff => ff.neighboredBy === null || ff.neighboredBy === this.testFirefly
+      ) //TEST
+
+      this.fireflies.filter(ff=> ff.neighboredBy === this.testFirefly).forEach(
+        (ff, i, neighbors) => {
+          const distanceBetweenTwoFireflies = Utilities.calculateDistance(
+            this.testFirefly?.x ?? 0,
+            this.testFirefly?.y ?? 0,
+            ff?.x ?? 0,
+            ff?.y ?? 0,
+          )
+
+          if (distanceBetweenTwoFireflies > distance) {
+            this.testFirefly!.neighbors = neighbors.filter(n => n !== ff) 
+            ff.neighboredBy = null
+            // onNeighborhoodExit
+            // ff.hue.value = 3
+            // ff.size.value = 0
+          } 
+        }
+      )
+
+      // previous nearby fireflies
+      const previousNearByFireflies = this.testFirefly!.neighbors
+
+
+      // idetifying nearbyFireflies
+      const nearbyFireflies = nonNeighboredFireflies.filter(nnff => {
+        const distanceBetweenTwoFireflies = Utilities.calculateDistance(
+          this.testFirefly?.x ?? 0,
+          this.testFirefly?.y ?? 0,
+          nnff?.x ?? 0,
+          nnff?.y ?? 0,
+        )
+
+        return distanceBetweenTwoFireflies <= distance && nnff !== this.testFirefly
+      })
+
+      // making neighborhood
+      this.testFirefly!.neighbors = nearbyFireflies
+      nearbyFireflies.forEach(
+        nbff => {
+          nbff.neighboredBy = this.testFirefly;
+        }
+      )
+
+      const newFireFlies = nearbyFireflies.filter(
+        ff => !previousNearByFireflies.includes(ff)
+      )
+
+      // onNeighborhoodEnter
+      newFireFlies.forEach(
+        ff => {
+          ff.hue.value += 10
+        }
+      )
+
+      
+      //onNeighborhood
+      this.testFirefly!.neighbors.forEach(
+        ff => {
+          ff.size.value += .1
+
+        }
+      )
+
+
+    } //TEST
+
+
+
+
+    
+    
+    
+    
   }
 }

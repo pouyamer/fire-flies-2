@@ -1,13 +1,12 @@
 import { Shape, ShapeSetMethod } from "../enums"
 import { Firefly, FireflyCanvas, Range } from "../models"
-import { BaseConfig } from "./base-config.type";
 import { PossibleValue } from "./possible-value.type";
 export type ShapeConfig =
   | SingleShapeConfig
   | RandomShapeConfig
   | CallbackShapeConfig;
 
-export type ShapeValue = BaseConfig & (BasicShapeValue | PolygonValue | PolygramValue)
+export type ShapeValue = BasicShapeValue | PolygonValue | PolygramValue
 
 type BaseSingleShapeConfig = {
   setMethod: ShapeSetMethod.SingleShape;
