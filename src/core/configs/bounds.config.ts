@@ -1,3 +1,4 @@
+import { ServiceName } from "../enums";
 import { FireflyCanvas } from "../models";
 import { BoundsConfig } from "../types";
 
@@ -28,7 +29,7 @@ export const boundsConfig: BoundsConfig = {
   general: {
     type: "out-of-bounds",
     onOutOfBounds: ({currentFirefly, app}) => {
-      app.setServicesOnSingleFirefly(currentFirefly)
+      app.setServicesOnSingleFireflyByServiceNames(currentFirefly, ServiceName.Location)
     }
   }
   

@@ -4,5 +4,5 @@ import { ChangingValueConfig } from "../types"
 
 export const hueConfig: ChangingValueConfig = {
   type: ChangeType.NoChange,
-  value: 3
+  value: () => 120
 }

@@ -30,6 +30,7 @@ export class Firefly {
   movingAngle: number;
   neighboredBy: Firefly | null;
   neighbors: Firefly[];
+  beforeEnteringNeighborhoodSnapshot: Firefly | null;
 
 
   constructor(model: Partial<Firefly> = {}) {
@@ -54,15 +55,16 @@ export class Firefly {
       initialFireflySnapshot: null,
     }
 
-  this.rotatedAngle = model.rotatedAngle ?? 0;
-  this.rotateSpeed = model.rotateSpeed ?? 0;
-  this.rotateAcceleration = model.rotateAcceleration ?? 0;
-  this.jitterX = model.jitterX ?? 0;
-  this.jitterY = model.jitterY ?? 0;
-  this.activeServices = model.activeServices ?? [];
-  this.firefliesInCollision = model.firefliesInCollision ?? [];
-  this.neighboredBy = model.neighboredBy ?? null;
-  this.neighbors = model.neighbors ?? [];
+    this.rotatedAngle = model.rotatedAngle ?? 0;
+    this.rotateSpeed = model.rotateSpeed ?? 0;
+    this.rotateAcceleration = model.rotateAcceleration ?? 0;
+    this.jitterX = model.jitterX ?? 0;
+    this.jitterY = model.jitterY ?? 0;
+    this.activeServices = model.activeServices ?? [];
+    this.firefliesInCollision = model.firefliesInCollision ?? [];
+    this.neighboredBy = model.neighboredBy ?? null;
+    this.neighbors = model.neighbors ?? [];
+    this.beforeEnteringNeighborhoodSnapshot = null;
   }
 
 }

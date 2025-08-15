@@ -17,3 +17,4 @@ export * from "./jitter-config.type";
 export * from "./possible-value.type";
 export * from "./global-firefly-modifier-config.type";
 export * from "./collision-config.type";
+export * from "./neighbourhood-config.type";

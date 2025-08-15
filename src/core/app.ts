@@ -1,9 +1,10 @@
-import { accelerationConfig, alphaConfig, boundsConfig, collisionConfig, generalFireflyConfig, globalFireflyModifierConfig, hueConfig, jitterConfig, lightnessConfig, locationConfig, rotationConfig, saturationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "./configs";
+import { accelerationConfig, alphaConfig, boundsConfig, collisionConfig, generalFireflyConfig, globalFireflyModifierConfig, hueConfig, jitterConfig, lightnessConfig, locationConfig, neighbourhoodConfig, rotationConfig, saturationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "./configs";
 import { ServiceName } from "./enums";
 import { Service } from "./interfaces";
 import { Firefly, FireflyCanvas } from "./models";
 import { AccelerationService, BoundService, ChangingValueService, CollisionService, DrawService, GlobalFireflyModifierService, JitterService, LocationService, RotationService, ShapeService, SpeedService, WindowService } from "./services";
-import { AccelerationConfig, BoundsConfig, ChangingValueConfig, CollisionConfig, GeneralFireflyConfig, GlobalFireflyModifierConfig, JitterConfig, LocationConfig, RotationConfig, ShapeConfig, SpeedConfig, WindowConfig } from "./types";
+import { NeighbourhoodService } from "./services/neighbourhood.service";
+import { AccelerationConfig, BoundsConfig, ChangingValueConfig, CollisionConfig, GeneralFireflyConfig, GlobalFireflyModifierConfig, JitterConfig, LocationConfig, NeighbourhoodConfig, RotationConfig, ShapeConfig, SpeedConfig, WindowConfig } from "./types";
 import { Utilities } from "./utilities";
 
 interface Configs {
@@ -12,7 +13,7 @@ interface Configs {
   bound: BoundsConfig;
   collision: CollisionConfig;
   draw: null;
-  generalFireflyConfig: GeneralFireflyConfig;
+  generalFirefly: GeneralFireflyConfig;
   globalFireflyModifier: GlobalFireflyModifierConfig;
   hue: ChangingValueConfig;
   jitter: JitterConfig;
@@ -24,6 +25,7 @@ interface Configs {
   size: ChangingValueConfig;
   speed: SpeedConfig;
   window: WindowConfig;
+  neighbourhood: NeighbourhoodConfig;
 }
 
 export class FireflyApp {
@@ -45,7 +47,8 @@ export class FireflyApp {
     size: sizeConfig,
     speed: speedConfig,
     window: windowConfig,
-    generalFireflyConfig: generalFireflyConfig
+    generalFirefly: generalFireflyConfig,
+    neighbourhood: neighbourhoodConfig,
   }
 
   private canvas: FireflyCanvas
@@ -69,7 +72,7 @@ export class FireflyApp {
   }
 
   private createFireflies(): void {
-    this.fireflies = Array(this.configs.generalFireflyConfig.count).fill(0).map(
+    this.fireflies = Array(this.configs.generalFirefly.count).fill(0).map(
       _ => new Firefly()
     )
   }
@@ -80,8 +83,7 @@ export class FireflyApp {
       new ChangingValueService("alpha", this.canvas, this.fireflies, this.configs.alpha, ServiceName.Alpha, this),
       new BoundService(this.canvas, this.fireflies, this.configs.bound, this),
       new CollisionService(this.canvas, this.fireflies, this.configs.collision, this, this.collision),
-      new GlobalFireflyModifierService(this.canvas, this.fireflies, this.configs.globalFireflyModifier, this),
-      new ChangingValueService("hue", this.canvas, this.fireflies, this.configs.hue, ServiceName.Alpha, this),
+      new ChangingValueService("hue", this.canvas, this.fireflies, this.configs.hue, ServiceName.Hue, this),
       new ChangingValueService("saturation", this.canvas, this.fireflies, this.configs.saturation, ServiceName.Saturation, this),
       new ChangingValueService("lightness", this.canvas, this.fireflies, this.configs.lightness, ServiceName.Lightness, this),
       new ChangingValueService("size", this.canvas, this.fireflies, this.configs.size, ServiceName.Size, this),
@@ -91,6 +93,8 @@ export class FireflyApp {
       new WindowService(this.canvas, this.fireflies, this.configs.window, this.windowContext, this),
       new RotationService(this.canvas, this.fireflies, this.configs.rotation, this),
       new JitterService(this.canvas, this.fireflies, this.configs.jitter, this),
+      new NeighbourhoodService(this.canvas, this.fireflies, this.configs.neighbourhood, this),
+      new GlobalFireflyModifierService(this.canvas, this.fireflies, this.configs.globalFireflyModifier, this),
       new DrawService(this.canvas, this.fireflies),
     ]
   }
@@ -98,6 +102,14 @@ export class FireflyApp {
   public setServicesOnSingleFirefly(firefly: Firefly) {
     for (let service of this.services) {
       service.setOnSingleFirefly(firefly)
+    }
+  }
+
+  public setServicesOnSingleFireflyByServiceNames(firefly: Firefly, ...names: ServiceName[]) {
+    for(const service of this.services) {
+      if (names.includes(service.name)) {
+        service.setOnSingleFirefly(firefly);
+      }
     }
   }
 
@@ -114,112 +126,15 @@ export class FireflyApp {
     )
   }
 
-  private testFirefly: Firefly | null  = null; //TEST
 
   public run = (): void => {
 
-    const distance = 100 //TEST
-
     requestAnimationFrame(this.run);
-
-    if(this.testFirefly === null && this.fireflies[0]){this.testFirefly = this.fireflies[0]} //TEST
 
     this.canvas.renderingContext?.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
-    
-     
-
-
-
-
-
     for (let service of this.services) {
       service.onFramePass();
-    }
-
-      if(this.testFirefly){
-      // this.canvas.renderingContext!.fillStyle = "yellow"
-      // this.canvas.renderingContext?.beginPath()
-      // this.canvas.renderingContext?.arc(this.testFirefly.x, this.testFirefly.y, distance, 0, 2 * Math.PI)
-      // this.canvas.renderingContext?.moveTo(this.testFirefly.x, this.testFirefly.y)
-      // this.canvas.renderingContext?.fill()
-
-      const nonNeighboredFireflies = this.fireflies.filter(
-        ff => ff.neighboredBy === null || ff.neighboredBy === this.testFirefly
-      ) //TEST
-
-      this.fireflies.filter(ff=> ff.neighboredBy === this.testFirefly).forEach(
-        (ff, i, neighbors) => {
-          const distanceBetweenTwoFireflies = Utilities.calculateDistance(
-            this.testFirefly?.x ?? 0,
-            this.testFirefly?.y ?? 0,
-            ff?.x ?? 0,
-            ff?.y ?? 0,
-          )
-
-          if (distanceBetweenTwoFireflies > distance) {
-            this.testFirefly!.neighbors = neighbors.filter(n => n !== ff) 
-            ff.neighboredBy = null
-            // onNeighborhoodExit
-            // ff.hue.value = 3
-            // ff.size.value = 0
-          } 
-        }
-      )
-
-      // previous nearby fireflies
-      const previousNearByFireflies = this.testFirefly!.neighbors
-
-
-      // idetifying nearbyFireflies
-      const nearbyFireflies = nonNeighboredFireflies.filter(nnff => {
-        const distanceBetweenTwoFireflies = Utilities.calculateDistance(
-          this.testFirefly?.x ?? 0,
-          this.testFirefly?.y ?? 0,
-          nnff?.x ?? 0,
-          nnff?.y ?? 0,
-        )
-
-        return distanceBetweenTwoFireflies <= distance && nnff !== this.testFirefly
-      })
-
-      // making neighborhood
-      this.testFirefly!.neighbors = nearbyFireflies
-      nearbyFireflies.forEach(
-        nbff => {
-          nbff.neighboredBy = this.testFirefly;
-        }
-      )
-
-      const newFireFlies = nearbyFireflies.filter(
-        ff => !previousNearByFireflies.includes(ff)
-      )
-
-      // onNeighborhoodEnter
-      newFireFlies.forEach(
-        ff => {
-          ff.hue.value += 10
-        }
-      )
-
-      
-      //onNeighborhood
-      this.testFirefly!.neighbors.forEach(
-        ff => {
-          ff.size.value += .1
-
-        }
-      )
-
-
-    } //TEST
-
-
-
-
-    
-    
-    
-    
+    } 
   }
 }

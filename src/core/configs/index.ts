@@ -14,3 +14,4 @@ export * from "./rotation.config"
 export * from "./jitter.config";
 export * from "./collision.config";
 export * from "./global-firefly-modifier.config"
+export * from "./neighbourhood.config";
