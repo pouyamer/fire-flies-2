@@ -1,13 +1,16 @@
 import { FireflyApp } from "../app";
-import { ServiceName } from "../enums";
+import { ServiceName, Shape } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
 import { JitterConfig, NeighbourhoodConfig } from "../types";
 import { Utilities } from "../utilities";
 
+
 export class NeighbourhoodService
   implements Service {
 
+  protected candidateFireflies: Firefly[] = [];
+    
   public name = ServiceName.Neighbourhood;
 
 
@@ -23,7 +26,11 @@ export class NeighbourhoodService
   }
 
   setOnEveryFirefly(): void {
-    
+    this.candidateFireflies = this.config.candidatePicker({
+      canvas: this.canvas,
+      fireflies: this.fireflies,
+      app: this.app
+    })
   }
 
   onFramePassForSingleFirefly(firefly: Firefly): void {
@@ -32,88 +39,62 @@ export class NeighbourhoodService
   
   onFramePass(): void {
 
-    const distance = 100 //TEST
+    this.candidateFireflies.forEach(chosenFirefly => {
 
-    const chosenFireflies = [
-      this.fireflies[0],
+      chosenFirefly.alpha.value = 0;
+      chosenFirefly.speedX = 0;
+      chosenFirefly.speedY = 0;
+      chosenFirefly.shape = Shape.Circle;
 
-    ]
-
-    chosenFireflies.forEach(chosenFirefly => {
-
-      // chosenFirefly.hue.value = 120;
-
-      const nonNeighboredFireflies = this.fireflies.filter(
-        ff => (ff.neighboredBy === null || ff.neighboredBy === chosenFirefly) && !chosenFireflies.includes(ff)
-      ) //TEST
-
-      this.fireflies.filter(ff=> ff.neighboredBy === chosenFirefly).forEach(
-        (ff, i, neighbors) => {
-          const distanceBetweenTwoFireflies = Utilities.calculateDistance(
-            chosenFirefly?.x ?? 0,
-            chosenFirefly?.y ?? 0,
-            ff?.x ?? 0,
-            ff?.y ?? 0,
-          )
-
-          if (distanceBetweenTwoFireflies > distance) {
-            chosenFirefly!.neighbors = neighbors.filter(n => n !== ff) 
-            ff.neighboredBy = null
-            this.app.setServicesOnSingleFireflyByServiceNames(ff, ServiceName.Size, ServiceName.Hue, ServiceName.Speed)
-            // onNeighborhoodExit
-            // ff.hue.value = 3
-            // ff.size.value = 0
-          } 
-        }
-      )
-
-      // previous nearby fireflies
-      const previousNearByFireflies = chosenFirefly!.neighbors
-
-  
-      // idetifying nearbyFireflies
-      const nearbyFireflies = nonNeighboredFireflies.filter(nnff => {
-        const distanceBetweenTwoFireflies = Utilities.calculateDistance(
-          chosenFirefly?.x ?? 0,
-          chosenFirefly?.y ?? 0,
-          nnff?.x ?? 0,
-          nnff?.y ?? 0,
-        )
-
-        return distanceBetweenTwoFireflies <= distance && nnff !== chosenFirefly
+      const availableFireflies = this.fireflies.filter(ff => {
+        return (
+          !this.candidateFireflies.includes(ff) && // not from candidates
+          ff !== chosenFirefly && // not self
+          (ff.neighboredBy === null || ff.neighboredBy === chosenFirefly) // not picked
+        );
       })
 
-      // making neighborhood
-      chosenFirefly!.neighbors = nearbyFireflies
-      nearbyFireflies.forEach(
-        nbff => {
-          nbff.neighboredBy = chosenFirefly;
-        }
-      )
+      const neighbours = this.config.neighbourPicker(chosenFirefly, availableFireflies)
 
-      const newFireFlies = nearbyFireflies.filter(
-        ff => !previousNearByFireflies.includes(ff)
-      )
+      const newNeighbours = neighbours.filter(nf => nf.neighboredBy !== chosenFirefly);
 
-      // onNeighborhoodEnter
-      newFireFlies.forEach(
-        ff => {
-          // ff.speedX = -4* ff.speedX;
-          // ff.speedY = -4* ff.speedY;
-          // ff.size.value /= 2
-          // ff.hue.value = 0
-        }
-      )
+      const pastNeighbours = this.fireflies.filter(ff => (
+        ff.neighboredBy === chosenFirefly &&
+        !neighbours.includes(ff)
+      ));
 
+      // events
+      newNeighbours.forEach(nf => {
+        // onNeighbourhoodEnter
+        nf.alpha.value = 1;
+        nf.speedX /=100;
+        nf.speedY /=100;
+      })
       
-      //onInNeighborhood
-      chosenFirefly!.neighbors.forEach(
-        ff => {
-        }
-      )
-  })
+      neighbours.forEach(nff => {
+        // onNeighbourhood
+        nff.alpha.value = 1;
+        nff.hue.value = 0;
+      })
 
-}
+      pastNeighbours.forEach(pf => {
+        // onNeighbourhoodExit
+        pf.alpha.value = 1;
+        pf.speedX *=100;
+        pf.speedY *=100;
 
+      })
+
+      // mark neighbours and non neighbours
+      neighbours.forEach(nf => {
+        nf.neighboredBy = chosenFirefly
+      })
+
+      pastNeighbours.forEach(pf => {
+        pf.neighboredBy = null;
+      })
+    })
+
+  }
     
 }
