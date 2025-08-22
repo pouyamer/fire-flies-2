@@ -10,4 +10,9 @@ export class Color {
     this.lightness = model.lightness ?? 0;
     this.alpha = model.alpha ?? 1;
   }
+
+  toString(): string {
+    const color = new Color(this)
+    return `hsl(${color.hue}, ${color.saturation}%, ${color.lightness}%, ${color.alpha})`
+  }
 }

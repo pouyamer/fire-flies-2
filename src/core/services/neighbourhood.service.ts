@@ -1,9 +1,8 @@
 import { FireflyApp } from "../app";
-import { ServiceName, Shape } from "../enums";
+import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
-import { JitterConfig, NeighbourhoodConfig } from "../types";
-import { Utilities } from "../utilities";
+import { NeighbourhoodConfig } from "../types";
 
 
 export class NeighbourhoodService
@@ -34,23 +33,69 @@ export class NeighbourhoodService
   }
 
   onFramePassForSingleFirefly(firefly: Firefly): void {
-    
   }
   
   onFramePass(): void {
 
+
+    // handle candidates
+    if (this.config.candidatePickingStrategy === 'reactive') {
+      const oldCondidates = this.candidateFireflies;
+
+      this.candidateFireflies = this.config.candidatePicker({
+        canvas: this.canvas,
+        fireflies: this.fireflies,
+        app: this.app
+      })
+
+      // candidates that are no longer candidates
+      const pastCandidates = oldCondidates.filter(c => !this.candidateFireflies.includes(c))
+
+      this.fireflies.filter(ff =>  ff.neighboredBy &&  pastCandidates.includes(ff.neighboredBy)).forEach(
+        ff => {
+          ff.neighboredBy = null;
+          this.config.onNeighbourhoodExit?.({
+            currentFirefly: ff,
+            app: this.app,
+            canvas: this.canvas,
+            fireflies: this.fireflies,
+          })
+        }
+      )
+
+      // Events:
+      this.candidateFireflies.forEach(
+        c => this.config.onCandidatePicked?.({
+          currentFirefly: c,
+          app: this.app,
+          canvas: this.canvas,
+          fireflies: this.fireflies
+        })
+      )
+
+      pastCandidates.forEach(
+        pc => this.config.onCandidateDismissed?.({
+          currentFirefly: pc,
+          app: this.app,
+          canvas: this.canvas,
+          fireflies: this.fireflies,
+        })
+      )
+
+    }
+    
+    // handle neighbours
     this.candidateFireflies.forEach(chosenFirefly => {
-
-      chosenFirefly.alpha.value = 0;
-      chosenFirefly.speedX = 0;
-      chosenFirefly.speedY = 0;
-      chosenFirefly.shape = Shape.Circle;
-
       const availableFireflies = this.fireflies.filter(ff => {
         return (
-          !this.candidateFireflies.includes(ff) && // not from candidates
+          (this.config.canPickCandidates || !this.candidateFireflies.includes(ff)) && // not from candidates
           ff !== chosenFirefly && // not self
-          (ff.neighboredBy === null || ff.neighboredBy === chosenFirefly) // not picked
+          (
+            this.config.canPickNeighboursFromOtherCandidates || (
+              ff.neighboredBy === null ||
+              ff.neighboredBy === chosenFirefly
+            )
+          ) // not picked
         );
       })
 
@@ -63,31 +108,50 @@ export class NeighbourhoodService
         !neighbours.includes(ff)
       ));
 
+      const nonNeighbours = this.fireflies.filter(ff => (
+        !neighbours.includes(ff)
+      ))
+
       // events
+      nonNeighbours.forEach(nnf => {
+        this.config.onNotInNeighbourhood?.({
+          currentFirefly: nnf,
+          app: this.app,
+          canvas: this.canvas,
+          fireflies: this.fireflies,
+        })
+      })
+      
       newNeighbours.forEach(nf => {
-        // onNeighbourhoodEnter
-        nf.alpha.value = 1;
-        nf.speedX /=100;
-        nf.speedY /=100;
+        this.config.onNeighbourhoodEnter?.({
+          currentFirefly: nf,
+          app: this.app,
+          canvas: this.canvas,
+          fireflies: this.fireflies,
+        });
       })
       
       neighbours.forEach(nff => {
-        // onNeighbourhood
-        nff.alpha.value = 1;
-        nff.hue.value = 0;
+        this.config.onNeighbourhood?.({
+          currentFirefly: nff,
+          app: this.app,
+          canvas: this.canvas,
+          fireflies: this.fireflies,
+        })
       })
 
       pastNeighbours.forEach(pf => {
-        // onNeighbourhoodExit
-        pf.alpha.value = 1;
-        pf.speedX *=100;
-        pf.speedY *=100;
-
+        this.config.onNeighbourhoodExit?.({
+          currentFirefly: pf,
+          app: this.app,
+          canvas: this.canvas,
+          fireflies: this.fireflies,
+        })
       })
 
       // mark neighbours and non neighbours
       neighbours.forEach(nf => {
-        nf.neighboredBy = chosenFirefly
+        nf.neighboredBy = chosenFirefly;
       })
 
       pastNeighbours.forEach(pf => {

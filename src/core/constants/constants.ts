@@ -1,4 +1,5 @@
-import { LocationConfig, PossibleValue, ValueGenerator } from "../types";
+import { EventCallBack, FireflyNeighbourhoodPicker, LocationConfig, ValueGenerator } from "../types";
+import { Utilities } from "../utilities";
 
 export class CONSTANTS {
 
@@ -42,6 +43,85 @@ export class CONSTANTS {
         ? Array(Math.floor(segment)).fill(null).map((s, i) => i* canvas.height / Math.floor(segment))
         : []
       : Math.random() * canvas.height;
+  }
+
+  public static NEIGHBOUR_PICKERS = {
+    All: (): FireflyNeighbourhoodPicker => (ff, ffs) => ffs,
+    Circle: (r: number): FireflyNeighbourhoodPicker => {
+      return this.NEIGHBOUR_PICKERS.Ring(0, r)
+    },
+    Rectangle: (width: number, height: number): FireflyNeighbourhoodPicker => {
+      return (ff, ffs) => {
+        return ffs.filter(f => (
+          Math.abs(f.x - ff.x) < width &&
+          Math.abs(f.y - ff.y) < height
+        ))
+      }
+    },
+    Square: (width: number): FireflyNeighbourhoodPicker => {
+      return this.NEIGHBOUR_PICKERS.Rectangle(width, width)
+    },
+    Ring: (minR: number, maxR: number): FireflyNeighbourhoodPicker => {
+      return (ff, ffs) => {
+        return ffs.filter(f => {
+          const distance = Utilities.calculateDistance(f.x, f.y, ff.x, ff.y)
+          return distance <= maxR && distance >= minR
+        })
+      }
+    }
+  }
+
+  public static EVENT_CALLBACKS = {
+    BlackHole: (strength: number, safeDistance: number): EventCallBack => {
+      return ({currentFirefly: ff, canvas}) => {
+        if (ff.neighboredBy) {
+          const distanceToCandidate = Utilities.calculateDistance(
+            ff.x, ff.y, ff.neighboredBy.x, ff.neighboredBy.y
+          );
+          
+          // Don't move if already very close
+          if (distanceToCandidate < safeDistance) return;
+          
+          const maxDistance = Math.sqrt(canvas.width * canvas.width + canvas.height * canvas.height);
+          const normalizedDistance = distanceToCandidate / maxDistance;
+          
+          // Strong pull for medium distances, weak for very far distances
+          const _strength = strength / (1 + normalizedDistance * 15);
+          
+          const dx = ff.neighboredBy.x - ff.x;
+          const dy = ff.neighboredBy.y - ff.y;
+          const magnitude = Math.sqrt(dx * dx + dy * dy);
+          
+          if (magnitude > 0) {
+            ff.x += (dx / magnitude) * _strength;
+            ff.y += (dy / magnitude) * _strength;
+          }
+        }
+      }
+    },
+    BlackHoleWithExponentialFalloff: (strength: number): EventCallBack => {
+      return ({currentFirefly: ff, canvas}) => {
+        if (ff.neighboredBy) {
+          const distanceToCandidate = Utilities.calculateDistance(
+            ff.x, ff.y, ff.neighboredBy.x, ff.neighboredBy.y
+          );
+          
+          // Exponential falloff - very strong up close, very weak far away
+          const maxDistance = Math.sqrt(canvas.width * canvas.width + canvas.height * canvas.height);
+          const normalizedDistance = distanceToCandidate / maxDistance;
+          const _strength = strength * Math.exp(-normalizedDistance * 5);
+          
+          const dx = ff.neighboredBy.x - ff.x;
+          const dy = ff.neighboredBy.y - ff.y;
+          const magnitude = Math.sqrt(dx * dx + dy * dy);
+          
+          if (magnitude > 0) {
+            ff.x += (dx / magnitude) * _strength;
+            ff.y += (dy / magnitude) * _strength;
+          }
+        }
+      }
+    }
   }
 
 }

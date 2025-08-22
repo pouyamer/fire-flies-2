@@ -29,7 +29,7 @@ export const boundsConfig: BoundsConfig = {
   general: {
     type: "out-of-bounds",
     onOutOfBounds: ({currentFirefly, app}) => {
-      app.setServicesOnSingleFireflyByServiceNames(currentFirefly, ServiceName.Location)
+      app.setServicesOnSingleFireflyByServiceNames(currentFirefly, ServiceName.Location, ServiceName.Hue, ServiceName.Size, ServiceName.Lightness)
     }
   }
   

@@ -1,11 +1,9 @@
-import { FireflyApp } from "../app";
-import { Color, Firefly, FireflyCanvas, Range } from "../models";
-import { PossibleValue, ValueGenerator, ValueGeneratorParameters } from "../types";
+import { Color, Range } from "../models";
+import { PossibleValue, ValueGenerator, ValueGeneratorParameters, WeightedValue } from "../types";
 
 export class Utilities {
 
   public static isRange(target: unknown): target is Range {
-    const emptyRange = new Range();
     return (
       target !== null &&
       typeof target === "object" &&
@@ -104,7 +102,7 @@ export class Utilities {
   }
 
   public static getNumericValue(
-    rawValue: number | Range | number[] | Range[],
+    rawValue: number | Range | number[] | Range[] | WeightedValue<number>[],
   ): number
   public static getNumericValue(
     rawValue: Range,
@@ -129,7 +127,9 @@ export class Utilities {
     }
     else if (Array.isArray(rawValue)) {
       // if it is Range then it should be handled by Range mode
-      const chosenValue: Range | number =  this.chooseBetweenMultipleValues<Range | number>(rawValue)
+      const chosenValue: Range | number = rawValue.every(v => typeof v === "number" || this.isRange(v))
+        ? this.chooseBetweenMultipleValues<Range | number>(rawValue)
+        : this.getValueFromWeightedValues(rawValue);
 
       return typeof chosenValue === "number"
         ? chosenValue
@@ -156,4 +156,33 @@ export class Utilities {
 
     return values[index]
   }
+
+  public static getValueFromWeightedValues<T>(values: WeightedValue<T>[]): T {
+  if (values.length === 0) {
+    throw new Error('Cannot select from empty array');
+  }
+  
+  // Calculate total weight
+  const totalWeight = values.reduce((sum, item) => sum + item.weight, 0);
+  
+  if (totalWeight <= 0) {
+    throw new Error('Total weight must be greater than 0');
+  }
+  
+  // Generate random number between 0 and totalWeight
+  const random = Math.random() * totalWeight;
+  
+  // Find the selected item
+  let accumulatedWeight = 0;
+  
+  for (const item of values) {
+    accumulatedWeight += item.weight;
+    if (random <= accumulatedWeight) {
+      return item.value;
+    }
+  }
+  
+  // Fallback (should theoretically never reach here)
+  return values[values.length - 1].value;
+}
 }

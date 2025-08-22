@@ -1,5 +1,4 @@
 import { FireflyApp } from "./core";
-import { ChangeType } from "./core/enums";
 import { Color, FireflyCanvas } from "./core/models";
 
 const canvasElement: HTMLCanvasElement | null = document.querySelector(".canvas");
@@ -19,8 +18,6 @@ const canvas = new FireflyCanvas({
 if (canvas) {
 
   const app = new FireflyApp(canvas, window);
-
-  console.log(app)
 
   app.run()
 }

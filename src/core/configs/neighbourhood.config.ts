@@ -1,27 +1,17 @@
-import { Firefly } from "../models";
-import { FireflyNeighbourhoodPicker, NeighbourhoodConfig } from "../types";
-import { Utilities } from "../utilities";
-
-const pickNeighbourFirefliesInRadius = (r: number): FireflyNeighbourhoodPicker => {
-  return (ff, ffs) => {
-    return ffs.filter(f => Utilities.calculateDistance(f.x, f.y, ff.x, ff.y) <= r)
-  }
-}
-
-const pickNeighbourFirefliesInRectangle = (width: number, height: number): FireflyNeighbourhoodPicker => {
-  return (ff, ffs) => {
-    return ffs.filter(f => (
-      Math.abs(f.x - ff.x) < width &&
-      Math.abs(f.y - ff.y) < height
-    ))
-  }
-}
-
-const pickNeighbourFirefliesInSquare = (width: number): FireflyNeighbourhoodPicker => {
-  return pickNeighbourFirefliesInRectangle(width, width)
-}
+import { CONSTANTS } from "../constants/constants";
+import { NeighbourhoodConfig } from "../types";
 
 export const neighbourhoodConfig: NeighbourhoodConfig = {
-  candidatePicker: ({fireflies}) => { return fireflies.filter((_, i) => i < 1)},
-  neighbourPicker: pickNeighbourFirefliesInRadius(100)
+  candidatePickingStrategy: "reactive",
+  candidatePicker: ({fireflies}) =>  fireflies.filter((_, i) => i  <100),
+  neighbourPicker: CONSTANTS.NEIGHBOUR_PICKERS.Circle(300),
+  canPickCandidates: false,
+  canPickNeighboursFromOtherCandidates: false,
+  onNeighbourhoodEnter: () => {},
+  onNeighbourhood: CONSTANTS.EVENT_CALLBACKS.BlackHole(10, 0),
+  onNeighbourhoodExit: () => {},
+  onNotInNeighbourhood: () => {},
+  onCandidatePicked: ({currentFirefly: ff}) => {
+  },
+  onCandidateDismissed: ({currentFirefly: ff}) => { ff.hue.value = 100}
 }
