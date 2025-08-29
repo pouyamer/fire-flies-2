@@ -1,29 +1,24 @@
 import { EventCallBack } from "./event-callback.type";
 import { GeneratorValueOnCanvasCallback } from "./genarator-callback.type";
 
-type BoundSetter = {
-  setter: GeneratorValueOnCanvasCallback<number | null>;
+type DirectionalTyped<T> = {
+  left?: T;
+  right?: T;
+  top?: T;
+  bottom?: T;
 }
 
-type BaseBoundCallBacks = {
-  type: "touched-bounds"
-  onTouchedBounds?: EventCallBack | null;
-} | {
-  type: "out-of-bounds",
-  onOutOfBounds?: EventCallBack | null;
-} ;
+type BoundsConfigEvent = (Partial<DirectionalTyped<EventCallBack>> & {all?: EventCallBack}) |
+  EventCallBack
 
-type BoundOnlySetterCallBack = BoundSetter & {
-  type: "only-setter",
+export type Direction = 'top' | 'bottom' | 'left' | 'right'
+
+export type BoundsConfig =
+  Partial<DirectionalTyped<number | GeneratorValueOnCanvasCallback<number>>> &
+{
+  // when ON it corrects the offset of position of firefly when it goes out of bounds due to frames
+  // note that when this is on outofbounds never gets triggered for that direction
+  applyPositionCorrection?: Partial<DirectionalTyped<boolean>>;
+  onFireflyOutOfBounds?: BoundsConfigEvent;
+  onFireflyTouchedBounds?: BoundsConfigEvent;
 }
-
-type BoundCallbacks = BoundSetter & BaseBoundCallBacks;
-
-export type BoundsConfig =  {
-  left?: BoundCallbacks | BoundOnlySetterCallBack,
-  right?: BoundCallbacks | BoundOnlySetterCallBack,
-  top?: BoundCallbacks | BoundOnlySetterCallBack,
-  bottom?: BoundCallbacks | BoundOnlySetterCallBack;
-  // general (if any bound)
-  general: BaseBoundCallBacks;
-} 

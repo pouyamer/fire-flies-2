@@ -2,7 +2,7 @@ import { FireflyApp } from "../app";
 import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
-import { BoundsConfig } from "../types";
+import { BoundsConfig, Direction } from "../types";
 
 export class BoundService implements Service {
 
@@ -22,21 +22,57 @@ export class BoundService implements Service {
   ): Boolean {
     switch (direction) {
       case "top":
+        // correction of firefly getting out of bounds
+        if (
+          this.config.applyPositionCorrection?.top &&
+          this.canvas.topBound !== null &&
+          firefly.y - firefly.size.value < this.canvas.topBound - .1
+        ) {
+          firefly.y = this.canvas.topBound + firefly.size.value
+        }
+        
         return (
           this.canvas.topBound !== null &&
-          firefly.y - firefly.size.value <= this.canvas.topBound
+          firefly.y - firefly.size.value == this.canvas.topBound
         );
       case "bottom":
+
+        if (
+          this.config.applyPositionCorrection?.bottom &&
+          this.canvas.bottomBound !== null &&
+          firefly.y + firefly.size.value > this.canvas.bottomBound - .1
+        ) {
+          firefly.y = this.canvas.bottomBound - firefly.size.value
+        }
+
         return (
           this.canvas.bottomBound !== null &&
-          firefly.y + firefly.size.value >= this.canvas.bottomBound
+          firefly.y + firefly.size.value == this.canvas.bottomBound
         );
       case "left":
+        
+        if (
+          this.config.applyPositionCorrection?.left &&
+          this.canvas.leftBound !== null &&
+          firefly.x - firefly.size.value <= this.canvas.leftBound - .1
+        ) {
+          firefly.x = this.canvas.leftBound + firefly.size.value
+        }
+        
         return (
           this.canvas.leftBound !== null &&
           firefly.x - firefly.size.value <= this.canvas.leftBound
         );
       case "right":
+
+        if (
+          this.config.applyPositionCorrection?.right &&
+          this.canvas.rightBound !== null &&
+          firefly.x + firefly.size.value >= this.canvas.rightBound - .1
+        ) {
+          firefly.x = this.canvas.rightBound - firefly.size.value
+        }
+
         return (
           this.canvas.rightBound !== null &&
           firefly.x + firefly.size.value >= this.canvas.rightBound
@@ -72,172 +108,73 @@ export class BoundService implements Service {
     }
   }
 
-  private handleOutOfTopBound(firefly: Firefly): void {
-    if (
-      this.outOfBoundFromDirection(firefly, "top") &&
-      this.config.top?.setter &&
-      this.config.top?.type === "out-of-bounds" &&
-      this.config.top.onOutOfBounds
+  private handleOutOfBoundsByDirection(firefly: Firefly, direction?: Direction): void {
+    if (!direction) {
+      if (
+        (this.config.left && this.outOfBoundFromDirection(firefly, "left")) ||
+        (this.config.right && this.outOfBoundFromDirection(firefly, "right")) ||
+        (this.config.top && this.outOfBoundFromDirection(firefly, "top")) ||
+        (this.config.bottom && this.outOfBoundFromDirection(firefly, "bottom"))
+      ) {
+        const onOutOfBounds = typeof this.config.onFireflyOutOfBounds === "function" 
+          ? this.config.onFireflyOutOfBounds 
+          : this.config.onFireflyOutOfBounds?.all;
+        
+          onOutOfBounds?.({
+            currentFirefly: firefly,
+            canvas: this.canvas, 
+            fireflies: this.fireflies,
+            app: this.app
+          });
+      }
+    }
+    else if (
+      this.outOfBoundFromDirection(firefly, direction) &&
+      this.config[direction] &&
+      this.config.onFireflyOutOfBounds &&
+      typeof this.config.onFireflyOutOfBounds !== "function" 
     ) {
-        // on out of top bound
-        this.config.top.onOutOfBounds({
+        this.config.onFireflyOutOfBounds[direction]?.({
           currentFirefly: firefly,
           canvas: this.canvas, 
           fireflies: this.fireflies,
           app: this.app
-        })
+        });
     }
   }
 
-  private handleTouchedTopBound(firefly: Firefly): void {
-    if (
-      this.touchedBoundFromDirection(firefly, "top") &&
-      this.config.top?.type === "touched-bounds" &&
-      this.config.top.onTouchedBounds
-    ) {
-    // on top bound
-      this.config.top.onTouchedBounds({
-        currentFirefly: firefly,
-        canvas: this.canvas, 
-        fireflies: this.fireflies,
-        app: this.app
-      })
-    }
-  }
-
-  private handleOutOfLeftBound(firefly: Firefly): void {
-    if (
-      this.outOfBoundFromDirection(firefly, "left") &&
-      this.config.left?.type === "out-of-bounds" &&
-      this.config.left.onOutOfBounds
-    ) {
-        // on out of top bound
-        this.config.left.onOutOfBounds({
+  private handleTouchedBoundByDirection(firefly: Firefly, direction?: Direction): void {
+    if (!direction) {
+      if (
+        (this.config.left && this.touchedBoundFromDirection(firefly, "left")) ||
+        (this.config.right && this.touchedBoundFromDirection(firefly, "right")) ||
+        (this.config.top && this.touchedBoundFromDirection(firefly, "top")) ||
+        (this.config.bottom && this.touchedBoundFromDirection(firefly, "bottom"))
+      ) {
+        const onTouchedBounds = typeof this.config.onFireflyTouchedBounds === "function" 
+          ? this.config.onFireflyTouchedBounds 
+          : this.config.onFireflyTouchedBounds?.all;
+        
+        onTouchedBounds?.({
           currentFirefly: firefly,
           canvas: this.canvas, 
           fireflies: this.fireflies,
           app: this.app
-        })
+        });
+      }
     }
-  }
-
-  private handleTouchedLeftBound(firefly: Firefly): void {
-    if (
-      this.touchedBoundFromDirection(firefly, "left") &&
-      this.config.left?.type === "touched-bounds" &&
-      this.config.left.onTouchedBounds
+    else if (
+      this.touchedBoundFromDirection(firefly, direction) &&
+      this.config[direction] &&
+      this.config.onFireflyTouchedBounds &&
+      typeof this.config.onFireflyTouchedBounds !== "function" 
     ) {
-    // on top bound
-      this.config.left.onTouchedBounds({
-        currentFirefly: firefly,
-        canvas: this.canvas, 
-        fireflies: this.fireflies,
-        app: this.app
-      })
-    }
-  }
-
-  private handleOutOfBottomBound(firefly: Firefly): void {
-    if (
-      this.outOfBoundFromDirection(firefly, "bottom") &&
-      this.config.bottom?.type === "out-of-bounds" &&
-      this.config.bottom.onOutOfBounds
-    ) {
-        // on out of top bound
-        this.config.bottom.onOutOfBounds({
+        this.config.onFireflyTouchedBounds[direction]?.({
           currentFirefly: firefly,
           canvas: this.canvas, 
           fireflies: this.fireflies,
           app: this.app
-        })
-    }
-  }
-
-  private handleTouchedBottomBound(firefly: Firefly): void {
-    if (
-      this.touchedBoundFromDirection(firefly, "bottom") &&
-      this.config.bottom?.type === "touched-bounds" &&
-      this.config.bottom.onTouchedBounds
-    ) {
-    // on top bound
-      this.config.bottom.onTouchedBounds({
-        currentFirefly: firefly,
-        canvas: this.canvas, 
-        fireflies: this.fireflies,
-        app: this.app
-      })
-    }
-  }
-
-  private handleOutOfRightBound(firefly: Firefly): void {
-    if (
-      this.outOfBoundFromDirection(firefly, "right") &&
-      this.config.right?.type === "out-of-bounds" &&
-      this.config.right.onOutOfBounds
-    ) {
-        // on out of top bound
-        this.config.right.onOutOfBounds({
-          currentFirefly: firefly,
-          canvas: this.canvas, 
-          fireflies: this.fireflies,
-          app: this.app
-        })
-    }
-  }
-
-  private handleTouchedRightBound(firefly: Firefly): void {
-    if (
-      this.touchedBoundFromDirection(firefly, "right") &&
-      this.config.right?.type === "touched-bounds" &&
-      this.config.right.onTouchedBounds
-    ) {
-    // on top bound
-      this.config.right.onTouchedBounds({
-        currentFirefly: firefly,
-        canvas: this.canvas, 
-        fireflies: this.fireflies,
-        app: this.app
-      })
-    }
-  }
-
-  private handleOutOfBoundsGeneral(firefly: Firefly): void {
-    if (
-      (
-        this.outOfBoundFromDirection(firefly, "top") ||
-        this.outOfBoundFromDirection(firefly, "bottom") ||
-        this.outOfBoundFromDirection(firefly, "left") ||
-        this.outOfBoundFromDirection(firefly, "right")
-      ) && 
-      this.config.general?.type === "out-of-bounds" &&
-      this.config.general.onOutOfBounds
-    ) {
-      this.config.general.onOutOfBounds({
-        currentFirefly: firefly,
-        canvas: this.canvas, 
-        fireflies: this.fireflies,
-        app: this.app
-      })
-    }
-  }
-
-  private handleTouchedBoundsGeneral(firefly: Firefly): void {
-    if (
-      (
-        this.touchedBoundFromDirection(firefly, "top") ||
-        this.touchedBoundFromDirection(firefly, "bottom") ||
-        this.touchedBoundFromDirection(firefly, "left") ||
-        this.touchedBoundFromDirection(firefly, "right")
-      ) && 
-      this.config.general?.type === "touched-bounds" &&
-      this.config.general.onTouchedBounds
-    ) {
-      this.config.general.onTouchedBounds({
-        currentFirefly: firefly,
-        canvas: this.canvas, 
-        fireflies: this.fireflies,
-        app: this.app
-      })
+        });
     }
   }
 
@@ -248,28 +185,34 @@ export class BoundService implements Service {
   }
 
   public setOnEveryFirefly() {
-    const {
-      bottom,
-      left,
-      right,
-      top
-    } = this.config;
 
-    this.canvas.leftBound = left
-      ? left.setter(this.canvas)
+    const {left, top, right, bottom} = this.config
+
+    this.canvas.leftBound = (left !== null && left !== undefined)
+      ? typeof left === 'number'
+        ? left
+        : left(this.canvas)
       : null;
 
-    this.canvas.rightBound = right
-      ? right.setter(this.canvas)
+
+    this.canvas.topBound = (top !== null && top !== undefined)
+      ? typeof top === 'number'
+        ? top
+        : top(this.canvas)
       : null;
 
-    this.canvas.topBound = top
-      ? top.setter(this.canvas)
+    this.canvas.rightBound = (right !== null && right !== undefined)
+      ? typeof right === 'number'
+        ? right
+        : right(this.canvas)
       : null;
 
-    this.canvas.bottomBound = bottom
-      ? bottom.setter(this.canvas)
+    this.canvas.bottomBound = (bottom !== null && bottom !== undefined)
+      ? typeof bottom === 'number'
+        ? bottom
+        : bottom(this.canvas)
       : null;
+
 
     for(let ff of this.fireflies) {
       this.setOnSingleFirefly(ff)
@@ -283,21 +226,16 @@ export class BoundService implements Service {
     );
     
     if (serviceExists) {
+      const directions: Direction[] = ["bottom", "left", "right", "top"];
 
-      this.handleTouchedBoundsGeneral(firefly);
-      this.handleOutOfBoundsGeneral(firefly);
-      
-      this.handleTouchedTopBound(firefly);
-      this.handleOutOfTopBound(firefly);
-
-      this.handleTouchedLeftBound(firefly);
-      this.handleOutOfLeftBound(firefly);
-
-      this.handleTouchedBottomBound(firefly);
-      this.handleOutOfBottomBound(firefly);
-
-      this.handleTouchedRightBound(firefly);
-      this.handleOutOfRightBound(firefly);
+      directions.forEach(
+        direction => {
+          this.handleOutOfBoundsByDirection(firefly);
+          this.handleTouchedBoundByDirection(firefly);
+          this.handleTouchedBoundByDirection(firefly, direction);
+          this.handleOutOfBoundsByDirection(firefly, direction);
+        }
+      )
 
     }
   }

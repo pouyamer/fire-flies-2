@@ -9,7 +9,7 @@ export class DrawService
   name = ServiceName.Draw;
 
   constructor(
-    private readonly fireflyCanvas: FireflyCanvas,
+    private readonly canvas: FireflyCanvas,
     private readonly fireflies: Firefly[],
   ) {
   }
@@ -91,7 +91,7 @@ export class DrawService
   }
 
   public onFramePassForSingleFirefly(firefly: Firefly): void {
-    const { renderingContext: ctx } = this.fireflyCanvas
+    const { renderingContext: ctx } = this.canvas
 
     const serviceExists = !!firefly.activeServices.find(
       s => s.name === ServiceName.Draw
@@ -109,10 +109,18 @@ export class DrawService
   }
 
 
+  // TODO: ADD drawing config:
+  // 1. clear before each frame
+  // 2. draw times per frame
+
   public onFramePass(): void {
+    this.canvas.renderingContext?.clearRect(0, 0, this.canvas.width, this.canvas.height)
+
+    // for(let i = 0; i < 10; i++) {
       for (let ff of this.fireflies) {
         this.onFramePassForSingleFirefly(ff);
       }
+    // }
   }
 
 }

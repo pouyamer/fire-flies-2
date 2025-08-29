@@ -131,7 +131,6 @@ export class FireflyApp {
 
     requestAnimationFrame(this.run);
 
-    this.canvas.renderingContext?.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
     for (let service of this.services) {
       service.onFramePass();

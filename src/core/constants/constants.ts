@@ -1,7 +1,15 @@
+import { FireflyCanvas } from "../models";
 import { EventCallBack, FireflyNeighbourhoodPicker, LocationConfig, ValueGenerator } from "../types";
 import { Utilities } from "../utilities";
 
 export class CONSTANTS {
+
+  public static CANVAS_EDGE_BOUNDS = {
+    bottom: (canvas: FireflyCanvas) => canvas.height,
+    top: (canvas: FireflyCanvas) => 0,
+    left: (canvas: FireflyCanvas) => 0,
+    right: (canvas: FireflyCanvas) => canvas.width
+  }
 
   public static randomXCanvasWidth = this.createRandomValueBasedOnCanvasWidth();
 

@@ -8,7 +8,7 @@ const ALL_ANGLES = {
 }
 
 export const speedConfig: SpeedConfig = {
-  type: SpeedType.Cartesian,
-  speedY:  Utilities.range(-3, 3),
-  speedX: Utilities.range(-3, 3)
+  type: SpeedType.Polar,
+  angle_PI: ALL_ANGLES,
+  speed: 3
 }

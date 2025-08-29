@@ -1,36 +1,32 @@
-import { ServiceName } from "../enums";
-import { FireflyCanvas } from "../models";
+import { CONSTANTS } from "../constants/constants";
 import { BoundsConfig } from "../types";
 
-const DEFAULT_SETTER = {
-  bottom: (canvas: FireflyCanvas) => canvas.height,
-  top: (canvas: FireflyCanvas) => 0,
-  left: (canvas: FireflyCanvas) => 0,
-  right: (canvas: FireflyCanvas) => canvas.width
-}
-
 export const boundsConfig: BoundsConfig = {
-  bottom: {
-    type: "only-setter",
-    setter: DEFAULT_SETTER.bottom
+  ...CONSTANTS.CANVAS_EDGE_BOUNDS,
+  onFireflyTouchedBounds: {
+    all: ({currentFirefly: ff}) => {
+      ff.hue.value = 100
+    },
+    bottom: ({currentFirefly: ff}) => {
+      ff.speedY = -.8 *ff.speedY;
+    },
+    top: ({currentFirefly: ff}) => {
+      ff.speedY = -.8 *ff.speedY;
+    },
+    right: ({currentFirefly: ff}) => {
+      ff.speedX = -.8 *ff.speedX;
+    },
+    left: ({currentFirefly: ff}) => {
+      ff.speedX = -.8 *ff.speedX;
+    },
   },
-  top: {
-    type: "only-setter",
-    setter: DEFAULT_SETTER.top
+  applyPositionCorrection: {
+    bottom: true,
+    left: true,
+    right: true,
+    top: true,
   },
-  right: {
-    type: "only-setter",
-    setter: DEFAULT_SETTER.right
-  },
-  left: {
-    type: "only-setter",
-    setter: DEFAULT_SETTER.left
-  },
-  general: {
-    type: "out-of-bounds",
-    onOutOfBounds: ({currentFirefly, app}) => {
-      app.setServicesOnSingleFireflyByServiceNames(currentFirefly, ServiceName.Location, ServiceName.Hue, ServiceName.Size, ServiceName.Lightness)
-    }
+  onFireflyOutOfBounds: ({currentFirefly, app}) => {
   }
-  
+
 }

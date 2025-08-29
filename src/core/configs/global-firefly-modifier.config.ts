@@ -7,6 +7,6 @@ export const globalFireflyModifierConfig: GlobalFireflyModifierConfig = {
         // fireflies[1].speedX = -1;
         // fireflies[0].speedX = 1;
     },
-    onFramePassModifier: ({currentFirefly: ff}) => {
+    onFramePassModifier: ({currentFirefly: ff, canvas}) => {
     }
 }
