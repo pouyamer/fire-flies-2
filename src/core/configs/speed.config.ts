@@ -9,6 +9,6 @@ const ALL_ANGLES = {
 
 export const speedConfig: SpeedConfig = {
   type: SpeedType.Polar,
-  angle_PI: ({currentFirefly}) => {return currentFirefly.hue.value},
-  speed: 1
+  angle_PI: ALL_ANGLES,
+  speed: () => Math.random() * 10
 }

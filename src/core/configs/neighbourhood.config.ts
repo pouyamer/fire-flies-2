@@ -5,17 +5,11 @@ export const neighbourhoodConfig: NeighbourhoodConfig = {
   candidatePickingStrategy: "reactive",
   canPickCandidates: false,
   canPickNeighboursFromOtherCandidates: false,
-  candidatePicker: ({fireflies}) =>  {
-    return [fireflies[0]]
-  },
-  neighbourPicker: CONSTANTS.NEIGHBOUR_PICKERS.Circle(400),
+  candidatePicker: () => [],
+  neighbourPicker: () => [],
   onNeighbourhoodEnter: () => {},
-  onNeighbourhood: ({currentFirefly}) => {
-    currentFirefly.hue.value = 330
-  },
-  onNeighbourhoodExit: ({currentFirefly}) => {
-        currentFirefly.hue.value = 20
-  },
+  onNeighbourhood: () => {},
+  onNeighbourhoodExit: () => {},
   onNotInNeighbourhood: () => {},
   onCandidatePicked: () => {},
   onCandidateDismissed: () => {}

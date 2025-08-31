@@ -1,7 +1,8 @@
-import { ChangeType } from "../enums";
 import { ChangingValueConfig } from "../types";
 
 export const sizeConfig: ChangingValueConfig = {
-  type: ChangeType.NoChange,
-  value: 20
+  value: 400,
+  nextValueFn: ({currentFirefly}) => {
+    return Math.max(currentFirefly.hue.value, 0) ;
+  },
 }

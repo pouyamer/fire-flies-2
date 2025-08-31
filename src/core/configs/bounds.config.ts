@@ -23,7 +23,7 @@ export const boundsConfig: BoundsConfig = {
   applyPositionCorrection: {
     bottom: true,
     left: true,
-    right: true,
+    right:true,
     top: true,
   },
   onFireflyOutOfBounds: ({currentFirefly, app}) => {
