@@ -5,7 +5,7 @@ export const boundsConfig: BoundsConfig = {
   ...CONSTANTS.CANVAS_EDGE_BOUNDS,
   onFireflyTouchedBounds: {
     all: ({currentFirefly: ff}) => {
-      ff.hue.value = 100
+      // ff.hue.value = 100
     },
     bottom: ({currentFirefly: ff}) => {
       ff.speedY = -.8 *ff.speedY;

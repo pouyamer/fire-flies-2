@@ -10,3 +10,5 @@ export * from "./rotation.service";
 export * from "./jitter.service";
 export * from "./global-firefly-modifier.service";
 export * from "./collision.service";
+export * from "./neighbourhood.service";
+export * from "./life.service"

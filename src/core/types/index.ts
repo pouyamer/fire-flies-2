@@ -18,3 +18,5 @@ export * from "./possible-value.type";
 export * from "./global-firefly-modifier-config.type";
 export * from "./collision-config.type";
 export * from "./neighbourhood-config.type";
+export * from "./draw-config.type";
+export * from "./life-config.type";

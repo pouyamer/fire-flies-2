@@ -15,3 +15,5 @@ export * from "./jitter.config";
 export * from "./collision.config";
 export * from "./global-firefly-modifier.config"
 export * from "./neighbourhood.config";
+export * from "./draw.config";
+export * from "./life.config";

@@ -15,5 +15,6 @@ export enum ServiceName {
   Jitter = "jitter",
   GlobalFireflyModifier = "global-firefly-modifier",
   Collision = "collision",
-  Neighbourhood = "neighbourhood"
+  Neighbourhood = "neighbourhood",
+  Life = "life"
 };

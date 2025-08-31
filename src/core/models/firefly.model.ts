@@ -1,5 +1,6 @@
 import { Shape } from "../enums";
 import { Service } from "../interfaces";
+import { DrawConfig } from "../types";
 import { ChangingNumericalValueItem } from "./changing-numerical-value-item.model";
 
 export class Firefly {
@@ -26,6 +27,8 @@ export class Firefly {
   jitterX: number;
   jitterY: number;
   firefliesInCollision: Firefly[];
+  drawMethod: DrawConfig['method'];
+  life: number;
   // moving angle gets cached to be used in acceleration service
   movingAngle: number;
   neighboredBy: Firefly | null;
@@ -65,6 +68,8 @@ export class Firefly {
     this.neighboredBy = model.neighboredBy ?? null;
     this.neighbors = model.neighbors ?? [];
     this.beforeEnteringNeighborhoodSnapshot = null;
+    this.drawMethod = model.drawMethod ?? 'fill';
+    this.life = model.life ?? Infinity;
   }
 
 }

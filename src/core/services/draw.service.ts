@@ -1,6 +1,8 @@
+import { FireflyApp } from "../app";
 import { ServiceName, Shape } from "../enums";
 import { Service } from "../interfaces";
 import { Color, Firefly, FireflyCanvas } from "../models";
+import { DrawConfig } from "../types";
 import { Utilities } from "../utilities";
 
 export class DrawService
@@ -11,12 +13,14 @@ export class DrawService
   constructor(
     private readonly canvas: FireflyCanvas,
     private readonly fireflies: Firefly[],
+    private readonly config: DrawConfig,
+    private readonly app: FireflyApp
   ) {
   }
 
   private drawFirefly(
     firefly: Firefly,
-    ctx: CanvasRenderingContext2D
+    ctx: CanvasRenderingContext2D,
   ): void {
 
     const { x, y, size } = firefly;
@@ -25,10 +29,13 @@ export class DrawService
         ctx.beginPath()
         ctx.arc(x, y, size.value, 0, 2 * Math.PI)
         ctx.moveTo(x, y)
-        ctx.fill()
+        firefly.drawMethod === "stroke" ? ctx.stroke() : ctx.fill()
         break;
       case "square":
         ctx.fillRect(x, y, size.value, size.value);
+        firefly.drawMethod === "stroke" 
+          ? ctx.strokeRect(x, y, size.value, size.value)
+          : ctx.fillRect(x, y, size.value, size.value)
         break;
       case Shape.RegularPolygram:
         const angle = ((firefly.pointCount - 2) * Math.PI) / (2 * firefly.pointCount) + firefly.rotatedAngle
@@ -51,7 +58,8 @@ export class DrawService
           ctx.lineTo(outerX, outerY)
           ctx.lineTo(innerX, innerY)
         }
-        ctx.fill()
+
+        firefly.drawMethod === "stroke" ? ctx.stroke() : ctx.fill()
 
         break;
       case Shape.RegularPolygon:
@@ -71,7 +79,7 @@ export class DrawService
           }
         }
         ctx.closePath()
-        ctx.fill()
+        firefly.drawMethod === "stroke" ? ctx.stroke() : ctx.fill()
         break;
       case Shape.QuarterCircle:
         break;
@@ -88,6 +96,15 @@ export class DrawService
     if (!firefly.activeServices?.some(service => service.name === this.name)) {
       firefly.activeServices?.push(this)
     }
+
+    const method = typeof this.config.method === "string" ? this.config.method : this.config.method({
+      app: this.app,
+      canvas: this.canvas,
+      currentFirefly: firefly,
+      fireflies: this.fireflies
+    });
+
+    firefly.drawMethod = method;
   }
 
   public onFramePassForSingleFirefly(firefly: Firefly): void {
@@ -98,29 +115,32 @@ export class DrawService
     )
 
     if (ctx && serviceExists) {
-      ctx.fillStyle = Utilities.hslColorToString(new Color({
+
+      const style = Utilities.hslColorToString(new Color({
         hue: firefly.hue.value,
         saturation: firefly.saturation.value,
         lightness: firefly.lightness.value,
         alpha: firefly.alpha.value,
       }));
+
+      firefly.drawMethod === "fill" 
+        ? ctx.fillStyle = style
+        : ctx.strokeStyle = style
+      
       this.drawFirefly(firefly, ctx)
     }
   }
 
-
-  // TODO: ADD drawing config:
-  // 1. clear before each frame
-  // 2. draw times per frame
-
   public onFramePass(): void {
-    this.canvas.renderingContext?.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    if (this.config.clearBeforeDrawing) {
+      this.canvas.renderingContext?.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    }
 
-    // for(let i = 0; i < 10; i++) {
+    for(let i = 0; i < this.config.iterationPerFrame; i++) {
       for (let ff of this.fireflies) {
         this.onFramePassForSingleFirefly(ff);
       }
-    // }
+    }
   }
 
 }
