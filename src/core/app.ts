@@ -1,7 +1,7 @@
 import { accelerationConfig, alphaConfig, boundsConfig, collisionConfig, drawConfig, generalFireflyConfig, globalFireflyModifierConfig, hueConfig, jitterConfig, lifeConfig, lightnessConfig, locationConfig, neighbourhoodConfig, rotationConfig, saturationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "./configs";
 import { ServiceName } from "./enums";
 import { Service } from "./interfaces";
-import { Firefly, FireflyCanvas } from "./models";
+import { Color, Firefly, FireflyCanvas } from "./models";
 import { AccelerationService, BoundService, ChangingValueService, CollisionService, DrawService, GlobalFireflyModifierService, JitterService, LifeService, LocationService, NeighbourhoodService, RotationService, ShapeService, SpeedService, WindowService } from "./services";
 import { AccelerationConfig, BoundsConfig, ChangingValueConfig, CollisionConfig, DrawConfig, GeneralFireflyConfig, GlobalFireflyModifierConfig, JitterConfig, LifeConfig, LocationConfig, NeighbourhoodConfig, RotationConfig, ShapeConfig, SpeedConfig, WindowConfig } from "./types";
 import { Utilities } from "./utilities";
@@ -138,13 +138,34 @@ export class FireflyApp {
     }
   }
 
+  public markFireflyAsCandidate(firefly: Firefly): void {
+    const neighbourhoodService = this.services.find(s => s.name === ServiceName.Neighbourhood) as NeighbourhoodService;
+
+    neighbourhoodService.markFireflyAsCandidate(firefly)
+  }
+
 
   public run = (): void => {
-    
+
 
     for (let service of this.services) {
       service.onFramePass();
     }
+
+    const avgSpeedX = Math.floor((this.fireflies.map(ff => ff.speedX).reduce((a, b) => a + Math.abs(b) / this.fireflies.length, 0)) * 100) / 100
+    const avgSpeedY = Math.floor((this.fireflies.map(ff => ff.speedY).reduce((a, b) => a + Math.abs(b) / this.fireflies.length, 0)) * 100) / 100
+    
+    this.canvas.renderingContext!.fillStyle  = "white"
+    this.canvas.renderingContext!.font = "48px serif";
+    this.canvas.renderingContext!.fillText(`avgSpeedX: ${avgSpeedX}`, 100, 100);
+    this.canvas.renderingContext!.fillText(`avgSpeedY: ${avgSpeedY}`, 100, 150);
+
+    
+    this.fireflies.forEach((ff, i) => {
+      this.canvas.renderingContext!.font = "30px serif";
+      this.canvas.renderingContext!.fillStyle = 'white'
+      // this.canvas.renderingContext!.fillText((isFinite(Math.floor(ff.life)) ? Math.floor(ff.life) : '').toString(), ff.x, ff.y);
+    })
 
     requestAnimationFrame(this.run);
   }

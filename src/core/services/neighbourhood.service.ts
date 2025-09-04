@@ -20,6 +20,12 @@ export class NeighbourhoodService
     private readonly app: FireflyApp
   ) {}
 
+  public markFireflyAsCandidate(firefly: Firefly): void {
+    if (!this.fireflies.map(ff => ff.key).includes(firefly.key)) {
+      this.candidateFireflies.push(firefly)
+    }
+  }
+
   setOnSingleFirefly(firefly: Firefly): void {
     
   }
@@ -40,13 +46,15 @@ export class NeighbourhoodService
 
     // handle candidates
     if (this.config.candidatePickingStrategy === 'reactive') {
-      const oldCondidates = this.candidateFireflies;
-
       this.candidateFireflies = this.config.candidatePicker({
         canvas: this.canvas,
         fireflies: this.fireflies,
         app: this.app
       })
+    }
+      const oldCondidates = this.candidateFireflies;
+
+
 
       // candidates that are no longer candidates
       const pastCandidates = oldCondidates.filter(c => !this.candidateFireflies.includes(c))
@@ -81,8 +89,6 @@ export class NeighbourhoodService
           fireflies: this.fireflies,
         })
       )
-
-    }
     
     // handle neighbours
     this.candidateFireflies.forEach(chosenFirefly => {

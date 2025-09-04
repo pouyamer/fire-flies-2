@@ -76,7 +76,7 @@ export class LifeService
             canvas: this.canvas,
             currentFirefly: firefly,
             fireflies: this.fireflies
-          })
+          });
           this.app.removeFirefly(firefly)
         }
 

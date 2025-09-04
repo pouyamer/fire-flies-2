@@ -1,6 +1,7 @@
 import { ChangeType } from "../enums";
 import { ChangingValueConfig } from "../types";
+import { Utilities } from "../utilities";
 
 export const lightnessConfig: ChangingValueConfig = {
-  value: 55,
+  value: Utilities.range(45, 55),
 }

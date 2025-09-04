@@ -228,10 +228,11 @@ export class BoundService implements Service {
     if (serviceExists) {
       const directions: Direction[] = ["bottom", "left", "right", "top"];
 
+      this.handleOutOfBoundsByDirection(firefly);
+      this.handleTouchedBoundByDirection(firefly);
+
       directions.forEach(
         direction => {
-          this.handleOutOfBoundsByDirection(firefly);
-          this.handleTouchedBoundByDirection(firefly);
           this.handleTouchedBoundByDirection(firefly, direction);
           this.handleOutOfBoundsByDirection(firefly, direction);
         }

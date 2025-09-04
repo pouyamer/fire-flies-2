@@ -13,7 +13,7 @@ export class WindowService
     constructor(
       private readonly canvas: FireflyCanvas,
       private readonly fireflies: Firefly[],
-      private readonly config: unknown,
+      private readonly config: WindowConfig,
       private readonly windowContext: Window,
       private readonly fireflyApp: FireflyApp
     ) {}
@@ -48,15 +48,12 @@ export class WindowService
 
     private setMouseMoveEventListener(): void {
       this.windowContext.addEventListener("mousemove", (e: MouseEvent) => {
-        this.fireflies[0].x = e.x
-        this.fireflies[0].y = e.y
-        // this.fireflies.forEach(
-        //   ff => {
 
+        this.fireflies.forEach(
+          ff => {
 
-
-        //   }
-        // )
+          }
+        )
       })
     }
 

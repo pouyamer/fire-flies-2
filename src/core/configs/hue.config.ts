@@ -4,8 +4,5 @@ import { Utilities } from "../utilities"
 
 
 export const hueConfig: ChangingValueConfig = {
-  value: 0,
-  nextValueFn: ({currentFirefly}) => {
-    return currentFirefly.speedY * 9
-  }
+  value: Utilities.range(0, 360)
 }
