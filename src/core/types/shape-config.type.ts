@@ -1,68 +1,14 @@
-import { Shape, ShapeSetMethod } from "../enums"
-import { Firefly, FireflyCanvas, Range } from "../models"
-import { PossibleValue } from "./possible-value.type";
-export type ShapeConfig =
-  | SingleShapeConfig
-  | RandomShapeConfig
-  | CallbackShapeConfig;
+import { Shape } from "../enums";
+import { ValueGenerator } from "./genarator-callback.type";
+import { WeightedValue } from "./possible-value.type";
 
-export type ShapeValue = BasicShapeValue | PolygonValue | PolygramValue
+type ComplexShapes = Shape.RegularPolygon | Shape.RegularPolygram
 
-type BaseSingleShapeConfig = {
-  setMethod: ShapeSetMethod.SingleShape;
-};
-
-type BasicShapeValue = {
-  value: Shape.Circle | Shape.Square | Shape.QuarterCircle;
+export type ShapeValue =  Exclude<Shape, ComplexShapes> | {
+  shape: ComplexShapes,
+  parameter: number
 }
 
-type PolygonValue = {
-  value: Shape.RegularPolygon;
-  sideCount: PossibleValue<number>;
-}
-
-type PolygramValue = {
-  value: Shape.RegularPolygram;
-  pointCount: PossibleValue<number>;
-}
-
-type BasicShapeConfig = BaseSingleShapeConfig & BasicShapeValue;
-
-// Configuration for regular polygons
-type PolygonConfig = BaseSingleShapeConfig & PolygonValue;
-
-// Configuration for regular polygrams
-type PolygramConfig = BaseSingleShapeConfig & PolygramValue;
-
-// Single shape configurations
-type SingleShapeConfig =
-  | BasicShapeConfig
-  | PolygonConfig
-  | PolygramConfig;
-
-// Random shape configuration
-type RandomShapeConfig = {
-  setMethod: ShapeSetMethod.Random;
-  values: ShapeValue[]
+export type ShapeConfig = {
+  value: ShapeValue | ShapeValue[] | ValueGenerator<ShapeValue | ShapeValue[]> | WeightedValue<ShapeValue>[]
 };
-
-// Callback shape configuration
-type CallbackShapeConfig = {
-  setMethod: ShapeSetMethod.ShapeSetterCallback;
-  shapeSetter: (
-    firefly?: Firefly,
-    canvas?: FireflyCanvas
-  ) => ShapeValue[]
-  ;
-};
-
-// Helper type for complex shape configurations
-type ComplexShapeConfig =
-  | {
-    value: Shape.RegularPolygon;
-    sideCount: PossibleValue<number>;
-  }
-  | {
-    value: Shape.RegularPolygram;
-    pointCount: PossibleValue<number>;
-  };

@@ -34,14 +34,7 @@ export class WindowService
 
     private setMouseClickEventListener(): void {
       this.windowContext.addEventListener("click", (e: MouseEvent) => {
-        const newFirefly = new Firefly();
-
-        this.fireflies.push(newFirefly)
-        
-        this.fireflyApp.setServicesOnSingleFirefly(newFirefly)
-
-        newFirefly.x = e.clientX;
-        newFirefly.y = e.clientY
+        this.fireflyApp.togglePauseApplication();
       })
     }
 

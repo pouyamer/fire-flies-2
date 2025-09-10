@@ -1,8 +1,12 @@
-import { Shape, ShapeSetMethod } from "../enums";
+import { Shape } from "../enums";
 import { ShapeConfig } from "../types";
 
 export const shapeConfig: ShapeConfig = {
-  setMethod: ShapeSetMethod.SingleShape,
-  value: Shape.Circle,
+  value: [
+    {
+      shape: Shape.RegularPolygon,
+      parameter: 4,
+    },
 
+  ]
 }

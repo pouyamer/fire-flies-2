@@ -1,7 +1,7 @@
 import { FireflyApp } from "../app";
-import { ChangeType, ChangingValueMethod, ServiceName } from "../enums";
+import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
-import { ChangingNumericalValueItem, Firefly, FireflyCanvas } from "../models";
+import { Firefly, FireflyCanvas } from "../models";
 import { ChangingValueConfig, ChangingValueKey, PossibleValue } from "../types";
 import { Utilities } from "../utilities";
 

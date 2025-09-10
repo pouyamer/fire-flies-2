@@ -1,5 +1,3 @@
-import { ChangeType, ChangingValueMethod } from "../enums";
-
 export class ChangingNumericalValueItem {
   decrement: number;
   increment: number;

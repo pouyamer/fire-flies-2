@@ -5,7 +5,7 @@ import { ServiceName } from "../enums";
 import { Utilities } from "../utilities";
 
 export const lifeConfig: LifeConfig = {
-  value: ({fireflies}) => 1000,
+  value: Infinity,
   codeGenerator: () => v4(),
   nextValueFn: ({currentFirefly, fireflies}) => {return currentFirefly.life - currentFirefly.hue.value / 50 - 1},
   onFireflyDead: ({fireflies, app, currentFirefly}) => {

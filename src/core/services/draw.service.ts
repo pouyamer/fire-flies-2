@@ -24,34 +24,43 @@ export class DrawService
   ): void {
 
     const { x, y, size } = firefly;
-    switch (firefly.shape) {
-      case "circle":
-        ctx.beginPath()
-        ctx.arc(x, y, size.value, 0, 2 * Math.PI)
-        ctx.moveTo(x, y)
-        firefly.drawMethod === "stroke" ? ctx.stroke() : ctx.fill()
-        break;
-      case "square":
-        ctx.fillRect(x, y, size.value, size.value);
-        firefly.drawMethod === "stroke" 
-          ? ctx.strokeRect(x, y, size.value, size.value)
-          : ctx.fillRect(x, y, size.value, size.value)
-        break;
+
+    if (typeof firefly.shapeValue === "string") {
+      switch(firefly.shapeValue) {
+        case Shape.Circle:
+          ctx.beginPath()
+          ctx.arc(x, y, size.value, 0, 2 * Math.PI)
+          ctx.moveTo(x, y)
+          firefly.drawMethod === "stroke" ? ctx.stroke() : ctx.fill()
+          break;
+
+        case Shape.Square:
+          ctx.fillRect(x, y, size.value, size.value);
+          firefly.drawMethod === "stroke" 
+            ? ctx.strokeRect(x, y, size.value, size.value)
+            : ctx.fillRect(x, y, size.value, size.value)
+          break;
+        case Shape.QuarterCircle:
+          break;
+      }
+    }
+    else {
+      switch(firefly.shapeValue.shape) {
       case Shape.RegularPolygram:
-        const angle = ((firefly.pointCount - 2) * Math.PI) / (2 * firefly.pointCount) + firefly.rotatedAngle
+        const angle = ((firefly.shapeValue.parameter - 2) * Math.PI) / (2 * firefly.shapeValue.parameter) + firefly.rotatedAngle
 
         const innerRadius = firefly.size.value / 2
         const outerRadius = firefly.size.value
 
         ctx.beginPath()
-        for (let i = 0; i < firefly.pointCount; i++) {
-          let dx = outerRadius * Math.cos((i * 2 * Math.PI) / firefly.pointCount + angle)
-          let dy = outerRadius * Math.sin((i * 2 * Math.PI) / firefly.pointCount + angle)
+        for (let i = 0; i < firefly.shapeValue.parameter; i++) {
+          let dx = outerRadius * Math.cos((i * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
+          let dy = outerRadius * Math.sin((i * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
           let outerX = x + dx
           let outerY = y + dy
 
-          dx = innerRadius * Math.cos(((i + 0.5) * 2 * Math.PI) / firefly.pointCount + angle)
-          dy = innerRadius * Math.sin(((i + 0.5) * 2 * Math.PI) / firefly.pointCount + angle)
+          dx = innerRadius * Math.cos(((i + 0.5) * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
+          dy = innerRadius * Math.sin(((i + 0.5) * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
           let innerX = x + dx
           let innerY = y + dy
 
@@ -66,10 +75,10 @@ export class DrawService
         const halfSize = firefly.size.value
 
         ctx.beginPath()
-        for (let i = 0; i < firefly.sideCount; i++) {
-          const angle = ((firefly.sideCount - 2) * Math.PI) / (2 * firefly.sideCount) + firefly.rotatedAngle
-          let dx = halfSize * Math.cos((i * 2 * Math.PI) / firefly.sideCount + angle)
-          let dy = halfSize * Math.sin((i * 2 * Math.PI) / firefly.sideCount + angle)
+        for (let i = 0; i < firefly.shapeValue.parameter; i++) {
+          const angle = ((firefly.shapeValue.parameter - 2) * Math.PI) / (2 * firefly.shapeValue.parameter) + firefly.rotatedAngle
+          let dx = halfSize * Math.cos((i * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
+          let dy = halfSize * Math.sin((i * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
           let outerX = x + +dx
           let outerY = y + dy
           if (i === 0) {
@@ -81,8 +90,7 @@ export class DrawService
         ctx.closePath()
         firefly.drawMethod === "stroke" ? ctx.stroke() : ctx.fill()
         break;
-      case Shape.QuarterCircle:
-        break;
+      }
     }
   }
 

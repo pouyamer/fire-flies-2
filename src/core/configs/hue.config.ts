@@ -1,8 +1,6 @@
-import { ChangeType } from "../enums"
 import { ChangingValueConfig } from "../types"
-import { Utilities } from "../utilities"
 
 
 export const hueConfig: ChangingValueConfig = {
-  value: Utilities.range(0, 360)
+  value: 100
 }

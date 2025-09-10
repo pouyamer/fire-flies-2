@@ -12,6 +12,19 @@ export class Utilities {
     )
   }
 
+  public static isWeightedValue<T>(target: unknown): target is WeightedValue<T> {
+    return (
+      target !== null &&
+      typeof target === "object" &&
+      "value" in target &&
+      "weight" in target
+    )
+  }
+
+  public static isWeightedValues<T>(target: unknown): target is WeightedValue<T>[] {
+    return Array.isArray(target) && target.every(t => this.isWeightedValue<T>(t))
+  }
+
   public static range(min: number, max: number): Range {
     return {
       min, max

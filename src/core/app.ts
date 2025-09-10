@@ -57,6 +57,7 @@ export class FireflyApp {
   private configs: Configs = this.defaultConfigs;
   private services: Service[] = [];
   private collision: Firefly[][] = [];
+  private paused: boolean = false;
 
   constructor(
     canvas: FireflyCanvas,
@@ -99,6 +100,16 @@ export class FireflyApp {
       new GlobalFireflyModifierService(this.canvas, this.fireflies, this.configs.globalFireflyModifier, this),
       new DrawService(this.canvas, this.fireflies, this.configs.draw, this),
     ]
+  }
+
+  public togglePauseApplication(
+    value?: boolean
+  ): void {
+    this.paused = value === undefined ? !this.paused : value;
+
+    if (!this.paused) {
+      requestAnimationFrame(this.run);
+    }
   }
 
   public setServicesOnSingleFirefly(firefly: Firefly) {
@@ -167,6 +178,8 @@ export class FireflyApp {
       // this.canvas.renderingContext!.fillText((isFinite(Math.floor(ff.life)) ? Math.floor(ff.life) : '').toString(), ff.x, ff.y);
     })
 
-    requestAnimationFrame(this.run);
+    if(!this.paused) {
+      requestAnimationFrame(this.run);
+    }
   }
 }
