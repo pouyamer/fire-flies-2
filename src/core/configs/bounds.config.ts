@@ -1,32 +1,19 @@
 import { CONSTANTS } from "../constants/constants";
+import { ServiceName } from "../enums";
 import { BoundsConfig } from "../types";
 
 export const boundsConfig: BoundsConfig = {
   ...CONSTANTS.CANVAS_EDGE_BOUNDS,
-  onFireflyTouchedBounds: {
-    all: ({currentFirefly: ff}) => {
-      ff.life -= Math.random() * 100
-    },
-    bottom: ({currentFirefly: ff}) => {
-      ff.speedY = -.8 *ff.speedY;
-    },
-    top: ({currentFirefly: ff}) => {
-      ff.speedY = -.8 *ff.speedY;
-    },
-    right: ({currentFirefly: ff}) => {
-      ff.speedX = -.8 *ff.speedX;
-    },
-    left: ({currentFirefly: ff}) => {
-      ff.speedX = -.8 *ff.speedX;
+  onFireflyOutOfBounds: {
+    all: ({app, currentFirefly}) => {
+      app.setServicesOnSingleFireflyByServiceNames(currentFirefly, ServiceName.Location)
     },
   },
   applyPositionCorrection: {
-    bottom: true,
-    left: true,
-    right:true,
-    top: true,
+    bottom: false,
+    left: false,
+    right:false,
+    top: false,
   },
-  onFireflyOutOfBounds: ({currentFirefly, app}) => {
-  }
 
 }

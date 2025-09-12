@@ -52,6 +52,7 @@ export class ChangingValueService
 
     firefly[this.key].max = this.config.max ? this.getValue(firefly, this.config.max) : null;
     firefly[this.key].min = this.config.min ? this.getValue(firefly, this.config.min) : null;
+    firefly[this.key].nextValueFn = this.config.nextValueFn ?? null;
   }
 
   public setOnEveryFirefly(): void {
@@ -76,7 +77,7 @@ export class ChangingValueService
           app: this.app
         }
       
-      const nextValue = this.config.nextValueFn ? this.config.nextValueFn(parameters) : fireflyProp.value;
+      const nextValue = fireflyProp.nextValueFn ? fireflyProp.nextValueFn(parameters) : fireflyProp.value;
 
       if (
         fireflyProp.max !== null &&
