@@ -12,6 +12,8 @@ export class FireflyCanvas {
   rightBound: number | null;
   topBound: number | null;
   bottomBound: number | null;
+  mouseX: number | null;
+  mouseY: number | null;
 
   constructor(model: Omit<Partial<FireflyCanvas>, "renderingContext"> = {}) {
     this.height = model.height ?? DEFAULT_VALUE.CanvasHeight;
@@ -25,6 +27,8 @@ export class FireflyCanvas {
     this.rightBound = model.rightBound ?? null;
     this.topBound = model.topBound ?? null;
     this.bottomBound = model.bottomBound ?? null;
+    this.mouseX = model.mouseX ?? null
+    this.mouseY = model.mouseY ?? null
 
 
     this.setWidthAndHeight(this.width, this.height)

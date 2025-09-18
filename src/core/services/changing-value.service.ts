@@ -81,7 +81,7 @@ export class ChangingValueService
 
       if (
         fireflyProp.max !== null &&
-        nextValue > fireflyProp.max
+        nextValue >= fireflyProp.max
       ) {
         this.config.onMax?.(parameters)
         fireflyProp.value = fireflyProp.max;

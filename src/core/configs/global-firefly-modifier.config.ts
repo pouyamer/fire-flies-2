@@ -8,15 +8,5 @@ export const globalFireflyModifierConfig: GlobalFireflyModifierConfig = {
         // fireflies[0].speedX = 1;
     },
     onFramePassModifier: ({currentFirefly: ff, canvas}) => {
-        if (ff.x > 100) {
-            ff.hue.nextValueFn = ({currentFirefly}) =>  {
-                return currentFirefly.hue.value - 1;
-            }
-        }
-        else {
-            ff.hue.nextValueFn = ({currentFirefly}) =>  {
-                return currentFirefly.hue.value - 2;
-            }
-        }
     }
 }

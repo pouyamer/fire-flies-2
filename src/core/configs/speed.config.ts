@@ -10,5 +10,5 @@ const ALL_ANGLES = {
 export const speedConfig: SpeedConfig = {
   type: SpeedType.Polar,
   angle_PI: ALL_ANGLES,
-  speed: 5
+  speed: 4
 }

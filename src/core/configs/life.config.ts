@@ -1,13 +1,9 @@
 import { v4 } from "uuid";
 import { LifeConfig } from "../types";
-import { Firefly } from "../models";
-import { ServiceName } from "../enums";
-import { Utilities } from "../utilities";
 
 export const lifeConfig: LifeConfig = {
   value: Infinity,
   codeGenerator: () => v4(),
-  nextValueFn: ({currentFirefly, fireflies}) => {return currentFirefly.life - currentFirefly.hue.value / 50 - 1},
   onFireflyDead: ({fireflies, app, currentFirefly}) => {
     // const offSprings = Utilities.getRandomNumberBetween(Utilities.range(0 , 3), true);
     // Array(offSprings).fill(null).map(() => new Firefly()).forEach(ff => {

@@ -2,7 +2,7 @@ import { FireflyApp } from "../app";
 import { ServiceName, Shape } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
-import { WindowConfig } from "../types";
+import { ValueGeneratorParameters, WindowConfig } from "../types";
 import { Utilities } from "../utilities";
 
 export class WindowService
@@ -10,43 +10,72 @@ export class WindowService
   
     name = ServiceName.Window;
 
+    private mouseHoveredFirefliesKeys: Firefly["key"][] = [];
+
     constructor(
       private readonly canvas: FireflyCanvas,
       private readonly fireflies: Firefly[],
       private readonly config: WindowConfig,
       private readonly windowContext: Window,
-      private readonly fireflyApp: FireflyApp
+      private readonly app: FireflyApp
     ) {}
 
     private setResizeEventListener(): void {
       this.windowContext.addEventListener("resize", (e: Event) => {
         this.canvas.setWidthAndHeight(this.windowContext.innerWidth, this.windowContext.innerHeight)
         for( let ff of this.fireflies) {
-          for (let s of ff.activeServices) {
-            if (s.name === ServiceName.Bound) {
-              s.setOnEveryFirefly();
-              return;
-            }
-          }
+          this.app.setServicesOnSingleFireflyByServiceNames(ff, ServiceName.Bound)
         }
       })
     }
 
+    private isMouseInsideFirefly(ff: Firefly): boolean {
+      return (
+        !!this.canvas.mouseX &&
+        !!this.canvas.mouseY &&
+        this.canvas.mouseX <= ff.x + (ff.size.value + this.config.mousePositionFuzziness) &&
+        this.canvas.mouseX >= ff.x - (ff.size.value + this.config.mousePositionFuzziness) &&
+        this.canvas.mouseY <= ff.y + (ff.size.value + this.config.mousePositionFuzziness) &&
+        this.canvas.mouseY >= ff.y - (ff.size.value + this.config.mousePositionFuzziness)
+      )
+    }
+
     private setMouseClickEventListener(): void {
       this.windowContext.addEventListener("click", (e: MouseEvent) => {
-        this.fireflyApp.togglePauseApplication();
+        // this.fireflyApp.togglePauseApplication();
+        this.fireflies.filter(ff => this.isMouseInsideFirefly(ff)).forEach(
+          ff => this.app.markFireflyAsCandidate(ff)
+        )
       })
+    }
+
+    private handleOnFireflyHovered(ff: Firefly): void {
+      const parameters: ValueGeneratorParameters = {
+        app: this.app,
+        canvas: this.canvas,
+        currentFirefly: ff,
+        fireflies: this.fireflies
+      }
+      
+      if (this.isMouseInsideFirefly(ff)) {
+        this.config.onFireflyMouseOver?.(parameters)
+
+        if (!this.mouseHoveredFirefliesKeys.includes(ff.key)) {
+          this.mouseHoveredFirefliesKeys.push(ff.key)
+        }
+      }
+      else if (this.mouseHoveredFirefliesKeys.includes(ff.key)) {
+        this.config.onFireflyMouseLeave?.(parameters)
+
+        this.mouseHoveredFirefliesKeys = this.mouseHoveredFirefliesKeys.filter(key => ff.key !== key);
+      }
     }
 
 
     private setMouseMoveEventListener(): void {
       this.windowContext.addEventListener("mousemove", (e: MouseEvent) => {
-
-        this.fireflies.forEach(
-          ff => {
-
-          }
-        )
+        this.canvas.mouseX = e.x;
+        this.canvas.mouseY = e.y;
       })
     }
 
@@ -60,7 +89,7 @@ export class WindowService
     }
 
     onFramePassForSingleFirefly(firefly: Firefly): void {
-      
+      this.handleOnFireflyHovered(firefly)
     }
 
     setOnSingleFirefly(firefly: Firefly): void {
@@ -70,6 +99,8 @@ export class WindowService
     }
 
     onFramePass(): void {
-      
+      this.fireflies.forEach(ff => {
+        this.onFramePassForSingleFirefly(ff)
+      })
     }
 }

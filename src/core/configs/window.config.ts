@@ -2,5 +2,13 @@ import { ServiceName } from "../enums";
 import { WindowConfig } from "../types";
 
 export const windowConfig: WindowConfig = {
-    name: ServiceName.Window,
+    mousePositionFuzziness: 100,
+    onFireflyMouseOver: ({currentFirefly: f}) => {
+        f.size.value = 10
+    },
+    onFireflyMouseLeave: ({currentFirefly: f}) => {
+        f.size.nextValueFn = ({currentFirefly}) => {
+            return currentFirefly.size.value + .1 ;
+        }
+    }
 };
