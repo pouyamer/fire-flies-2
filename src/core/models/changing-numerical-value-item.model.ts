@@ -1,10 +1,10 @@
-import { ValueGenerator } from "../types";
+import { ChangingValueConfig, ValueGenerator } from "../types";
 
 export class ChangingNumericalValueItem {
   max: number | null;
   min: number | null;
   value: number;
-  nextValueFn: ValueGenerator<number> | null;
+  nextValueFn: ChangingValueConfig["nextValueFn"] | null;
 
   constructor(model: Partial<ChangingNumericalValueItem> = {}) {
     this.max = model.max ?? null;

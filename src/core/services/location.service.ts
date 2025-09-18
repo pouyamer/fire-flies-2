@@ -50,7 +50,12 @@ export class LocationService
   }
 
   public onFramePassForSingleFirefly(firefly: Firefly): void {
-    
+    const cartesianFromPolarSpeedValue = Utilities.Speed.toCartesian(
+      firefly.polarSpeedAmount.value,
+      firefly.polarSpeedAngle.value,
+    )
+    firefly.x += firefly.speedX.value + cartesianFromPolarSpeedValue.speedX;
+    firefly.y += firefly.speedY.value+ cartesianFromPolarSpeedValue.speedY;
   }
 
   public setOnEveryFirefly(): void {
@@ -59,5 +64,9 @@ export class LocationService
     }
   }
   
-  public onFramePass() { }
+  public onFramePass() {
+    for(let ff of this.fireflies) {
+      this.onFramePassForSingleFirefly(ff)
+    }
+  }
 }

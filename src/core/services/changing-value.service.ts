@@ -74,7 +74,8 @@ export class ChangingValueService
           currentFirefly: firefly,
           canvas: this.canvas, 
           fireflies: this.fireflies,
-          app: this.app
+          app: this.app,
+          current: fireflyProp.value
         }
       
       const nextValue = fireflyProp.nextValueFn ? fireflyProp.nextValueFn(parameters) : fireflyProp.value;

@@ -8,8 +8,8 @@ export const neighbourhoodConfig: NeighbourhoodConfig = {
   candidatePicker: () => [],
   neighbourPicker: CONSTANTS.NEIGHBOUR_PICKERS.Circle(100),
   onNeighbourhoodEnter: ({currentFirefly, app}) => {
-    currentFirefly.speedX = -.1 *  currentFirefly.speedX 
-    currentFirefly.speedY = -.1 * currentFirefly.speedY
+    // currentFirefly.speedX = -.1 *  currentFirefly.speedX 
+    // currentFirefly.speedY = -.1 * currentFirefly.speedY
     currentFirefly.hue.value = 100;
 
 

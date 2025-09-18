@@ -1,5 +1,5 @@
 import { Color, Range } from "../models";
-import { PossibleValue, ValueGenerator, ValueGeneratorParameters, WeightedValue } from "../types";
+import { ChangingValueConfig, PossibleValue, SpeedConfig, ValueGenerator, ValueGeneratorParameters, WeightedValue } from "../types";
 
 export class Utilities {
 
@@ -161,6 +161,73 @@ export class Utilities {
     }
   }
 
+  public static Speed = {
+    toPolar: (
+      speedX: number, 
+      speedY: number
+    ) => {
+      const polarSpeedAmount = Math.sqrt(speedX * speedX + speedY * speedY);
+      const polarSpeedAngle = Math.atan2(speedY, speedX);
+      
+      return {
+        polarSpeedAngle,
+        polarSpeedAmount
+      };
+    },
+    toCartesian: (
+      polarSpeedAmount: number,
+      polarSpeedAngle: number,
+    ) => {
+      const speedX = polarSpeedAmount * Math.cos(polarSpeedAngle);
+      const speedY = polarSpeedAmount * Math.sin(polarSpeedAngle);
+      
+      return { speedX, speedY };
+    },
+    onlyCartesianValue: (
+      speedX: number, 
+      speedY: number
+    ): SpeedConfig => ({
+      polarSpeedAmount: {
+        value: 0
+      },
+      polarSpeedAngle: {
+        value: 0
+      },
+      speedX: {
+        value: speedX,
+      },
+      speedY: {
+        value: speedY
+      }
+    }),
+    onlyPolarValue: (
+      polarSpeedAngle: number,
+      polarSpeedAmount: number
+    ): SpeedConfig => ({
+      polarSpeedAmount: {
+        value: polarSpeedAmount
+      },
+      polarSpeedAngle: {
+        value: polarSpeedAngle
+      },
+      speedX: {
+        value: 0,
+      },
+      speedY: {
+        value: 0
+      }
+    })
+  } as const
+
+  public static ChangingValue = {
+    incrementByValue: (value: number): ChangingValueConfig['nextValueFn'] => {
+      return ({current}) => current + value;
+    },
+    decrementByValue: (value: number): ChangingValueConfig['nextValueFn'] => {
+      return ({current}) => current + value;
+    },
+  }
+
   public static chooseBetweenMultipleValues<T>(values: T[]): T {
     const index = Utilities.getRandomNumberBetween({
       min: 0,
@@ -171,31 +238,31 @@ export class Utilities {
   }
 
   public static getValueFromWeightedValues<T>(values: WeightedValue<T>[]): T {
-  if (values.length === 0) {
-    throw new Error('Cannot select from empty array');
-  }
-  
-  // Calculate total weight
-  const totalWeight = values.reduce((sum, item) => sum + item.weight, 0);
-  
-  if (totalWeight <= 0) {
-    throw new Error('Total weight must be greater than 0');
-  }
-  
-  // Generate random number between 0 and totalWeight
-  const random = Math.random() * totalWeight;
-  
-  // Find the selected item
-  let accumulatedWeight = 0;
-  
-  for (const item of values) {
-    accumulatedWeight += item.weight;
-    if (random <= accumulatedWeight) {
-      return item.value;
+    if (values.length === 0) {
+      throw new Error('Cannot select from empty array');
     }
+    
+    // Calculate total weight
+    const totalWeight = values.reduce((sum, item) => sum + item.weight, 0);
+    
+    if (totalWeight <= 0) {
+      throw new Error('Total weight must be greater than 0');
+    }
+    
+    // Generate random number between 0 and totalWeight
+    const random = Math.random() * totalWeight;
+    
+    // Find the selected item
+    let accumulatedWeight = 0;
+    
+    for (const item of values) {
+      accumulatedWeight += item.weight;
+      if (random <= accumulatedWeight) {
+        return item.value;
+      }
+    }
+    
+    // Fallback (should theoretically never reach here)
+    return values[values.length - 1].value;
   }
-  
-  // Fallback (should theoretically never reach here)
-  return values[values.length - 1].value;
-}
 }

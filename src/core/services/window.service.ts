@@ -61,6 +61,7 @@ export class WindowService
         this.config.onFireflyMouseOver?.(parameters)
 
         if (!this.mouseHoveredFirefliesKeys.includes(ff.key)) {
+          this.config.onFireflyMouseEnter?.(parameters)
           this.mouseHoveredFirefliesKeys.push(ff.key)
         }
       }

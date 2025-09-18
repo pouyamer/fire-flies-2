@@ -1,14 +1,20 @@
+import { CONSTANTS } from "../constants/constants";
 import { SpeedType } from "../enums";
 import { SpeedConfig } from "../types";
 import { Utilities } from "../utilities";
 
-const ALL_ANGLES = {
-  min: 0,
-  max: 2 * Math.PI
-}
-
 export const speedConfig: SpeedConfig = {
-  type: SpeedType.Polar,
-  angle_PI: ALL_ANGLES,
-  speed: 4
+  polarSpeedAmount: {
+    value: 3,
+  },
+  polarSpeedAngle: {
+    value: () => CONSTANTS.Ranges.ALL_ANGLES,
+  },
+  speedX: {
+    value: 0,
+  },
+  speedY: {
+    value: 0,
+
+  },
 }

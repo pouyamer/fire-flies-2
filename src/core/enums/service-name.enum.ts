@@ -6,8 +6,6 @@ export enum ServiceName {
   Lightness = "lightness",
   Alpha = "alpha",
   Size = "size",
-  Speed = "speed",
-  Acceleration = "acceleration",
   Draw = "draw",
   Bound = "bound",
   Window = "window",
@@ -16,5 +14,10 @@ export enum ServiceName {
   GlobalFireflyModifier = "global-firefly-modifier",
   Collision = "collision",
   Neighbourhood = "neighbourhood",
-  Life = "life"
+  Life = "life",
+  /* === Speed === */
+  SpeedX = "speedX",
+  SpeedY = "speedY",
+  PolarSpeedAngle = "polarSpeedAngle",
+  PolarSpeedAmount = "polarSpeedAmount",
 };

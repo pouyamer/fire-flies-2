@@ -132,4 +132,22 @@ export class CONSTANTS {
     }
   }
 
+  
+  public static Angles = {
+    PI: Math.PI,
+    TWO_PI: Math.PI * 2,
+    HALF_PI: Math.PI / 2,
+    THREE_HALF_PI: Math.PI / 2,
+    Q_PI: Math.PI / 4,
+    THREE_Q_PI: Math.PI / 4,
+    nPi: (n: number) => n * Math.PI
+  } as const;
+
+  public static Ranges = {
+    ALL_ANGLES: {
+      min: 0,
+      max: 2 * Math.PI
+    }
+  }
+
 }

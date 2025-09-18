@@ -1,13 +1,9 @@
-import { SpeedType } from "../enums"
-import { PossibleValue } from "./possible-value.type"
+import { ChangingValueConfig } from "./changing-value-config.type";
 
-export type SpeedConfig ={
-  type: SpeedType.Cartesian,
-  speedX: PossibleValue<number>,
-  speedY: PossibleValue<number>,
-} |
-{
-  type: SpeedType.Polar,
-  angle_PI: PossibleValue<number>,
-  speed: PossibleValue<number>,
+
+export type SpeedConfig = {
+  speedX: ChangingValueConfig;
+  speedY: ChangingValueConfig;
+  polarSpeedAngle: ChangingValueConfig;
+  polarSpeedAmount: ChangingValueConfig;
 }

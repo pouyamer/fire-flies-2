@@ -6,4 +6,5 @@ export type WindowConfig = {
   // TODO: later offset for the position of the canvas
   onFireflyMouseOver?: EventCallBack;
   onFireflyMouseLeave?: EventCallBack;
+  onFireflyMouseEnter?: EventCallBack
 }

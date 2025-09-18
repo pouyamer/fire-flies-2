@@ -1,7 +1,7 @@
 import { ChangingValueConfig } from "../types"
+import { Utilities } from "../utilities"
 
 
 export const hueConfig: ChangingValueConfig = {
-  value: 100,
-  min: 100,
+  value: Utilities.range(0, 360)
 }
