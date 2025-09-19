@@ -50,9 +50,18 @@ export class ChangingValueService
       this.config.value
     );
 
-    firefly[this.key].max = this.config.max ? this.getValue(firefly, this.config.max) : null;
-    firefly[this.key].min = this.config.min ? this.getValue(firefly, this.config.min) : null;
-    firefly[this.key].nextValueFn = this.config.nextValueFn ?? null;
+    firefly[this.key].max = (
+      this.config.max !== null && 
+      this.config.max !== undefined
+    ) ? this.getValue(firefly, this.config.max) : null;
+
+    firefly[this.key].min = (
+      this.config.min !== null && 
+      this.config.min !== undefined
+    ) ? this.getValue(firefly, this.config.min) : null;
+
+    firefly[this.key].nextValueFn = this.config.nextValueFn;
+
   }
 
   public setOnEveryFirefly(): void {
@@ -78,29 +87,27 @@ export class ChangingValueService
           current: fireflyProp.value
         }
       
-      const nextValue = fireflyProp.nextValueFn ? fireflyProp.nextValueFn(parameters) : fireflyProp.value;
+      if (fireflyProp.nextValueFn) {
+        const nextValue = fireflyProp.nextValueFn(parameters)
 
-      if (
-        fireflyProp.max !== null &&
-        nextValue >= fireflyProp.max
-      ) {
-        this.config.onMax?.(parameters)
-        fireflyProp.value = fireflyProp.max;
-      } else if (
-        fireflyProp.min !== null &&
-        nextValue < fireflyProp.min
-      ) {
-        this.config.onMin?.(parameters);
-        fireflyProp.value = fireflyProp.min;
+        if (
+          fireflyProp.max !== null &&
+          nextValue > fireflyProp.max
+        ) {
+          this.config.onMax?.(parameters)
+          fireflyProp.value = fireflyProp.max;
+        } else if (
+          fireflyProp.min !== null &&
+          nextValue < fireflyProp.min
+        ) {
+          this.config.onMin?.(parameters);
+          fireflyProp.value = fireflyProp.min;
+        }
+        else {
+          fireflyProp.value = nextValue;
+        }
       }
-      else {
-        fireflyProp.value = nextValue;
-      }
-
     }
-
-
-
   }
 
   public onFramePass(): void {

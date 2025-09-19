@@ -221,10 +221,10 @@ export class Utilities {
 
   public static ChangingValue = {
     incrementByValue: (value: number): ChangingValueConfig['nextValueFn'] => {
-      return ({current}) => current + value;
+      return ({current}) => (current + value);
     },
     decrementByValue: (value: number): ChangingValueConfig['nextValueFn'] => {
-      return ({current}) => current + value;
+      return ({current}) => (current - value);
     },
   }
 
