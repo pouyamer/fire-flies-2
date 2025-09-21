@@ -6,8 +6,9 @@ export class FireflyCanvas {
   height: number;
   width: number;
   color: Color;
-  viewElement: HTMLCanvasElement | null;
-  renderingContext: CanvasRenderingContext2D | null;
+  hostElement: HTMLElement | null;
+  canvasElement: HTMLCanvasElement;
+  renderingContext2d: CanvasRenderingContext2D | null;
   leftBound: number | null;
   rightBound: number | null;
   topBound: number | null;
@@ -19,10 +20,14 @@ export class FireflyCanvas {
     this.height = model.height ?? DEFAULT_VALUE.CanvasHeight;
     this.width = model.width ?? DEFAULT_VALUE.CanvasWidth;
     this.color = model.color ?? DEFAULT_VALUE.Color;
-    this.viewElement = model.viewElement ?? null;
-    if (!model.viewElement) console.warn(MESSAGE.CanvasElementDoesNotExist);
-    this.renderingContext = model.viewElement?.getContext("2d") ?? null;
-    if (!this.renderingContext) console.warn(MESSAGE.CanvasRenderingContextDoesNotExist)
+    this.hostElement = model.hostElement ?? null;
+    this.canvasElement = document.createElement('canvas');
+    this.canvasElement.innerHTML = 'Your Browser doesn\'t support HTML Canvas :(';
+    this.canvasElement.classList.add('canvas')
+    if (this.hostElement) {
+      this.hostElement.appendChild(this.canvasElement)
+    }
+    this.renderingContext2d = this.canvasElement.getContext('2d');
     this.leftBound = model.leftBound ?? null;
     this.rightBound = model.rightBound ?? null;
     this.topBound = model.topBound ?? null;
@@ -42,16 +47,12 @@ export class FireflyCanvas {
     this.height = height;
     this.width = width;
 
-    if (this.viewElement) {
-      this.viewElement.height = height;
-      this.viewElement.width = width;
-    }
+    this.canvasElement.height = height;
+    this.canvasElement.width = width;
   }
 
   public setColor(value: Color) {
     this.color = value;
-    if (this.viewElement) {
-      this.viewElement.style.backgroundColor = Utilities.hslColorToString(value)
-    }
+    this.canvasElement.style.backgroundColor = Utilities.hslColorToString(value)
   }
 }

@@ -1,7 +1,7 @@
 import { FireflyApp } from "./core";
 import { Color, FireflyCanvas } from "./core/models";
 
-const canvasElement: HTMLCanvasElement | null = document.querySelector(".canvas");
+const canvasElement = document.querySelector("body");
 
 const canvas = new FireflyCanvas({
   color: new Color({
@@ -12,7 +12,7 @@ const canvas = new FireflyCanvas({
   }),
   height: innerHeight,
   width: innerWidth,
-  viewElement: canvasElement,
+  hostElement: canvasElement,
 })
 
 if (canvas) {

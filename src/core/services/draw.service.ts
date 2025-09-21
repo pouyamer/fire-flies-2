@@ -116,7 +116,7 @@ export class DrawService
   }
 
   public onFramePassForSingleFirefly(firefly: Firefly): void {
-    const { renderingContext: ctx } = this.canvas
+    const { renderingContext2d: ctx } = this.canvas
 
     const serviceExists = !!firefly.activeServices.find(
       s => s.name === ServiceName.Draw
@@ -141,7 +141,7 @@ export class DrawService
 
   public onFramePass(): void {
     if (this.config.clearBeforeDrawing) {
-      this.canvas.renderingContext?.clearRect(0, 0, this.canvas.width, this.canvas.height)
+      this.canvas.renderingContext2d?.clearRect(0, 0, this.canvas.width, this.canvas.height)
     }
 
     for(let i = 0; i < this.config.iterationPerFrame; i++) {

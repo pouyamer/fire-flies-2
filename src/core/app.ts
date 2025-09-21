@@ -168,17 +168,17 @@ export class FireflyApp {
     // const avgSpeedX = Math.floor((this.fireflies.map(ff => ff.speedX).reduce((a, b) => a + Math.abs(b) / this.fireflies.length, 0)) * 100) / 100
     // const avgSpeedY = Math.floor((this.fireflies.map(ff => ff.speedY).reduce((a, b) => a + Math.abs(b) / this.fireflies.length, 0)) * 100) / 100
     
-    this.canvas.renderingContext!.fillStyle  = "white"
-    this.canvas.renderingContext!.font = "48px serif";
+    // this.canvas.renderingContext2d!.fillStyle  = "white"
+    // this.canvas.renderingContext2d!.font = "48px serif";
     // this.canvas.renderingContext!.fillText(`avgSpeedX: ${avgSpeedX}`, 100, 100);
     // this.canvas.renderingContext!.fillText(`avgSpeedY: ${avgSpeedY}`, 100, 150);
 
     
-    this.fireflies.forEach((ff, i) => {
-      this.canvas.renderingContext!.font = "30px serif";
-      this.canvas.renderingContext!.fillStyle = 'white'
-      // this.canvas.renderingContext!.fillText((isFinite(Math.floor(ff.life)) ? Math.floor(ff.life) : '').toString(), ff.x, ff.y);
-    })
+    // this.fireflies.forEach((ff, i) => {
+    //   this.canvas.renderingContext2d!.font = "30px serif";
+    //   this.canvas.renderingContext2d!.fillStyle = 'white'
+    //   // this.canvas.renderingContext!.fillText((isFinite(Math.floor(ff.life)) ? Math.floor(ff.life) : '').toString(), ff.x, ff.y);
+    // })
 
     if(!this.paused) {
       requestAnimationFrame(this.run);
