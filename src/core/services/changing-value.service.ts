@@ -92,16 +92,16 @@ export class ChangingValueService
 
         if (
           fireflyProp.max !== null &&
-          nextValue > fireflyProp.max
+          nextValue >= fireflyProp.max
         ) {
-          this.config.onMax?.(parameters)
           fireflyProp.value = fireflyProp.max;
+          this.config.onMax?.(parameters)
         } else if (
           fireflyProp.min !== null &&
-          nextValue < fireflyProp.min
+          nextValue <= fireflyProp.min
         ) {
-          this.config.onMin?.(parameters);
           fireflyProp.value = fireflyProp.min;
+          this.config.onMin?.(parameters);
         }
         else {
           fireflyProp.value = nextValue;

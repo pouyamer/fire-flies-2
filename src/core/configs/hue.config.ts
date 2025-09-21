@@ -3,5 +3,5 @@ import { Utilities } from "../utilities"
 
 
 export const hueConfig: ChangingValueConfig = {
-  value: Utilities.range(0, 360)
+  value: 70
 }

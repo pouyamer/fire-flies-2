@@ -5,7 +5,7 @@ import { Utilities } from "../utilities";
 
 export const speedConfig: SpeedConfig = {
   polarSpeedAmount: {
-    value: 3,
+    value: 1,
   },
   polarSpeedAngle: {
     value: () => CONSTANTS.Ranges.ALL_ANGLES,
