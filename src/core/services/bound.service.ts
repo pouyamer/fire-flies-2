@@ -6,14 +6,31 @@ import { BoundsConfig, Direction } from "../types";
 
 export class BoundService implements Service {
 
+  private fireflies: Firefly[];
   name = ServiceName.Bound;
 
   constructor(
     private readonly canvas: FireflyCanvas,
-    private readonly fireflies: Firefly[],
+    fireflies: Firefly[],
     private readonly config: BoundsConfig,
     private readonly app: FireflyApp
   ) {
+    this.fireflies = [...fireflies];
+  }
+
+  public addFireflies(fireflies: Firefly[]): void {
+    const fireflyKeys = this.fireflies.map(({key}) => key);
+
+    for(const ff of fireflies) {
+      if (!fireflyKeys.includes(ff.key)) fireflies.push(ff);
+      this.setOnSingleFirefly(ff);
+    }
+  }
+
+  public removeFireflies(fireflies: Firefly[]): void {
+    const removingFireflyKeys = fireflies.map(({key}) => key);
+    
+    this.fireflies = this.fireflies.filter(({key}) => !removingFireflyKeys.includes(key));
   }
 
   private touchedBoundFromDirection(
@@ -179,9 +196,6 @@ export class BoundService implements Service {
   }
 
   public setOnSingleFirefly(firefly: Firefly): void {
-    if (!firefly.activeServices?.some(service => service.name === this.name)) {
-      firefly.activeServices?.push(this)
-    }
   }
 
   public setOnEveryFirefly() {
@@ -220,25 +234,19 @@ export class BoundService implements Service {
   }
 
   public onFramePassForSingleFirefly(firefly: Firefly): void {
-
-    const serviceExists = !!firefly.activeServices.find(
-      s => s.name === this.name
-    );
     
-    if (serviceExists) {
-      const directions: Direction[] = ["bottom", "left", "right", "top"];
+    const directions: Direction[] = ["bottom", "left", "right", "top"];
 
-      this.handleOutOfBoundsByDirection(firefly);
-      this.handleTouchedBoundByDirection(firefly);
+    this.handleOutOfBoundsByDirection(firefly);
+    this.handleTouchedBoundByDirection(firefly);
 
-      directions.forEach(
-        direction => {
-          this.handleTouchedBoundByDirection(firefly, direction);
-          this.handleOutOfBoundsByDirection(firefly, direction);
-        }
-      )
+    directions.forEach(
+      direction => {
+        this.handleTouchedBoundByDirection(firefly, direction);
+        this.handleOutOfBoundsByDirection(firefly, direction);
+      }
+    );
 
-    }
   }
 
   public onFramePass() {

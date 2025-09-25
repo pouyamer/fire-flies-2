@@ -2,20 +2,38 @@ import { FireflyApp } from "../app";
 import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
-import { BoundsConfig, PossibleValue, RotationConfig } from "../types";
+import { PossibleValue, RotationConfig } from "../types";
 import { Utilities } from "../utilities";
 
 export class RotationService
   implements Service {
   
+  private fireflies: Firefly[];
   name = ServiceName.Rotation;
 
   constructor(
     private readonly canvas: FireflyCanvas,
-    private readonly fireflies: Firefly[],
+    fireflies: Firefly[],
     private readonly config: RotationConfig,
     private readonly app: FireflyApp
-  ) {}
+  ) {
+    this.fireflies = [...fireflies];
+  }
+
+  public addFireflies(fireflies: Firefly[]): void {
+    const fireflyKeys = this.fireflies.map(({key}) => key);
+
+    for(const ff of fireflies) {
+      if (!fireflyKeys.includes(ff.key)) fireflies.push(ff);
+      this.setOnSingleFirefly(ff);
+    }
+  }
+
+  public removeFireflies(fireflies: Firefly[]): void {
+    const removingFireflyKeys = fireflies.map(({key}) => key);
+    
+    this.fireflies = this.fireflies.filter(({key}) => !removingFireflyKeys.includes(key));
+  }
 
   // the inner get value sets args for Utilities.getNumericValue in valueGenerator mode
   private getValue(firefly: Firefly, value: PossibleValue<number>): number {
@@ -37,10 +55,6 @@ export class RotationService
   }
 
   public setOnSingleFirefly(firefly: Firefly): void {
-    if (!firefly.activeServices?.some(service => service.name === this.name)) {
-      firefly.activeServices?.push(this)
-    }
-
     firefly.rotatedAngle = this.getValue(firefly, this.config.startingAngle);
     firefly.rotateSpeed = this.getValue(firefly, this.config.speed_PI);
     firefly.rotateAcceleration = this.getValue(firefly, this.config.acceleration_PI);

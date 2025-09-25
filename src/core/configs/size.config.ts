@@ -1,6 +1,7 @@
 import { ChangingValueConfig } from "../types";
+import { Utilities } from "../utilities";
 
 export const sizeConfig: ChangingValueConfig = {
-  value: [5, 7],
+  value: Utilities.range(1, 15),
   max: 20
 }

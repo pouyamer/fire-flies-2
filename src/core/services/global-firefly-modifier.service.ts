@@ -5,14 +5,33 @@ import { Firefly, FireflyCanvas } from "../models";
 import { GlobalFireflyModifierConfig } from "../types";
 
 export class GlobalFireflyModifierService implements Service {
+  
+  private fireflies: Firefly[];
   name = ServiceName.GlobalFireflyModifier;
 
   constructor(
     private readonly canvas: FireflyCanvas,
-    private readonly fireflies: Firefly[],
+    fireflies: Firefly[],
     private readonly config: GlobalFireflyModifierConfig,
     private readonly app: FireflyApp
-  ){}
+  ){
+    this.fireflies = [...fireflies];
+  }
+
+  public addFireflies(fireflies: Firefly[]): void {
+    const fireflyKeys = this.fireflies.map(({key}) => key);
+
+    for(const ff of fireflies) {
+      if (!fireflyKeys.includes(ff.key)) fireflies.push(ff);
+      this.setOnSingleFirefly(ff);
+    }
+  }
+
+  public removeFireflies(fireflies: Firefly[]): void {
+    const removingFireflyKeys = fireflies.map(({key}) => key);
+    
+    this.fireflies = this.fireflies.filter(({key}) => !removingFireflyKeys.includes(key));
+  }
 
   onFramePassForSingleFirefly(firefly: Firefly): void {
     this.config.onFramePassModifier({

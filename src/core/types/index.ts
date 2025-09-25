@@ -19,3 +19,4 @@ export * from "./collision-config.type";
 export * from "./neighbourhood-config.type";
 export * from "./draw-config.type";
 export * from "./life-config.type";
+export * from "./hsl-color-config.type";

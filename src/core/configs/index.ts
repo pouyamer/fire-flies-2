@@ -1,9 +1,5 @@
 export * from "./speed.config";
 export * from "./size.config";
-export * from "./hue.config";
-export * from "./saturation.config";
-export * from "./lightness.config";
-export * from "./alpha.config";
 export * from "./location.config";
 export * from "./shape.config";
 export * from "./bounds.config";
@@ -16,3 +12,4 @@ export * from "./global-firefly-modifier.config"
 export * from "./neighbourhood.config";
 export * from "./draw.config";
 export * from "./life.config";
+export * from "./hsl-color.config"

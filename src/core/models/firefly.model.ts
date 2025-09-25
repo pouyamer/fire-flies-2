@@ -1,5 +1,4 @@
-import { Shape, SpeedType } from "../enums";
-import { Service } from "../interfaces";
+import { Shape } from "../enums";
 import { DrawConfig, ShapeValue } from "../types";
 import { ChangingNumericalValueItem } from "./changing-numerical-value-item.model";
 
@@ -18,7 +17,6 @@ export class Firefly {
   x: number;
   y: number;
   initialFireflySnapshot: Firefly | null;
-  activeServices: Service[];
   rotatedAngle: number;
   rotateSpeed: number;
   rotateAcceleration: number;
@@ -55,7 +53,6 @@ export class Firefly {
     this.rotateAcceleration = model.rotateAcceleration ?? 0;
     this.jitterX = model.jitterX ?? 0;
     this.jitterY = model.jitterY ?? 0;
-    this.activeServices = model.activeServices ?? [];
     this.firefliesInCollision = model.firefliesInCollision ?? [];
     this.neighboredBy = model.neighboredBy ?? null;
     this.neighbors = model.neighbors ?? [];

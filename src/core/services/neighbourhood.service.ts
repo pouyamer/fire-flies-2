@@ -8,6 +8,8 @@ import { NeighbourhoodConfig } from "../types";
 export class NeighbourhoodService
   implements Service {
 
+  private fireflies: Firefly[];
+    
   protected candidateFireflies: Firefly[] = [];
     
   public name = ServiceName.Neighbourhood;
@@ -15,10 +17,27 @@ export class NeighbourhoodService
 
   constructor(
     private readonly canvas: FireflyCanvas,
-    private readonly fireflies: Firefly[],
+    fireflies: Firefly[],
     private readonly config: NeighbourhoodConfig,
     private readonly app: FireflyApp
-  ) {}
+  ) {
+    this.fireflies = [...fireflies];
+  }
+
+  public addFireflies(fireflies: Firefly[]): void {
+    const fireflyKeys = this.fireflies.map(({key}) => key);
+
+    for(const ff of fireflies) {
+      if (!fireflyKeys.includes(ff.key)) fireflies.push(ff);
+      this.setOnSingleFirefly(ff);
+    }
+  }
+
+  public removeFireflies(fireflies: Firefly[]): void {
+    const removingFireflyKeys = fireflies.map(({key}) => key);
+    
+    this.fireflies = this.fireflies.filter(({key}) => !removingFireflyKeys.includes(key));
+  }
 
   public markFireflyAsCandidate(firefly: Firefly): void {
     if (!this.fireflies.map(ff => ff.key).includes(firefly.key)) {

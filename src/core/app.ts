@@ -1,23 +1,18 @@
-import { alphaConfig, boundsConfig, collisionConfig, drawConfig, generalFireflyConfig, globalFireflyModifierConfig, hueConfig, jitterConfig, lifeConfig, lightnessConfig, locationConfig, neighbourhoodConfig, rotationConfig, saturationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "./configs";
+import { boundsConfig, collisionConfig, drawConfig, generalFireflyConfig, globalFireflyModifierConfig, hslColorConfig, jitterConfig, lifeConfig, locationConfig, neighbourhoodConfig, rotationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "./configs";
 import { ServiceName } from "./enums";
-import { Service } from "./interfaces";
 import { Firefly, FireflyCanvas } from "./models";
-import { BoundService, ChangingValueService, CollisionService, DrawService, GlobalFireflyModifierService, JitterService, LifeService, LocationService, NeighbourhoodService, RotationService, ShapeService, WindowService } from "./services";
-import { BoundsConfig, ChangingValueConfig, CollisionConfig, DrawConfig, GeneralFireflyConfig, GlobalFireflyModifierConfig, JitterConfig, LifeConfig, LocationConfig, NeighbourhoodConfig, RotationConfig, ShapeConfig, SpeedConfig, WindowConfig } from "./types";
+import { BoundService, ChangingValueService, DrawService, GlobalFireflyModifierService, JitterService, LifeService, LocationService, NeighbourhoodService, RotationService, ShapeService, WindowService } from "./services";
+import { BoundsConfig, ChangingValueConfig, CollisionConfig, DrawConfig, GeneralFireflyConfig, GlobalFireflyModifierConfig, HslColorConfig, JitterConfig, LifeConfig, LocationConfig, NeighbourhoodConfig, RotationConfig, ShapeConfig, SpeedConfig, WindowConfig } from "./types";
 import { Utilities } from "./utilities";
 
 interface Configs {
-  alpha: ChangingValueConfig;
   bound: BoundsConfig;
   collision: CollisionConfig;
   generalFirefly: GeneralFireflyConfig;
   globalFireflyModifier: GlobalFireflyModifierConfig;
-  hue: ChangingValueConfig;
   jitter: JitterConfig;
-  lightness: ChangingValueConfig;
   location:  LocationConfig;
   rotation: RotationConfig;
-  saturation: ChangingValueConfig;
   shape:  ShapeConfig;
   size: ChangingValueConfig;
   speed: SpeedConfig;
@@ -25,35 +20,45 @@ interface Configs {
   neighbourhood: NeighbourhoodConfig;
   draw: DrawConfig;
   life: LifeConfig;
+  hslColor: HslColorConfig
 }
 
 export class FireflyApp {
 
   private readonly defaultConfigs: Configs = {
-    alpha: alphaConfig,
     bound: boundsConfig,
     collision: collisionConfig,
     draw: drawConfig,
     globalFireflyModifier: globalFireflyModifierConfig,
-    hue: hueConfig,
     jitter: jitterConfig,
-    lightness: lightnessConfig,
     location: locationConfig,
     rotation: rotationConfig,
-    saturation: saturationConfig,
     shape: shapeConfig,
     size: sizeConfig,
     speed: speedConfig,
     window: windowConfig,
     generalFirefly: generalFireflyConfig,
     neighbourhood: neighbourhoodConfig,
-    life: lifeConfig
+    life: lifeConfig,
+    hslColor: hslColorConfig
   }
 
   private canvas: FireflyCanvas
   private fireflies: Firefly[] = [];
   private configs: Configs = this.defaultConfigs;
-  private services: Service[] = [];
+  private services: (
+    | LifeService
+    | ShapeService
+    | ChangingValueService
+    | BoundService
+    | LocationService
+    | WindowService
+    | RotationService
+    | JitterService
+    | NeighbourhoodService
+    | GlobalFireflyModifierService
+    | DrawService
+  )[] = [];
   private collision: Firefly[][] = [];
   private paused: boolean = false;
 
@@ -81,13 +86,13 @@ export class FireflyApp {
     this.services = [
       new LifeService(this.canvas, this.fireflies, this.configs.life, this),
       new ShapeService(this.canvas, this.fireflies, this.configs.shape, this),
-      new ChangingValueService("hue", this.canvas, this.fireflies, this.configs.hue, ServiceName.Hue, this),
-      new ChangingValueService("saturation", this.canvas, this.fireflies, this.configs.saturation, ServiceName.Saturation, this),
-      new ChangingValueService("lightness", this.canvas, this.fireflies, this.configs.lightness, ServiceName.Lightness, this),
+      new ChangingValueService("hue", this.canvas, this.fireflies, this.configs.hslColor.hue, ServiceName.Hue, this),
+      new ChangingValueService("saturation", this.canvas, this.fireflies, this.configs.hslColor.saturation, ServiceName.Saturation, this),
+      new ChangingValueService("lightness", this.canvas, this.fireflies, this.configs.hslColor.lightness, ServiceName.Lightness, this),
       new ChangingValueService("size", this.canvas, this.fireflies, this.configs.size, ServiceName.Size, this),
-      new ChangingValueService("alpha", this.canvas, this.fireflies, this.configs.alpha, ServiceName.Alpha, this),
+      new ChangingValueService("alpha", this.canvas, this.fireflies, this.configs.hslColor.alpha, ServiceName.Alpha, this),
       new BoundService(this.canvas, this.fireflies, this.configs.bound, this),
-      new CollisionService(this.canvas, this.fireflies, this.configs.collision, this, this.collision),
+      // new CollisionService(this.canvas, this.fireflies, this.configs.collision, this, this.collision),
       /* ========= Speed ============ */
       new ChangingValueService("speedX", this.canvas, this.fireflies, this.configs.speed.speedX, ServiceName.SpeedX, this),
       new ChangingValueService("speedY", this.canvas, this.fireflies, this.configs.speed.speedY, ServiceName.SpeedY, this),
@@ -116,14 +121,14 @@ export class FireflyApp {
 
   public setServicesOnSingleFirefly(firefly: Firefly) {
     for (let service of this.services) {
-      service.setOnSingleFirefly(firefly)
+      service.addFireflies([firefly]);
     }
   }
 
   public setServicesOnSingleFireflyByServiceNames(firefly: Firefly, ...names: ServiceName[]) {
     for(const service of this.services) {
       if (names.includes(service.name)) {
-        service.setOnSingleFirefly(firefly);
+        service.addFireflies([firefly]);
       }
     }
   }
@@ -144,9 +149,15 @@ export class FireflyApp {
   }
 
   public removeFirefly(firefly: Firefly): void {
-    for (let i = this.fireflies.length - 1; i >= 0; i--) {
-      if (this.fireflies[i].key === firefly.key) {
-        this.fireflies.splice(i, 1);
+    for(const s of this.services){
+      s.removeFireflies([firefly]);
+    }
+  }
+
+  public removeFireflyFromServices(firefly: Firefly, ...names: ServiceName[]) {
+    for(const s of this.services) {
+      if (names.includes(s.name)) {
+        s.removeFireflies([firefly]);
       }
     }
   }

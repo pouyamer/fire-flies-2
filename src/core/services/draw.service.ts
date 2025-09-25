@@ -8,14 +8,32 @@ import { Utilities } from "../utilities";
 export class DrawService
   implements Service {
 
+  private fireflies: Firefly[];
+    
   name = ServiceName.Draw;
 
   constructor(
     private readonly canvas: FireflyCanvas,
-    private readonly fireflies: Firefly[],
+    fireflies: Firefly[],
     private readonly config: DrawConfig,
     private readonly app: FireflyApp
   ) {
+    this.fireflies = [...fireflies];
+  }
+
+  public addFireflies(fireflies: Firefly[]): void {
+    const fireflyKeys = this.fireflies.map(({key}) => key);
+
+    for(const ff of fireflies) {
+      if (!fireflyKeys.includes(ff.key)) fireflies.push(ff);
+      this.setOnSingleFirefly(ff);
+    }
+  }
+
+  public removeFireflies(fireflies: Firefly[]): void {
+    const removingFireflyKeys = fireflies.map(({key}) => key);
+    
+    this.fireflies = this.fireflies.filter(({key}) => !removingFireflyKeys.includes(key));
   }
 
   private drawFirefly(
@@ -101,9 +119,6 @@ export class DrawService
   }
 
   public setOnSingleFirefly(firefly: Firefly): void {
-    if (!firefly.activeServices?.some(service => service.name === this.name)) {
-      firefly.activeServices?.push(this)
-    }
 
     const method = typeof this.config.method === "string" ? this.config.method : this.config.method({
       app: this.app,
@@ -118,11 +133,7 @@ export class DrawService
   public onFramePassForSingleFirefly(firefly: Firefly): void {
     const { renderingContext2d: ctx } = this.canvas
 
-    const serviceExists = !!firefly.activeServices.find(
-      s => s.name === ServiceName.Draw
-    )
-
-    if (ctx && serviceExists) {
+    if (ctx) {
 
       const style = Utilities.hslColorToString(new Color({
         hue: firefly.hue.value,

@@ -8,13 +8,31 @@ import { Utilities } from "../utilities";
 export class LifeService 
   implements Service {
     name = ServiceName.Life;
+    private fireflies: Firefly[];
 
     constructor(
       private readonly canvas: FireflyCanvas,
-      private readonly fireflies: Firefly[],
+      fireflies: Firefly[],
       private readonly config: LifeConfig,
       private readonly app: FireflyApp
-    ) {}
+    ) {
+      this.fireflies = [...fireflies];
+    }
+
+    public addFireflies(fireflies: Firefly[]): void {
+      const fireflyKeys = this.fireflies.map(({key}) => key);
+
+      for(const ff of fireflies) {
+        if (!fireflyKeys.includes(ff.key)) fireflies.push(ff);
+        this.setOnSingleFirefly(ff);
+      }
+    }
+
+    public removeFireflies(fireflies: Firefly[]): void {
+      const removingFireflyKeys = fireflies.map(({key}) => key);
+      
+      this.fireflies = this.fireflies.filter(({key}) => !removingFireflyKeys.includes(key));
+    }
 
     // the inner get value sets args for Utilities.getValue in valueGenerator mode
     private getValue(firefly: Firefly, value: PossibleValue<number>) {
@@ -36,10 +54,6 @@ export class LifeService
     }
 
     setOnSingleFirefly(firefly: Firefly): void {
-      if (!firefly.activeServices?.some(service => service.name === this.name)) {
-        firefly.activeServices?.push(this)
-      }
-
       firefly.life = this.getValue(firefly, this.config.value);
       firefly.key = this.config.codeGenerator();
     }
@@ -57,11 +71,7 @@ export class LifeService
     }
 
    onFramePassForSingleFirefly(firefly: Firefly): void {
-    const serviceExists = !!firefly.activeServices.find(
-      s => s.name === this.name
-    );
     
-    if (serviceExists) {
       if (this.config.nextValueFn) {
         const nextValue = this.config.nextValueFn({
           app: this.app,
@@ -83,7 +93,6 @@ export class LifeService
         firefly.life = nextValue
       }
     }
-   } 
 
 
   }

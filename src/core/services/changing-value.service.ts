@@ -8,43 +8,56 @@ import { Utilities } from "../utilities";
 export class ChangingValueService
   implements Service {
 
+  private fireflies: Firefly[];
   name;
 
   constructor(
     private readonly key: ChangingValueKey<Firefly>,
     private readonly canvas: FireflyCanvas,
-    private readonly fireflies: Firefly[],
+    fireflies: Firefly[],
     private readonly config: ChangingValueConfig,
     name: ServiceName,
     private readonly app: FireflyApp,
   ) {
     this.name = name;
+    this.fireflies = [...fireflies];
   }
 
-    // the inner get value sets args for Utilities.getNumericValue in valueGenerator mode
-    private getValue(firefly: Firefly, value: PossibleValue<number>) {
-      if (
-        Utilities.isRange(value) ||
-        typeof value === "number" ||
-        Array.isArray(value)
-      ) {
-        return Utilities.getNumericValue(value);
-      }
-      else {
-        return Utilities.getNumericValue(value({
-          currentFirefly: firefly,
-          canvas: this.canvas,
-          fireflies: this.fireflies,
-          app: this.app
-        }));
-      }
-    }
+  public addFireflies(fireflies: Firefly[]): void {
+    const fireflyKeys = this.fireflies.map(({key}) => key);
 
-  public setOnSingleFirefly(firefly: Firefly) {
-    if (!firefly.activeServices?.some(service => service.name === this.name)) {
-      firefly.activeServices?.push(this)
+    for(const ff of fireflies) {
+      if (!fireflyKeys.includes(ff.key)) fireflies.push(ff);
+      this.setOnSingleFirefly(ff);
     }
+  }
+
+  public removeFireflies(fireflies: Firefly[]): void {
+    const removingFireflyKeys = fireflies.map(({key}) => key);
     
+    this.fireflies = this.fireflies.filter(({key}) => !removingFireflyKeys.includes(key));
+  }
+
+  // the inner get value sets args for Utilities.getNumericValue in valueGenerator mode
+  private getValue(firefly: Firefly, value: PossibleValue<number>) {
+    if (
+      Utilities.isRange(value) ||
+      typeof value === "number" ||
+      Array.isArray(value)
+    ) {
+      return Utilities.getNumericValue(value);
+    }
+    else {
+      return Utilities.getNumericValue(value({
+        currentFirefly: firefly,
+        canvas: this.canvas,
+        fireflies: this.fireflies,
+        app: this.app
+      }));
+    }
+  }
+
+  public setOnSingleFirefly(firefly: Firefly) {    
     firefly[this.key].value = this.getValue(
       firefly,
       this.config.value
@@ -73,39 +86,32 @@ export class ChangingValueService
   public onFramePassForSingleFirefly(firefly: Firefly): void {
     const fireflyProp = firefly[this.key];
 
-    const serviceExists = !!firefly.activeServices.find(
-      s => s.name === this.name
-    )
-
-    if (serviceExists) {
-
-      const parameters = {
-          currentFirefly: firefly,
-          canvas: this.canvas, 
-          fireflies: this.fireflies,
-          app: this.app,
-          current: fireflyProp.value
-        }
+    const parameters = {
+      currentFirefly: firefly,
+      canvas: this.canvas, 
+      fireflies: this.fireflies,
+      app: this.app,
+      current: fireflyProp.value
+    }
       
-      if (fireflyProp.nextValueFn) {
-        const nextValue = fireflyProp.nextValueFn(parameters)
+    if (fireflyProp.nextValueFn) {
+      const nextValue = fireflyProp.nextValueFn(parameters)
 
-        if (
-          fireflyProp.max !== null &&
-          nextValue >= fireflyProp.max
-        ) {
-          fireflyProp.value = fireflyProp.max;
-          this.config.onMax?.(parameters)
-        } else if (
-          fireflyProp.min !== null &&
-          nextValue <= fireflyProp.min
-        ) {
-          fireflyProp.value = fireflyProp.min;
-          this.config.onMin?.(parameters);
-        }
-        else {
-          fireflyProp.value = nextValue;
-        }
+      if (
+        fireflyProp.max !== null &&
+        nextValue >= fireflyProp.max
+      ) {
+        fireflyProp.value = fireflyProp.max;
+        this.config.onMax?.(parameters)
+      } else if (
+        fireflyProp.min !== null &&
+        nextValue <= fireflyProp.min
+      ) {
+        fireflyProp.value = fireflyProp.min;
+        this.config.onMin?.(parameters);
+      }
+      else {
+        fireflyProp.value = nextValue;
       }
     }
   }
