@@ -1,5 +1,6 @@
+import { DrawService } from "../services";
 import { GeneralFireflyConfig } from "../types";
 
 export const generalFireflyConfig: GeneralFireflyConfig = {
-    count: 2500,
+    count: 8000,
 }

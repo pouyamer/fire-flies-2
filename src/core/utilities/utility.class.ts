@@ -265,4 +265,8 @@ export class Utilities {
     // Fallback (should theoretically never reach here)
     return values[values.length - 1].value;
   }
+
+  public static createWeightedValue<T>(...params: [value: T, weight: number][]): WeightedValue<T>[] {
+    return params.map(([value, weight]) => ({value, weight}));
+  }
 }

@@ -1,16 +1,17 @@
 import { HslColorConfig } from "../types";
+import { Utilities } from "../utilities";
 
 export const hslColorConfig: HslColorConfig = {
   hue: {
-    value: [0, 100, 200, 300]
+    value: Utilities.range(0, 50),
   },
   saturation: {
-    value: 78
+    value: Utilities.range(60, 60),
   },
   lightness: {
-    value: 58
+    value: Utilities.range(45, 55),
   },
   alpha: {
-    value: 1
+    value: Utilities.range(0, 1)
   },
 }

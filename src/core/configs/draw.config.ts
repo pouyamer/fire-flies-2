@@ -1,7 +1,7 @@
 import { DrawConfig } from "../types";
 
 export const drawConfig: DrawConfig = {
-  clearBeforeDrawing: true,
+  clearBeforeDrawing: false,
   iterationPerFrame: 1,
   method: 'fill'
 }

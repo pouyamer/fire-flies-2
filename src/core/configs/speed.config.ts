@@ -1,12 +1,13 @@
+import { CONSTANTS } from "../constants/constants";
 import { SpeedConfig } from "../types";
+import { Utilities } from "../utilities";
 
 export const speedConfig: SpeedConfig = {
   polarSpeedAmount: {
-    value: 0,
-    nextValueFn: ({currentFirefly}) => (1- currentFirefly.alpha.value) * 2 
+    value: 1,
   },
   polarSpeedAngle: {
-    value: 0,
+    value: CONSTANTS.Ranges.ALL_ANGLES,
   },
   speedX: {
     value: 0,

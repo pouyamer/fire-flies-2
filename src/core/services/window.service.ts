@@ -41,7 +41,7 @@ export class WindowService
       this.windowContext.addEventListener("resize", (e: Event) => {
         this.canvas.setWidthAndHeight(this.windowContext.innerWidth, this.windowContext.innerHeight)
         for( let ff of this.fireflies) {
-          this.app.setServicesOnSingleFirefly(ff)
+          this.app.setServicesOnSingleFireflyByServiceNames(ff, ServiceName.Location)
         }
       })
     }
@@ -59,10 +59,7 @@ export class WindowService
 
     private setMouseClickEventListener(): void {
       this.windowContext.addEventListener("click", (e: MouseEvent) => {
-        // this.fireflyApp.togglePauseApplication();
-        this.fireflies.filter(ff => this.isMouseInsideFirefly(ff)).forEach(
-          ff => this.app.markFireflyAsCandidate(ff)
-        )
+        this.app.togglePauseApplication();
       })
     }
 

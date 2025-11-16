@@ -2,6 +2,7 @@ import { boundsConfig, collisionConfig, drawConfig, generalFireflyConfig, global
 import { ServiceName } from "./enums";
 import { Firefly, FireflyCanvas } from "./models";
 import { BoundService, ChangingValueService, DrawService, GlobalFireflyModifierService, JitterService, LifeService, LocationService, NeighbourhoodService, RotationService, ShapeService, WindowService } from "./services";
+import { ColorBinderService } from "./services/color-binder.service";
 import { BoundsConfig, ChangingValueConfig, CollisionConfig, DrawConfig, GeneralFireflyConfig, GlobalFireflyModifierConfig, HslColorConfig, JitterConfig, LifeConfig, LocationConfig, NeighbourhoodConfig, RotationConfig, ShapeConfig, SpeedConfig, WindowConfig } from "./types";
 import { Utilities } from "./utilities";
 
@@ -58,6 +59,7 @@ export class FireflyApp {
     | NeighbourhoodService
     | GlobalFireflyModifierService
     | DrawService
+    | ColorBinderService
   )[] = [];
   private collision: Firefly[][] = [];
   private paused: boolean = false;
@@ -86,11 +88,8 @@ export class FireflyApp {
     this.services = [
       new LifeService(this.canvas, this.fireflies, this.configs.life, this),
       new ShapeService(this.canvas, this.fireflies, this.configs.shape, this),
-      new ChangingValueService("hue", this.canvas, this.fireflies, this.configs.hslColor.hue, ServiceName.Hue, this),
-      new ChangingValueService("saturation", this.canvas, this.fireflies, this.configs.hslColor.saturation, ServiceName.Saturation, this),
-      new ChangingValueService("lightness", this.canvas, this.fireflies, this.configs.hslColor.lightness, ServiceName.Lightness, this),
       new ChangingValueService("size", this.canvas, this.fireflies, this.configs.size, ServiceName.Size, this),
-      new ChangingValueService("alpha", this.canvas, this.fireflies, this.configs.hslColor.alpha, ServiceName.Alpha, this),
+      new ColorBinderService(this.canvas, this.fireflies, this.configs.hslColor, this),
       new BoundService(this.canvas, this.fireflies, this.configs.bound, this),
       // new CollisionService(this.canvas, this.fireflies, this.configs.collision, this, this.collision),
       /* ========= Speed ============ */
@@ -126,9 +125,23 @@ export class FireflyApp {
   }
 
   public setServicesOnSingleFireflyByServiceNames(firefly: Firefly, ...names: ServiceName[]) {
-    for(const service of this.services) {
-      if (names.includes(service.name)) {
-        service.addFireflies([firefly]);
+    for(const s of this.services) {
+      if (s instanceof ColorBinderService) {
+        names.forEach(
+          n => {
+            if (
+              n === ServiceName.Hue ||
+              n === ServiceName.Alpha ||
+              n === ServiceName.Saturation ||
+              n === ServiceName.Lightness
+            ) {
+              s.addFireflies([firefly], n);
+            }
+          }
+        )
+      }
+      else if (names.includes(s.name)) {
+        s.addFireflies([firefly]);
       }
     }
   }
@@ -156,16 +169,30 @@ export class FireflyApp {
 
   public removeFireflyFromServices(firefly: Firefly, ...names: ServiceName[]) {
     for(const s of this.services) {
-      if (names.includes(s.name)) {
+      if (s instanceof ColorBinderService) {
+        names.forEach(
+          n => {
+            if (
+              n === ServiceName.Hue ||
+              n === ServiceName.Alpha ||
+              n === ServiceName.Saturation ||
+              n === ServiceName.Lightness
+            ) {
+              s.removeFireflies([firefly], n);
+            }
+          }
+        )
+      }
+      else if (names.includes(s.name)) {
         s.removeFireflies([firefly]);
       }
     }
   }
 
   public markFireflyAsCandidate(firefly: Firefly): void {
-    const neighbourhoodService = this.services.find(s => s.name === ServiceName.Neighbourhood) as NeighbourhoodService;
+    const neighbourhoodService = this.services.find(s => s instanceof NeighbourhoodService);
 
-    neighbourhoodService.markFireflyAsCandidate(firefly)
+    neighbourhoodService?.markFireflyAsCandidate(firefly)
   }
 
 
