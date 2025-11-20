@@ -1,7 +1,11 @@
 import { DrawConfig } from "../types";
+import { Utilities } from "../utilities";
 
 export const drawConfig: DrawConfig = {
-  clearBeforeDrawing: false,
+  clearBeforeDrawing: true,
   iterationPerFrame: 1,
-  method: 'fill'
+  method: {
+    lineWidth: Utilities.range(1, 10),
+    value: 'stroke'
+  },
 }

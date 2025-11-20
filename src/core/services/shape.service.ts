@@ -73,7 +73,7 @@ export class ShapeService
     }
   }
 
-  onFramePassForSingleFirefly(firefly: Firefly): void {
+  onFramePassForSingleFirefly(/* firefly: Firefly */): void {
     
   }
   

@@ -29,7 +29,7 @@ export class NeighbourhoodService
 
     for(const ff of fireflies) {
       if (!fireflyKeys.includes(ff.key)) fireflies.push(ff);
-      this.setOnSingleFirefly(ff);
+      this.setOnSingleFirefly(/* ff */);
     }
   }
 
@@ -45,7 +45,7 @@ export class NeighbourhoodService
     }
   }
 
-  setOnSingleFirefly(firefly: Firefly): void {
+  setOnSingleFirefly(/* firefly: Firefly */): void {
     
   }
 
@@ -57,7 +57,7 @@ export class NeighbourhoodService
     })
   }
 
-  onFramePassForSingleFirefly(firefly: Firefly): void {
+  onFramePassForSingleFirefly(/* firefly: Firefly */): void {
   }
   
   onFramePass(): void {

@@ -1,4 +1,4 @@
-import { DEFAULT_VALUE, MESSAGE } from "../constants";
+import { DEFAULT_VALUE } from "../constants";
 import { Utilities } from "../utilities";
 import { Color } from "./color.model";
 

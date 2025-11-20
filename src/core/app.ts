@@ -61,7 +61,7 @@ export class FireflyApp {
     | DrawService
     | ColorBinderService
   )[] = [];
-  private collision: Firefly[][] = [];
+  // private collision: Firefly[][] = [];
   private paused: boolean = false;
 
   constructor(
@@ -152,7 +152,7 @@ export class FireflyApp {
     }
     
     this.fireflies.forEach(
-      (ff, i) => {
+      (ff) => {
         ff.initialFireflySnapshot = {
           ...ff,
           initialFireflySnapshot: null,

@@ -1,4 +1,4 @@
-import { ChangingValueConfig, ValueGenerator } from "../types";
+import { ChangingValueConfig } from "../types";
 
 export class ChangingNumericalValueItem {
   max: number | null;

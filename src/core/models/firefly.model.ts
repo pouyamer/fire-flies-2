@@ -1,5 +1,5 @@
 import { Shape } from "../enums";
-import { DrawConfig, ShapeValue } from "../types";
+import { ShapeValue } from "../types";
 import { ChangingNumericalValueItem } from "./changing-numerical-value-item.model";
 
 export class Firefly {
@@ -23,11 +23,12 @@ export class Firefly {
   jitterX: number;
   jitterY: number;
   firefliesInCollision: Firefly[];
-  drawMethod: DrawConfig['method'];
+  drawMethod: 'fill' | 'stroke';
   life: number;
   neighboredBy: Firefly | null;
   neighbors: Firefly[];
   beforeEnteringNeighborhoodSnapshot: Firefly | null;
+  strokeLineWidth: number;
 
 
   constructor(model: Partial<Firefly> = {}) {
@@ -59,6 +60,7 @@ export class Firefly {
     this.beforeEnteringNeighborhoodSnapshot = null;
     this.drawMethod = model.drawMethod ?? 'fill';
     this.life = model.life ?? Infinity;
+    this.strokeLineWidth = model.strokeLineWidth ?? 1;
   }
 
 }

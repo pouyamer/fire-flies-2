@@ -1,9 +1,5 @@
-import { FireflyApp } from "../app";
 import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
-import { Firefly, FireflyCanvas } from "../models";
-import { CollisionConfig } from "../types";
-import { Utilities } from "../utilities";
 
 export class CollisionService 
   implements Service {
@@ -11,17 +7,15 @@ export class CollisionService
   public name = ServiceName.Collision;
 
   constructor(
-    private readonly canvas: FireflyCanvas,
-    private readonly fireflies: Firefly[],
-    private readonly config: CollisionConfig,
-    private readonly app: FireflyApp,
-    private readonly collisions: Firefly[][],
+    // canvas: FireflyCanvas,
+    // private readonly fireflies: Firefly[],
+    // config: CollisionConfig,
+    // app: FireflyApp,
+    // collisions: Firefly[][],
   ) {}
 
-  public onFramePassForSingleFirefly(firefly: Firefly): void {
+  public onFramePassForSingleFirefly(/* firefly: Firefly */): void {
     // if (this.collisions.length) {
-    //   console.log(this.collisions)
-  
     //   }
     // this.fireflies.forEach(
     //   (ff, i) => {
@@ -67,7 +61,6 @@ export class CollisionService
     //   collide => {
     //     if(collide.length) {
 
-    //       console.log("collided")
     //     }
     //   }
     // )
@@ -75,14 +68,14 @@ export class CollisionService
     
   }
   
-  public setOnSingleFirefly(firefly: Firefly): void {
+  public setOnSingleFirefly(/* firefly: Firefly */): void {
     
   }
 
   public onFramePass(): void {
-    for(let ff of this.fireflies) {
-      this.onFramePassForSingleFirefly(ff)
-    }
+    // for(let ff of this.fireflies) {
+    //   this.onFramePassForSingleFirefly()
+    // }
   }
 
   public setOnEveryFirefly(): void {

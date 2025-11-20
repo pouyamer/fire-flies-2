@@ -2,7 +2,7 @@ import { FireflyApp } from "../app";
 import { ServiceName, Shape } from "../enums";
 import { Service } from "../interfaces";
 import { Color, Firefly, FireflyCanvas } from "../models";
-import { DrawConfig } from "../types";
+import { DrawConfig, PossibleValue } from "../types";
 import { Utilities } from "../utilities";
 
 export class DrawService
@@ -19,6 +19,24 @@ export class DrawService
     private readonly app: FireflyApp
   ) {
     this.fireflies = [...fireflies];
+  }
+
+  private getValue(firefly: Firefly, value: PossibleValue<number>) {
+    if (
+      Utilities.isRange(value) ||
+      typeof value === "number" ||
+      Array.isArray(value)
+    ) {
+      return Utilities.getNumericValue(value);
+    }
+    else {
+      return Utilities.getNumericValue(value({
+        currentFirefly: firefly,
+        canvas: this.canvas,
+        fireflies: this.fireflies,
+        app: this.app
+      }));
+    }
   }
 
   public addFireflies(fireflies: Firefly[]): void {
@@ -42,6 +60,7 @@ export class DrawService
   ): void {
 
     const { x, y, size } = firefly;
+
 
     if (typeof firefly.shapeValue === "string") {
       switch(firefly.shapeValue) {
@@ -113,6 +132,8 @@ export class DrawService
   }
 
   public setOnEveryFirefly(): void {
+
+
     for(let ff of this.fireflies) {
       this.setOnSingleFirefly(ff);
     }
@@ -120,14 +141,29 @@ export class DrawService
 
   public setOnSingleFirefly(firefly: Firefly): void {
 
-    const method = typeof this.config.method === "string" ? this.config.method : this.config.method({
-      app: this.app,
-      canvas: this.canvas,
-      currentFirefly: firefly,
-      fireflies: this.fireflies
-    });
+    const methodAndStrokeLineWidth = ((): [('fill' | 'stroke'), number] => {
+      this.config.method
 
-    firefly.drawMethod = method;
+      if(this.config.method === 'fill') {
+        return ['fill', 0];
+      }
+
+      if (typeof this.config.method === 'function') {
+        const valueFromFunction = this.config.method({
+          app: this.app,
+          canvas: this.canvas,
+          currentFirefly: firefly,
+          fireflies: this.fireflies,
+        })
+
+        return valueFromFunction === 'fill' ? ['fill', 0] : ['stroke', this.getValue(firefly, valueFromFunction.lineWidth)]
+      }
+
+      return ['stroke', this.getValue(firefly, this.config.method.lineWidth)]
+    })()
+
+    firefly.drawMethod = methodAndStrokeLineWidth[0]
+    firefly.strokeLineWidth = methodAndStrokeLineWidth[1]
   }
 
   public onFramePassForSingleFirefly(firefly: Firefly): void {
@@ -142,6 +178,7 @@ export class DrawService
         alpha: firefly.alpha.value,
       }));
 
+      ctx.lineWidth = firefly.strokeLineWidth;
       firefly.drawMethod === "fill" 
         ? ctx.fillStyle = style
         : ctx.strokeStyle = style

@@ -22,7 +22,7 @@ export class ColorBinderService {
     private readonly canvas: FireflyCanvas,
     fireflies: Firefly[],
     private readonly config: HslColorConfig,
-    private readonly app: FireflyApp
+    app: FireflyApp
   ) {
     this.fireflies = [...fireflies];
 

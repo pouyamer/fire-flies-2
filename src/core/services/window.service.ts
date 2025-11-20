@@ -27,7 +27,7 @@ export class WindowService
 
     for(const ff of fireflies) {
       if (!fireflyKeys.includes(ff.key)) fireflies.push(ff);
-      this.setOnSingleFirefly(ff);
+      this.setOnSingleFirefly(/* ff */);
     }
   }
 
@@ -38,7 +38,7 @@ export class WindowService
   }
 
     private setResizeEventListener(): void {
-      this.windowContext.addEventListener("resize", (e: Event) => {
+      this.windowContext.addEventListener("resize", () => {
         this.canvas.setWidthAndHeight(this.windowContext.innerWidth, this.windowContext.innerHeight)
         for( let ff of this.fireflies) {
           this.app.setServicesOnSingleFireflyByServiceNames(ff, ServiceName.Location)
@@ -58,7 +58,7 @@ export class WindowService
     }
 
     private setMouseClickEventListener(): void {
-      this.windowContext.addEventListener("click", (e: MouseEvent) => {
+      this.windowContext.addEventListener("click", (/* e: MouseEvent */) => {
         this.app.togglePauseApplication();
       })
     }
@@ -95,9 +95,9 @@ export class WindowService
     }
 
     setOnEveryFirefly(): void {
-      for(let ff of this.fireflies) {
-        this.setOnSingleFirefly(ff)
-      }
+      // for(let ff of this.fireflies) {
+      //   this.setOnSingleFirefly(/* ff */)
+      // }
       this.setResizeEventListener();
       this.setMouseClickEventListener();
       this.setMouseMoveEventListener();
@@ -107,7 +107,7 @@ export class WindowService
       this.handleOnFireflyHovered(firefly)
     }
 
-    setOnSingleFirefly(firefly: Firefly): void {
+    setOnSingleFirefly(/* firefly: Firefly */): void {
     }
 
     onFramePass(): void {

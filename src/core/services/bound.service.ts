@@ -23,7 +23,7 @@ export class BoundService implements Service {
 
     for(const ff of fireflies) {
       if (!fireflyKeys.includes(ff.key)) fireflies.push(ff);
-      this.setOnSingleFirefly(ff);
+      this.setOnSingleFirefly();
     }
   }
 
@@ -195,7 +195,7 @@ export class BoundService implements Service {
     }
   }
 
-  public setOnSingleFirefly(firefly: Firefly): void {
+  public setOnSingleFirefly(): void {
   }
 
   public setOnEveryFirefly() {
@@ -228,9 +228,9 @@ export class BoundService implements Service {
       : null;
 
 
-    for(let ff of this.fireflies) {
-      this.setOnSingleFirefly(ff)
-    }
+    // for(let ff of this.fireflies) {
+    //   this.setOnSingleFirefly()
+    // }
   }
 
   public onFramePassForSingleFirefly(firefly: Firefly): void {

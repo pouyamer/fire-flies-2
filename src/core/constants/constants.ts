@@ -6,8 +6,8 @@ export class CONSTANTS {
 
   public static CANVAS_EDGE_BOUNDS = {
     bottom: (canvas: FireflyCanvas) => canvas.height,
-    top: (canvas: FireflyCanvas) => 0,
-    left: (canvas: FireflyCanvas) => 0,
+    top: () => 0,
+    left: () => 0,
     right: (canvas: FireflyCanvas) => canvas.width
   }
 
@@ -40,7 +40,7 @@ export class CONSTANTS {
   public static createRandomValueBasedOnCanvasWidth(segment?: number): ValueGenerator<number | number[]> {
     return ({canvas}) => (segment)
       ? segment >= 0
-        ? Array(Math.floor(segment)).fill(null).map((s, i) => i* canvas.width / Math.floor(segment))
+        ? Array(Math.floor(segment)).fill(null).map((_, i) => i* canvas.width / Math.floor(segment))
         : []
       : Math.random() * canvas.width;
   }
@@ -48,13 +48,13 @@ export class CONSTANTS {
   public static createRandomValueBasedOnCanvasHeight(segment?: number): ValueGenerator<number | number[]> {
     return ({canvas}) => (segment)
       ? segment >= 0
-        ? Array(Math.floor(segment)).fill(null).map((s, i) => i* canvas.height / Math.floor(segment))
+        ? Array(Math.floor(segment)).fill(null).map((_, i) => i* canvas.height / Math.floor(segment))
         : []
       : Math.random() * canvas.height;
   }
 
   public static NEIGHBOUR_PICKERS = {
-    All: (): FireflyNeighbourhoodPicker => (ff, ffs) => ffs,
+    All: (): FireflyNeighbourhoodPicker => (_, ffs) => ffs,
     Circle: (r: number): FireflyNeighbourhoodPicker => {
       return this.NEIGHBOUR_PICKERS.Ring(0, r)
     },

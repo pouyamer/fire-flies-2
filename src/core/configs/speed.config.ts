@@ -1,19 +1,18 @@
-import { CONSTANTS } from "../constants/constants";
 import { SpeedConfig } from "../types";
 import { Utilities } from "../utilities";
 
 export const speedConfig: SpeedConfig = {
   polarSpeedAmount: {
-    value: 1,
+    value: 0,
   },
   polarSpeedAngle: {
-    value: CONSTANTS.Ranges.ALL_ANGLES,
+    value: 0,
   },
   speedX: {
-    value: 0,
+    value: Utilities.range(.1, 20),
   },
   speedY: {
-    value: 0,
+    value: Utilities.range(.1, 20),
 
   },
 }
