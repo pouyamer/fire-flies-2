@@ -9,10 +9,10 @@ export const speedConfig: SpeedConfig = {
     value: 0,
   },
   speedX: {
-    value: Utilities.range(.1, 20),
+    value: Utilities.range(-2, 2),
   },
   speedY: {
-    value: Utilities.range(.1, 20),
+    value: Utilities.range(-2, 2),
 
   },
 }

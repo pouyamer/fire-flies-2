@@ -1,6 +1,8 @@
 import { GlobalFireflyModifierConfig } from "../types";
 
 export const globalFireflyModifierConfig: GlobalFireflyModifierConfig = {
-  onSetModifier: () => {},
+  onSetModifier: ({currentFirefly}) => {
+    currentFirefly.hue.value = currentFirefly.x
+  },
   onFramePassModifier: () => {}
 }

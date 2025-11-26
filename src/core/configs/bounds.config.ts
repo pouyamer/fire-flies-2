@@ -24,16 +24,16 @@ export const boundsConfig: BoundsConfig = {
       }
     },
     bottom: ({currentFirefly}) => {
-      currentFirefly.speedY.value = -1 *currentFirefly.speedY.value;
+      currentFirefly.speedY.value = -2 *currentFirefly.speedY.value;
     },
     top: ({currentFirefly}) => {
-      currentFirefly.speedY.value = -1 *currentFirefly.speedY.value;
+      currentFirefly.speedY.value = -2 *currentFirefly.speedY.value;
     },
     left: ({currentFirefly}) => {
-      currentFirefly.speedX.value = -1 *currentFirefly.speedX.value;
+      currentFirefly.speedX.value = -2 *currentFirefly.speedX.value;
     },
     right: ({currentFirefly}) => {
-      currentFirefly.speedX.value = -1 *currentFirefly.speedX.value;
+      currentFirefly.speedX.value = -2 *currentFirefly.speedX.value;
     },
   }
 
