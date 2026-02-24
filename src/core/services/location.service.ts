@@ -35,7 +35,6 @@ export class LocationService
     this.fireflies = this.fireflies.filter(({key}) => !removingFireflyKeys.includes(key));
   }
 
-    // the inner get value sets args for Utilities.getNumericValue in valueGenerator mode
   private getValue(firefly: Firefly, value: PossibleValue<number>) {
     if (
       Utilities.isRange(value) ||
@@ -62,12 +61,23 @@ export class LocationService
   }
 
   public onFramePassForSingleFirefly(firefly: Firefly): void {
-    const cartesianFromPolarSpeedValue = Utilities.Speed.toCartesian(
+    const cartesianFromPolarSpeedValue = Utilities.toCartesian(
       firefly.polarSpeedAmount.value,
       firefly.polarSpeedAngle.value,
     )
-    firefly.x += firefly.speedX.value + cartesianFromPolarSpeedValue.speedX;
-    firefly.y += firefly.speedY.value + cartesianFromPolarSpeedValue.speedY;
+
+    const cartesianFromPolarJitterValue = Utilities.toCartesian(
+      firefly.jitterPolarAmount.value,
+      firefly.jitterPolarAngle.value,
+    );
+    
+    firefly.x += (firefly.jitterX.value * 2 * Math.random()) - firefly.jitterX.value
+    firefly.y += (firefly.jitterY.value * 2 * Math.random()) - firefly.jitterY.value;
+    firefly.x += (cartesianFromPolarJitterValue.x * 2 * Math.random()) - cartesianFromPolarJitterValue.x
+    firefly.y += (cartesianFromPolarJitterValue.y * 2 * Math.random()) - cartesianFromPolarJitterValue.y
+
+      firefly.x += firefly.speedX.value + cartesianFromPolarSpeedValue.x;
+    firefly.y += firefly.speedY.value + cartesianFromPolarSpeedValue.y;
   }
 
   public setOnEveryFirefly(): void {

@@ -4,23 +4,23 @@ import { BoundsConfig } from "../types";
 
 export const boundsConfig: BoundsConfig = {
   ...CONSTANTS.CANVAS_EDGE_BOUNDS,
-  onFireflyOutOfBounds: {
+  onFireflyTouchedBounds: {
     all: () => {
       // app.setServicesOnSingleFireflyByServiceNames(currentFirefly, ServiceName.Location)
     },
   },
   applyPositionCorrection: {
-    bottom: true,
-    left: true,
-    right:true,
-    top: true,
+    bottom: false,
+    left: false,
+    right:false,
+    top: false,
   },
-  onFireflyTouchedBounds: {
+  onFireflyOutOfBounds: {
     all: ({app, currentFirefly}) => {
       if (Math.abs(currentFirefly.speedX.value) < 1 || Math.abs(currentFirefly.speedY.value) < 1) {
         app.setServicesOnSingleFireflyByServiceNames(currentFirefly, ServiceName.Location);
-        app.setServicesOnSingleFireflyByServiceNames(currentFirefly, ServiceName.SpeedX);
-        app.setServicesOnSingleFireflyByServiceNames(currentFirefly, ServiceName.SpeedY);
+        app.setServicesOnSingleFireflyByServiceNames(currentFirefly, ServiceName.PolarSpeedAmount);
+        app.setServicesOnSingleFireflyByServiceNames(currentFirefly, ServiceName.PolarSpeedAngle);
       }
     },
     bottom: ({currentFirefly}) => {

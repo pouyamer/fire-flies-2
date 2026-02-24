@@ -3,15 +3,18 @@ import { Utilities } from "../utilities";
 
 export const hslColorConfig: HslColorConfig = {
   hue: {
-    value: Utilities.range(0, 50),
+    value: [360, 10],
   },
   saturation: {
-    value: Utilities.range(60, 60),
+    value: Utilities.range(60, 80),
   },
   lightness: {
     value: Utilities.range(45, 55),
   },
   alpha: {
-    value: Utilities.range(0, 1)
+    value: 1,
+    nextValueFn: ({currentFirefly: ff}) => {
+      return ff.size.value / 10
+    }
   },
 }

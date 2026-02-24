@@ -2,7 +2,7 @@ import { FireflyApp } from "../app";
 import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
-import { ChangingValueConfig, ChangingValueKey, PossibleValue } from "../types";
+import { ChangingValueConfig, ChangingValueKey, PossibleValue, ValueGeneratorParameters } from "../types";
 import { Utilities } from "../utilities";
 
 export class ChangingValueService
@@ -18,6 +18,9 @@ export class ChangingValueService
     private readonly config: ChangingValueConfig,
     name: ServiceName,
     private readonly app: FireflyApp,
+    private readonly sideEffect?: (parameters: ValueGeneratorParameters & {
+    current: number;
+}) => void
   ) {
     this.name = name;
     this.fireflies = [...fireflies];
@@ -113,6 +116,8 @@ export class ChangingValueService
       else {
         fireflyProp.value = nextValue;
       }
+
+      this.sideEffect?.(parameters)
     }
   }
 

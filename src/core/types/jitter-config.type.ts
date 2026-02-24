@@ -1,6 +1,8 @@
-import { PossibleValue } from "./possible-value.type";
+import { ChangingValueConfig } from "./changing-value-config.type";
 
 export type JitterConfig = {
-  jitterX: PossibleValue<number>;
-  jitterY: PossibleValue<number>
+  jitterX: ChangingValueConfig;
+  jitterY: ChangingValueConfig;
+  jitterPolarAngle: ChangingValueConfig;
+  jitterPolarAmount: ChangingValueConfig;
 }

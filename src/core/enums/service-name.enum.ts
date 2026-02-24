@@ -10,7 +10,6 @@ export enum ServiceName {
   Bound = "bound",
   Window = "window",
   Rotation = "rotation",
-  Jitter = "jitter",
   GlobalFireflyModifier = "global-firefly-modifier",
   Collision = "collision",
   Neighbourhood = "neighbourhood",
@@ -20,4 +19,9 @@ export enum ServiceName {
   SpeedY = "speedY",
   PolarSpeedAngle = "polarSpeedAngle",
   PolarSpeedAmount = "polarSpeedAmount",
+  /* === Jitter === */
+  JitterX = "jitterX",
+  JitterY = "jitterY",
+  JitterPolarAngle = "jitterPolarAngle",
+  JitterPolarAmount = "jitterPolarAmount",
 };

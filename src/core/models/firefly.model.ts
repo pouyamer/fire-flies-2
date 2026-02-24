@@ -14,14 +14,16 @@ export class Firefly {
   polarSpeedAngle: ChangingNumericalValueItem;
   polarSpeedAmount: ChangingNumericalValueItem;
   shapeValue: ShapeValue;
+  jitterX: ChangingNumericalValueItem;
+  jitterY: ChangingNumericalValueItem;
+  jitterPolarAngle: ChangingNumericalValueItem;
+  jitterPolarAmount: ChangingNumericalValueItem;
   x: number;
   y: number;
   initialFireflySnapshot: Firefly | null;
   rotatedAngle: number;
   rotateSpeed: number;
   rotateAcceleration: number;
-  jitterX: number;
-  jitterY: number;
   firefliesInCollision: Firefly[];
   drawMethod: 'fill' | 'stroke';
   life: number;
@@ -45,15 +47,17 @@ export class Firefly {
       ...this,
       initialFireflySnapshot: null,
     }
-    this.speedX = model.speedX ?? new ChangingNumericalValueItem;
-    this.speedY = model.speedY ?? new ChangingNumericalValueItem;
-    this.polarSpeedAngle = model.polarSpeedAngle ?? new ChangingNumericalValueItem;
-    this.polarSpeedAmount = model.polarSpeedAmount ?? new ChangingNumericalValueItem;
+    this.speedX = model.speedX ?? new ChangingNumericalValueItem();
+    this.speedY = model.speedY ?? new ChangingNumericalValueItem();
+    this.polarSpeedAngle = model.polarSpeedAngle ?? new ChangingNumericalValueItem();
+    this.polarSpeedAmount = model.polarSpeedAmount ?? new ChangingNumericalValueItem();
     this.rotatedAngle = model.rotatedAngle ?? 0;
     this.rotateSpeed = model.rotateSpeed ?? 0;
     this.rotateAcceleration = model.rotateAcceleration ?? 0;
-    this.jitterX = model.jitterX ?? 0;
-    this.jitterY = model.jitterY ?? 0;
+    this.jitterX = model.jitterX ?? new ChangingNumericalValueItem();
+    this.jitterY = model.jitterY ?? new ChangingNumericalValueItem();
+    this.jitterPolarAmount = model.jitterPolarAmount ?? new ChangingNumericalValueItem();
+    this.jitterPolarAngle = model.jitterPolarAngle ?? new ChangingNumericalValueItem();
     this.firefliesInCollision = model.firefliesInCollision ?? [];
     this.neighboredBy = model.neighboredBy ?? null;
     this.neighbors = model.neighbors ?? [];

@@ -1,7 +1,7 @@
 import { boundsConfig, collisionConfig, drawConfig, generalFireflyConfig, globalFireflyModifierConfig, hslColorConfig, jitterConfig, lifeConfig, locationConfig, neighbourhoodConfig, rotationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "./configs";
 import { ServiceName } from "./enums";
 import { Firefly, FireflyCanvas } from "./models";
-import { BoundService, ChangingValueService, DrawService, GlobalFireflyModifierService, JitterService, LifeService, LocationService, NeighbourhoodService, RotationService, ShapeService, WindowService } from "./services";
+import { BoundService, ChangingValueService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, RotationService, ShapeService, WindowService } from "./services";
 import { ColorBinderService } from "./services/color-binder.service";
 import { BoundsConfig, ChangingValueConfig, CollisionConfig, DrawConfig, GeneralFireflyConfig, GlobalFireflyModifierConfig, HslColorConfig, JitterConfig, LifeConfig, LocationConfig, NeighbourhoodConfig, RotationConfig, ShapeConfig, SpeedConfig, WindowConfig } from "./types";
 import { Utilities } from "./utilities";
@@ -12,9 +12,9 @@ interface Configs {
   generalFirefly: GeneralFireflyConfig;
   globalFireflyModifier: GlobalFireflyModifierConfig;
   jitter: JitterConfig;
-  location:  LocationConfig;
+  location: LocationConfig;
   rotation: RotationConfig;
-  shape:  ShapeConfig;
+  shape: ShapeConfig;
   size: ChangingValueConfig;
   speed: SpeedConfig;
   window: WindowConfig;
@@ -55,7 +55,6 @@ export class FireflyApp {
     | LocationService
     | WindowService
     | RotationService
-    | JitterService
     | NeighbourhoodService
     | GlobalFireflyModifierService
     | DrawService
@@ -98,10 +97,15 @@ export class FireflyApp {
       new ChangingValueService("polarSpeedAngle", this.canvas, this.fireflies, this.configs.speed.polarSpeedAngle, ServiceName.PolarSpeedAngle, this),
       new ChangingValueService("polarSpeedAmount", this.canvas, this.fireflies, this.configs.speed.polarSpeedAmount, ServiceName.PolarSpeedAmount, this),
       /* ============================ */
+      /* ========= Jitter ============ */
+      new ChangingValueService("jitterX", this.canvas, this.fireflies, this.configs.jitter.jitterX, ServiceName.JitterY, this),
+      new ChangingValueService("jitterY", this.canvas, this.fireflies, this.configs.jitter.jitterY, ServiceName.JitterY, this),
+      new ChangingValueService("jitterPolarAngle", this.canvas, this.fireflies, this.configs.jitter.jitterPolarAngle, ServiceName.JitterPolarAngle, this),
+      new ChangingValueService("jitterPolarAmount", this.canvas, this.fireflies, this.configs.jitter.jitterPolarAmount, ServiceName.JitterPolarAmount, this),
+      /* ============================ */
       new LocationService(this.canvas, this.fireflies, this.configs.location, this),
       new WindowService(this.canvas, this.fireflies, this.configs.window, this.windowContext, this),
       new RotationService(this.canvas, this.fireflies, this.configs.rotation, this),
-      new JitterService(this.canvas, this.fireflies, this.configs.jitter, this),
       new NeighbourhoodService(this.canvas, this.fireflies, this.configs.neighbourhood, this),
       new GlobalFireflyModifierService(this.canvas, this.fireflies, this.configs.globalFireflyModifier, this),
       new DrawService(this.canvas, this.fireflies, this.configs.draw, this),
@@ -125,7 +129,7 @@ export class FireflyApp {
   }
 
   public setServicesOnSingleFireflyByServiceNames(firefly: Firefly, ...names: ServiceName[]) {
-    for(const s of this.services) {
+    for (const s of this.services) {
       if (s instanceof ColorBinderService) {
         names.forEach(
           n => {
@@ -150,7 +154,7 @@ export class FireflyApp {
     for (let service of this.services) {
       service.setOnEveryFirefly()
     }
-    
+
     this.fireflies.forEach(
       (ff) => {
         ff.initialFireflySnapshot = {
@@ -162,13 +166,13 @@ export class FireflyApp {
   }
 
   public removeFirefly(firefly: Firefly): void {
-    for(const s of this.services){
+    for (const s of this.services) {
       s.removeFireflies([firefly]);
     }
   }
 
   public removeFireflyFromServices(firefly: Firefly, ...names: ServiceName[]) {
-    for(const s of this.services) {
+    for (const s of this.services) {
       if (s instanceof ColorBinderService) {
         names.forEach(
           n => {
@@ -205,21 +209,26 @@ export class FireflyApp {
 
     // const avgSpeedX = Math.floor((this.fireflies.map(ff => ff.speedX).reduce((a, b) => a + Math.abs(b) / this.fireflies.length, 0)) * 100) / 100
     // const avgSpeedY = Math.floor((this.fireflies.map(ff => ff.speedY).reduce((a, b) => a + Math.abs(b) / this.fireflies.length, 0)) * 100) / 100
-    
+
     // this.canvas.renderingContext2d!.fillStyle  = "white"
     // this.canvas.renderingContext2d!.font = "48px serif";
     // this.canvas.renderingContext!.fillText(`avgSpeedX: ${avgSpeedX}`, 100, 100);
     // this.canvas.renderingContext!.fillText(`avgSpeedY: ${avgSpeedY}`, 100, 150);
 
-    
+
     // this.fireflies.forEach((ff, i) => {
     //   this.canvas.renderingContext2d!.font = "30px serif";
     //   this.canvas.renderingContext2d!.fillStyle = 'white'
     //   // this.canvas.renderingContext!.fillText((isFinite(Math.floor(ff.life)) ? Math.floor(ff.life) : '').toString(), ff.x, ff.y);
     // })
 
-    if(!this.paused) {
+    if (!this.paused) {
       requestAnimationFrame(this.run);
     }
   }
 }
+
+
+
+// currentFirefly.x = current * 2 * Math.random() - current
+// currentFirefly.y += current * 2 * Math.random() - current

@@ -25,10 +25,24 @@ export class Utilities {
     return Array.isArray(target) && target.every(t => this.isWeightedValue<T>(t))
   }
 
-  public static range(min: number, max: number): Range {
-    return {
-      min, max
-    }
+  public static range(min: number, max: number): Range
+  public static range(mirroredValue: number): Range // -number, +number
+  public static range(minMax: [number, number]): Range
+  public static range(first: number | [number, number], second?: number): Range {
+
+    const min = Array.isArray(first) 
+      ? first[0]
+      : second !== undefined
+        ? first
+        : -Math.abs(first)
+
+      const max = Array.isArray(first) 
+      ? first[1]
+      : second !== undefined
+        ? second
+        : Math.abs(first)
+
+        return {min, max}
   }
 
   public static hslColorToString = (color: Color): string => {
@@ -76,7 +90,7 @@ export class Utilities {
     return 0
   }
 
-  public static isNumberArray(target: unknown):  target is number[] {
+  public static isNumberArray(target: unknown): target is number[] {
     return (
       target !== null &&
       Array.isArray(target) &&
@@ -106,12 +120,12 @@ export class Utilities {
     if (Array.isArray(rawValue)) {
       return Utilities.chooseBetweenMultipleValues(rawValue);
     }
-   else if (typeof rawValue === "function") {
+    else if (typeof rawValue === "function") {
       return rawValue(valueGeneratorArgs as ValueGeneratorParameters);
-   }
-   else {
-    return rawValue as T; 
-   }
+    }
+    else {
+      return rawValue as T;
+    }
   }
 
   public static getNumericValue(
@@ -147,7 +161,7 @@ export class Utilities {
       return typeof chosenValue === "number"
         ? chosenValue
         : this.getNumericValue(chosenValue)
-        
+
     }
     else if (!this.isRange(rawValue) && secondArgument && typeof secondArgument !== "boolean") {
       const valueFromGenerator = rawValue(
@@ -161,30 +175,32 @@ export class Utilities {
     }
   }
 
+  public static toPolar(
+    x: number,
+    y: number
+  ) {
+    const polarSpeedAmount = Math.sqrt(x * x + y * y);
+    const polarSpeedAngle = Math.atan2(y, x);
+
+    return {
+      polarSpeedAngle,
+      polarSpeedAmount
+    };
+  }
+
+  public static toCartesian(
+    polarAmount: number,
+    polarAngle: number,
+  ) {
+    const x = polarAmount * Math.cos(polarAngle);
+    const y = polarAmount * Math.sin(polarAngle);
+
+    return { x, y };
+  }
+
   public static Speed = {
-    toPolar: (
-      speedX: number, 
-      speedY: number
-    ) => {
-      const polarSpeedAmount = Math.sqrt(speedX * speedX + speedY * speedY);
-      const polarSpeedAngle = Math.atan2(speedY, speedX);
-      
-      return {
-        polarSpeedAngle,
-        polarSpeedAmount
-      };
-    },
-    toCartesian: (
-      polarSpeedAmount: number,
-      polarSpeedAngle: number,
-    ) => {
-      const speedX = polarSpeedAmount * Math.cos(polarSpeedAngle);
-      const speedY = polarSpeedAmount * Math.sin(polarSpeedAngle);
-      
-      return { speedX, speedY };
-    },
     onlyCartesianValue: (
-      speedX: number, 
+      speedX: number,
       speedY: number
     ): SpeedConfig => ({
       polarSpeedAmount: {
@@ -221,10 +237,10 @@ export class Utilities {
 
   public static ChangingValue = {
     incrementByValue: (value: number): ChangingValueConfig['nextValueFn'] => {
-      return ({current}) => (current + value);
+      return ({ current }) => (current + value);
     },
     decrementByValue: (value: number): ChangingValueConfig['nextValueFn'] => {
-      return ({current}) => (current - value);
+      return ({ current }) => (current - value);
     },
   }
 
@@ -241,32 +257,32 @@ export class Utilities {
     if (values.length === 0) {
       throw new Error('Cannot select from empty array');
     }
-    
+
     // Calculate total weight
     const totalWeight = values.reduce((sum, item) => sum + item.weight, 0);
-    
+
     if (totalWeight <= 0) {
       throw new Error('Total weight must be greater than 0');
     }
-    
+
     // Generate random number between 0 and totalWeight
     const random = Math.random() * totalWeight;
-    
+
     // Find the selected item
     let accumulatedWeight = 0;
-    
+
     for (const item of values) {
       accumulatedWeight += item.weight;
       if (random <= accumulatedWeight) {
         return item.value;
       }
     }
-    
+
     // Fallback (should theoretically never reach here)
     return values[values.length - 1].value;
   }
 
   public static createWeightedValue<T>(...params: [value: T, weight: number][]): WeightedValue<T>[] {
-    return params.map(([value, weight]) => ({value, weight}));
+    return params.map(([value, weight]) => ({ value, weight }));
   }
 }
