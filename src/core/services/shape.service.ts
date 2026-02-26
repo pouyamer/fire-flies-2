@@ -41,7 +41,7 @@ export class ShapeService
       ? value({
         app: this.app,
         canvas: this.canvas,
-        currentFirefly: firefly,
+        firefly: firefly,
         fireflies: this.fireflies
       })
       : value

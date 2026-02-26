@@ -3,7 +3,10 @@ import { Utilities } from "../utilities";
 
 export const hslColorConfig: HslColorConfig = {
   hue: {
-    value: [360, 10],
+    value: Utilities.range(0, 360),
+    nextValueFn: ({firefly}) => {
+      return (360 * (firefly.polarSpeedAngle.value / (2* Math.PI))) % 360;
+    }
   },
   saturation: {
     value: Utilities.range(60, 80),
@@ -13,7 +16,7 @@ export const hslColorConfig: HslColorConfig = {
   },
   alpha: {
     value: 1,
-    nextValueFn: ({currentFirefly: ff}) => {
+    nextValueFn: ({firefly: ff}) => {
       return ff.size.value / 10
     }
   },

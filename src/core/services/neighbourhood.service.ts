@@ -82,7 +82,7 @@ export class NeighbourhoodService
         ff => {
           ff.neighboredBy = null;
           this.config.onNeighbourhoodExit?.({
-            currentFirefly: ff,
+            firefly: ff,
             app: this.app,
             canvas: this.canvas,
             fireflies: this.fireflies,
@@ -93,7 +93,7 @@ export class NeighbourhoodService
       // Events:
       this.candidateFireflies.forEach(
         c => this.config.onCandidatePicked?.({
-          currentFirefly: c,
+          firefly: c,
           app: this.app,
           canvas: this.canvas,
           fireflies: this.fireflies
@@ -102,7 +102,7 @@ export class NeighbourhoodService
 
       pastCandidates.forEach(
         pc => this.config.onCandidateDismissed?.({
-          currentFirefly: pc,
+          firefly: pc,
           app: this.app,
           canvas: this.canvas,
           fireflies: this.fireflies,
@@ -140,7 +140,7 @@ export class NeighbourhoodService
       // events
       nonNeighbours.forEach(nnf => {
         this.config.onNotInNeighbourhood?.({
-          currentFirefly: nnf,
+          firefly: nnf,
           app: this.app,
           canvas: this.canvas,
           fireflies: this.fireflies,
@@ -149,7 +149,7 @@ export class NeighbourhoodService
       
       newNeighbours.forEach(nf => {
         this.config.onNeighbourhoodEnter?.({
-          currentFirefly: nf,
+          firefly: nf,
           app: this.app,
           canvas: this.canvas,
           fireflies: this.fireflies,
@@ -158,7 +158,7 @@ export class NeighbourhoodService
       
       neighbours.forEach(nff => {
         this.config.onNeighbourhood?.({
-          currentFirefly: nff,
+          firefly: nff,
           app: this.app,
           canvas: this.canvas,
           fireflies: this.fireflies,
@@ -167,7 +167,7 @@ export class NeighbourhoodService
 
       pastNeighbours.forEach(pf => {
         this.config.onNeighbourhoodExit?.({
-          currentFirefly: pf,
+          firefly: pf,
           app: this.app,
           canvas: this.canvas,
           fireflies: this.fireflies,

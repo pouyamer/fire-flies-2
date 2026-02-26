@@ -35,7 +35,7 @@ export class GlobalFireflyModifierService implements Service {
 
   onFramePassForSingleFirefly(firefly: Firefly): void {
     this.config.onFramePassModifier({
-      currentFirefly: firefly,
+      firefly: firefly,
       canvas: this.canvas,
       fireflies: this.fireflies,
       app: this.app
@@ -45,7 +45,7 @@ export class GlobalFireflyModifierService implements Service {
   setOnSingleFirefly(firefly: Firefly): void {
     if (this.config.onSetModifier) {
       this.config.onSetModifier({
-        currentFirefly: firefly,
+        firefly: firefly,
         canvas: this.canvas,
         fireflies: this.fireflies,
         app: this.app

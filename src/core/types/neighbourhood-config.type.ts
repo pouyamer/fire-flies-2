@@ -12,7 +12,7 @@ export type NeighbourhoodConfig  = {
   // type static: once the set runs
   // type reactive: runs every tick
   candidatePickingStrategy: 'static' | 'reactive';
-  candidatePicker: (parameters: Omit<ValueGeneratorParameters, "currentFirefly">) => Firefly[];
+  candidatePicker: (parameters: Omit<ValueGeneratorParameters, "firefly">) => Firefly[];
   // how candidates select their neighbourhood
   neighbourPicker: FireflyNeighbourhoodPicker;
   // default value: false, 

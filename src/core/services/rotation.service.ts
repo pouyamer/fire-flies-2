@@ -46,7 +46,7 @@ export class RotationService
     }
     else {
       return Utilities.getNumericValue(value({
-        currentFirefly: firefly,
+        firefly: firefly,
         canvas: this.canvas,
         fireflies: this.fireflies,
         app: this.app

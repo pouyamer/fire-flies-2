@@ -138,7 +138,7 @@ export class BoundService implements Service {
           : this.config.onFireflyOutOfBounds?.all;
         
           onOutOfBounds?.({
-            currentFirefly: firefly,
+            firefly: firefly,
             canvas: this.canvas, 
             fireflies: this.fireflies,
             app: this.app
@@ -152,7 +152,7 @@ export class BoundService implements Service {
       typeof this.config.onFireflyOutOfBounds !== "function" 
     ) {
         this.config.onFireflyOutOfBounds[direction]?.({
-          currentFirefly: firefly,
+          firefly: firefly,
           canvas: this.canvas, 
           fireflies: this.fireflies,
           app: this.app
@@ -173,7 +173,7 @@ export class BoundService implements Service {
           : this.config.onFireflyTouchedBounds?.all;
         
         onTouchedBounds?.({
-          currentFirefly: firefly,
+          firefly: firefly,
           canvas: this.canvas, 
           fireflies: this.fireflies,
           app: this.app
@@ -187,7 +187,7 @@ export class BoundService implements Service {
       typeof this.config.onFireflyTouchedBounds !== "function" 
     ) {
         this.config.onFireflyTouchedBounds[direction]?.({
-          currentFirefly: firefly,
+          firefly: firefly,
           canvas: this.canvas, 
           fireflies: this.fireflies,
           app: this.app

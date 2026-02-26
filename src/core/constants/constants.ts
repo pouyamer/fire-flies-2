@@ -81,7 +81,7 @@ export class CONSTANTS {
 
   public static EVENT_CALLBACKS = {
     BlackHole: (strength: number, safeDistance: number): EventCallBack => {
-      return ({currentFirefly: ff, canvas}) => {
+      return ({firefly: ff, canvas}) => {
         if (ff.neighboredBy) {
           const distanceToCandidate = Utilities.calculateDistance(
             ff.x, ff.y, ff.neighboredBy.x, ff.neighboredBy.y
@@ -108,7 +108,7 @@ export class CONSTANTS {
       }
     },
     BlackHoleWithExponentialFalloff: (strength: number): EventCallBack => {
-      return ({currentFirefly: ff, canvas}) => {
+      return ({firefly: ff, canvas}) => {
         if (ff.neighboredBy) {
           const distanceToCandidate = Utilities.calculateDistance(
             ff.x, ff.y, ff.neighboredBy.x, ff.neighboredBy.y

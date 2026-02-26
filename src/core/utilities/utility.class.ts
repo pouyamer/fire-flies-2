@@ -30,19 +30,19 @@ export class Utilities {
   public static range(minMax: [number, number]): Range
   public static range(first: number | [number, number], second?: number): Range {
 
-    const min = Array.isArray(first) 
+    const min = Array.isArray(first)
       ? first[0]
       : second !== undefined
         ? first
         : -Math.abs(first)
 
-      const max = Array.isArray(first) 
+    const max = Array.isArray(first)
       ? first[1]
       : second !== undefined
         ? second
         : Math.abs(first)
 
-        return {min, max}
+    return { min, max }
   }
 
   public static hslColorToString = (color: Color): string => {

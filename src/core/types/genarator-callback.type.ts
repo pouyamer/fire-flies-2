@@ -2,7 +2,7 @@ import { FireflyApp } from "../app";
 import { Firefly, FireflyCanvas } from "../models";
 
 export interface ValueGeneratorParameters {
-  currentFirefly: Firefly,
+  firefly: Firefly,
   canvas: FireflyCanvas,
   fireflies: Firefly[],
   app: FireflyApp

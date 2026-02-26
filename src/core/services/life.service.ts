@@ -45,7 +45,7 @@ export class LifeService
       }
       else {
         return Utilities.getNumericValue(value({
-          currentFirefly: firefly,
+          firefly: firefly,
           canvas: this.canvas,
           fireflies: this.fireflies,
           app: this.app
@@ -76,7 +76,7 @@ export class LifeService
         const nextValue = this.config.nextValueFn({
           app: this.app,
           canvas: this.canvas,
-          currentFirefly: firefly,
+          firefly: firefly,
           fireflies: this.fireflies
         })
 
@@ -84,7 +84,7 @@ export class LifeService
           this.config.onFireflyDead?.({
             app: this.app,
             canvas: this.canvas,
-            currentFirefly: firefly,
+            firefly: firefly,
             fireflies: this.fireflies
           });
           this.app.removeFirefly(firefly)

@@ -31,7 +31,7 @@ export class DrawService
     }
     else {
       return Utilities.getNumericValue(value({
-        currentFirefly: firefly,
+        firefly,
         canvas: this.canvas,
         fireflies: this.fireflies,
         app: this.app
@@ -152,7 +152,7 @@ export class DrawService
         const valueFromFunction = this.config.method({
           app: this.app,
           canvas: this.canvas,
-          currentFirefly: firefly,
+          firefly,
           fireflies: this.fireflies,
         })
 

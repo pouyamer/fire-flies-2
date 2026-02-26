@@ -52,7 +52,7 @@ export class ChangingValueService
     }
     else {
       return Utilities.getNumericValue(value({
-        currentFirefly: firefly,
+        firefly,
         canvas: this.canvas,
         fireflies: this.fireflies,
         app: this.app
@@ -90,7 +90,7 @@ export class ChangingValueService
     const fireflyProp = firefly[this.key];
 
     const parameters = {
-      currentFirefly: firefly,
+      firefly,
       canvas: this.canvas, 
       fireflies: this.fireflies,
       app: this.app,

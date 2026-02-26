@@ -45,7 +45,7 @@ export class LocationService
     }
     else {
       return Utilities.getNumericValue(value({
-        currentFirefly: firefly,
+        firefly,
         canvas: this.canvas,
         fireflies: this.fireflies,
         app: this.app
