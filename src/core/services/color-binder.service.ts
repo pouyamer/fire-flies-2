@@ -1,32 +1,35 @@
 import { FireflyApp } from "../app";
 import { ServiceName } from "../enums";
 import { Firefly, FireflyCanvas } from "../models";
-import { HslColorConfig } from "../types";
+import { ChangingValueKey } from "../types";
 import { ChangingValueService } from "./changing-value.service";
 
 type ColorServiceName = ServiceName.Hue | ServiceName.Saturation | ServiceName.Lightness | ServiceName.Alpha;
+
+const HSL_KEYS = [
+  'hue', 'saturation', 'lightness', 'alpha'
+]
+
+const RGB_KEYS = [
+  'red', 'green', 'blue', 'alpha'
+];
 
 export class ColorBinderService {
 
   private readonly fireflies: Firefly[];
 
-  private readonly textNames = [
-    'hue',
-    'saturation',
-    'lightness',
-    'alpha'
-  ] as const;
-
   private readonly services: ChangingValueService[];
   constructor(
     private readonly canvas: FireflyCanvas,
     fireflies: Firefly[],
-    private readonly config: HslColorConfig,
-    app: FireflyApp
+    private readonly app: FireflyApp
   ) {
     this.fireflies = [...fireflies];
 
-    this.services = this.textNames.map(n => new ChangingValueService(n, this.canvas, this.fireflies, config[n], n as ServiceName, app)); 
+    const colorConfig: any = app.colorConfigInfo.config;
+    const textNames = app.colorConfigInfo.type === 'HSL' ? HSL_KEYS : RGB_KEYS;
+
+    this.services = textNames.map(n => new ChangingValueService(n as ChangingValueKey<Firefly>, this.canvas, this.fireflies, colorConfig[n], n as ServiceName, app));
   }
 
   public setOnEveryFirefly(): void {
@@ -60,25 +63,32 @@ export class ColorBinderService {
 
   public onFramePass(): void {
     this.services.forEach(s => s.onFramePass());
-    this.fireflies.forEach(
-      ff => {
+    const colorBinder = this.app.colorConfigInfo.config.colorBinder;
+    if (colorBinder) {
+      this.fireflies.forEach(
+        ff => {
 
-        const hslFromColorBinder = this.config.colorBinder?.({
-          hue: ff.hue.value,
-          saturation: ff.saturation.value,
-          lightness: ff.lightness.value,
-          alpha: ff.alpha.value
-        }) ?? {};
+          const parameters = this.app.colorConfigInfo.type === 'HSL' ? {
+            hue: ff.hue.value,
+            saturation: ff.saturation.value,
+            lightness: ff.lightness.value,
+            alpha: ff.alpha.value
+          } : {
+            red: ff.red.value,
+            green: ff.green.value,
+            blue: ff.blue.value,
+            alpha: ff.alpha.value
+          };
 
-        ([
-          'hue',
-          'saturation',
-          'lightness',
-          'alpha'
-        ] as const).forEach(s => {
-          ff[s].value = hslFromColorBinder[s] ?? ff[s].value;
-        });
-      }
-    )
+          const colorFromColorBinder = colorBinder(parameters as any) as any;
+
+          const keys = (this.app.colorConfigInfo.type === 'HSL' ? HSL_KEYS : RGB_KEYS) as ChangingValueKey<Firefly>[];
+
+          keys.forEach((s) => {
+            ff[s].value = colorFromColorBinder[s] ?? ff[s].value;
+          });
+        }
+      )
+    }
   }
 }

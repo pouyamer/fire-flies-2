@@ -1,11 +1,10 @@
 import { DEFAULT_VALUE } from "../constants";
-import { Utilities } from "../utilities";
-import { Color } from "./color.model";
+import { HslColor, RgbColor } from "./color.model";
 
 export class FireflyCanvas {
   height: number;
   width: number;
-  color: Color;
+  color: HslColor | RgbColor;
   hostElement: HTMLElement | null;
   canvasElement: HTMLCanvasElement;
   renderingContext2d: CanvasRenderingContext2D | null;
@@ -51,8 +50,8 @@ export class FireflyCanvas {
     this.canvasElement.width = width;
   }
 
-  public setColor(value: Color) {
+  public setColor(value: HslColor | RgbColor) {
     this.color = value;
-    this.canvasElement.style.backgroundColor = Utilities.hslColorToString(value)
+    this.canvasElement.style.backgroundColor = value.toString();
   }
 }

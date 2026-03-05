@@ -1,7 +1,7 @@
 import { FireflyApp } from "../app";
 import { ServiceName, Shape } from "../enums";
 import { Service } from "../interfaces";
-import { Color, Firefly, FireflyCanvas } from "../models";
+import { Firefly, FireflyCanvas, HslColor, RgbColor } from "../models";
 import { DrawConfig, PossibleValue } from "../types";
 import { Utilities } from "../utilities";
 
@@ -171,12 +171,19 @@ export class DrawService
 
     if (ctx) {
 
-      const style = Utilities.hslColorToString(new Color({
+      const style = this.app.generalConfig.colorMode === 'HSL' 
+      ? new HslColor({
         hue: firefly.hue.value,
         saturation: firefly.saturation.value,
         lightness: firefly.lightness.value,
         alpha: firefly.alpha.value,
-      }));
+      }).toString()
+      : new RgbColor({
+        red: firefly.red.value,
+        green: firefly.green.value,
+        blue: firefly.blue.value,
+        alpha: firefly.alpha.value,
+      }).toString();
 
       ctx.lineWidth = firefly.strokeLineWidth;
       firefly.drawMethod === "fill" 

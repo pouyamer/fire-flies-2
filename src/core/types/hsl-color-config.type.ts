@@ -1,16 +1,12 @@
 import { ChangingValueConfig } from "./changing-value-config.type"
 
-type ColorNumberValues = {
-  hue: number;
-  saturation: number;
-  lightness: number;
-  alpha: number;
+export type Hsl<T> = {
+  hue: T;
+  saturation: T;
+  lightness: T;
+  alpha: T;
 }
 
-export type HslColorConfig = {
-  hue: ChangingValueConfig,
-  saturation: ChangingValueConfig,
-  lightness: ChangingValueConfig;
-  alpha: ChangingValueConfig;
-  colorBinder?: (options: ColorNumberValues) => Partial<ColorNumberValues>;
+export type HslColorConfig = Hsl<ChangingValueConfig> & {
+  colorBinder?: (options: Hsl<number>) => Partial<Hsl<number>>;
 }

@@ -1,9 +1,9 @@
-import { boundsConfig, collisionConfig, drawConfig, generalFireflyConfig, globalFireflyModifierConfig, hslColorConfig, jitterConfig, lifeConfig, locationConfig, neighbourhoodConfig, rotationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "./configs";
+import { boundsConfig, collisionConfig, drawConfig, generalFireflyConfig, globalFireflyModifierConfig, hslColorConfig, jitterConfig, lifeConfig, locationConfig, neighbourhoodConfig, rgbColorConfig, rotationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "./configs";
 import { ServiceName } from "./enums";
 import { Firefly, FireflyCanvas } from "./models";
 import { BoundService, ChangingValueService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, RotationService, ShapeService, WindowService } from "./services";
 import { ColorBinderService } from "./services/color-binder.service";
-import { BoundsConfig, ChangingValueConfig, CollisionConfig, DrawConfig, GeneralFireflyConfig, GlobalFireflyModifierConfig, HslColorConfig, JitterConfig, LifeConfig, LocationConfig, NeighbourhoodConfig, RotationConfig, ShapeConfig, SpeedConfig, WindowConfig } from "./types";
+import { BoundsConfig, ChangingValueConfig, CollisionConfig, DrawConfig, GeneralFireflyConfig, GlobalFireflyModifierConfig, HslColorConfig, JitterConfig, LifeConfig, LocationConfig, NeighbourhoodConfig, RgbColorConfig, RotationConfig, ShapeConfig, SpeedConfig, WindowConfig } from "./types";
 import { Utilities } from "./utilities";
 
 interface Configs {
@@ -21,7 +21,8 @@ interface Configs {
   neighbourhood: NeighbourhoodConfig;
   draw: DrawConfig;
   life: LifeConfig;
-  hslColor: HslColorConfig
+  hslColor: HslColorConfig,
+  rgbColor: RgbColorConfig;
 }
 
 export class FireflyApp {
@@ -41,7 +42,8 @@ export class FireflyApp {
     generalFirefly: generalFireflyConfig,
     neighbourhood: neighbourhoodConfig,
     life: lifeConfig,
-    hslColor: hslColorConfig
+    hslColor: hslColorConfig,
+    rgbColor: rgbColorConfig,
   }
 
   private canvas: FireflyCanvas
@@ -63,6 +65,7 @@ export class FireflyApp {
   // private collision: Firefly[][] = [];
   private paused: boolean = false;
 
+
   constructor(
     canvas: FireflyCanvas,
     private readonly windowContext: Window & typeof globalThis,
@@ -77,6 +80,25 @@ export class FireflyApp {
     this.setServices();
   }
 
+  public get generalConfig(): GeneralFireflyConfig {
+    return this.configs.generalFirefly;
+  }
+
+  public get colorConfigInfo(): { type: 'HSL', config: HslColorConfig } | { type: 'RGB', config: RgbColorConfig } {
+    return this.configs.generalFirefly.colorMode === 'HSL'
+      ? {
+        type: 'HSL', config: this.configs.hslColor
+      }
+      : {
+        type: 'RGB', config: this.configs.rgbColor,
+      }
+  }
+
+  public getConfig(key: keyof Configs) {
+    return this.configs[key];
+  }
+
+
   private createFireflies(): void {
     this.fireflies = Array(this.configs.generalFirefly.count).fill(0).map(
       _ => new Firefly()
@@ -88,7 +110,7 @@ export class FireflyApp {
       new LifeService(this.canvas, this.fireflies, this.configs.life, this),
       new ShapeService(this.canvas, this.fireflies, this.configs.shape, this),
       new ChangingValueService("size", this.canvas, this.fireflies, this.configs.size, ServiceName.Size, this),
-      new ColorBinderService(this.canvas, this.fireflies, this.configs.hslColor, this),
+      new ColorBinderService(this.canvas, this.fireflies, this),
       new BoundService(this.canvas, this.fireflies, this.configs.bound, this),
       // new CollisionService(this.canvas, this.fireflies, this.configs.collision, this, this.collision),
       /* ========= Speed ============ */

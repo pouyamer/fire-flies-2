@@ -13,3 +13,4 @@ export * from "./neighbourhood.config";
 export * from "./draw.config";
 export * from "./life.config";
 export * from "./hsl-color.config"
+export * from "./rgb-color.config";

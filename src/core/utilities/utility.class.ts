@@ -1,4 +1,4 @@
-import { Color, Range } from "../models";
+import { HslColor, Range, RgbColor } from "../models";
 import { ChangingValueConfig, PossibleValue, SpeedConfig, ValueGenerator, ValueGeneratorParameters, WeightedValue } from "../types";
 
 export class Utilities {
@@ -44,13 +44,6 @@ export class Utilities {
 
     return { min, max }
   }
-
-  public static hslColorToString = (color: Color): string => {
-    const { hue, lightness, saturation, alpha } = color;
-
-    return `hsl(${hue}, ${saturation}%, ${lightness}%, ${alpha})`
-  }
-
 
   public static isObject = (item: object) =>
     item && typeof item === "object" && !Array.isArray(item)
@@ -284,5 +277,32 @@ export class Utilities {
 
   public static createWeightedValue<T>(...params: [value: T, weight: number][]): WeightedValue<T>[] {
     return params.map(([value, weight]) => ({ value, weight }));
+  }
+
+  private static isRgbColor(value: unknown): value is RgbColor {
+    return (
+      value !== null &&
+      typeof value === 'object' &&
+      'red' in value &&
+      'green' in value &&
+      'blue' in value &&
+      'alpha' in value
+    );
+  }
+
+  private static isHslColor(value: unknown): value is HslColor {
+    return (
+      value !== null &&
+      typeof value === 'object' &&
+      'hue' in value &&
+      'saturation' in value &&
+      'lightness' in value &&
+      'alpha' in value
+    );
+  }
+
+  public static Color = {
+    isRgbColor: this.isRgbColor,
+    isHsl: this.isHslColor,
   }
 }

@@ -1,4 +1,4 @@
-import { Color } from "../models";
+import { HslColor, RgbColor } from "../models";
 
 type MessageKeys =
   | "CanvasElementDoesNotExist"
@@ -9,7 +9,7 @@ export type Message = {
 };
 
 export type DefaultValue = {
-  Color: Color,
+  Color: HslColor | RgbColor,
   CanvasHeight: number,
   CanvasWidth: number,
 }

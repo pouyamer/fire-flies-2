@@ -8,6 +8,9 @@ export class Firefly {
   size: ChangingNumericalValueItem;
   saturation: ChangingNumericalValueItem;
   lightness: ChangingNumericalValueItem;
+  red: ChangingNumericalValueItem;
+  green: ChangingNumericalValueItem;
+  blue: ChangingNumericalValueItem;
   alpha: ChangingNumericalValueItem;
   speedX: ChangingNumericalValueItem;
   speedY: ChangingNumericalValueItem;
@@ -31,6 +34,7 @@ export class Firefly {
   neighbors: Firefly[];
   beforeEnteringNeighborhoodSnapshot: Firefly | null;
   strokeLineWidth: number;
+  
 
 
   constructor(model: Partial<Firefly> = {}) {
@@ -58,6 +62,9 @@ export class Firefly {
     this.jitterY = model.jitterY ?? new ChangingNumericalValueItem();
     this.jitterPolarAmount = model.jitterPolarAmount ?? new ChangingNumericalValueItem();
     this.jitterPolarAngle = model.jitterPolarAngle ?? new ChangingNumericalValueItem();
+    this.red = model.red ?? new ChangingNumericalValueItem();
+    this.green = model.green ?? new ChangingNumericalValueItem();
+    this.blue = model.blue ?? new ChangingNumericalValueItem();
     this.firefliesInCollision = model.firefliesInCollision ?? [];
     this.neighboredBy = model.neighboredBy ?? null;
     this.neighbors = model.neighbors ?? [];

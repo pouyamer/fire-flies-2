@@ -3,28 +3,22 @@ import { Utilities } from "../utilities";
 
 export const speedConfig: SpeedConfig = {
   polarSpeedAmount: {
-    value: Utilities.range(2),
-    nextValueFn: ({current}) => current + Utilities.getRandomNumberBetween(
-        Utilities.range(.2, .7)
-      ),
-    max: 1,
+    value: Array.from({length: 50}).map((_, i) => (i + 1) / 2),
+    nextValueFn: ({current}) => current,
+    max: 40,
     onMax: ({firefly}) => {
-      firefly.polarSpeedAmount.nextValueFn = ({current}) => current - Utilities.getRandomNumberBetween(
-        Utilities.range(.2, .7)
-      );
+      firefly.polarSpeedAmount.nextValueFn = ({current}) => current;
     },
-    min: -3,
+    min: -40,
     onMin:  ({firefly}) => {
       firefly.polarSpeedAmount.nextValueFn = ({current}) => current + Utilities.getRandomNumberBetween(
-        Utilities.range(.2, .7)
+        Utilities.range(.00006, .0006)
       );
     },
   },
   polarSpeedAngle: {
     value: Utilities.range(0, 2 * Math.PI),
-    nextValueFn: ({ current }) => current + Utilities.getRandomNumberBetween(
-      Utilities.range(0, .01)
-    )
+    nextValueFn: ({ current }) => current
 
   },
   speedX: {

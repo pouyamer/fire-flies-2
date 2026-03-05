@@ -1,10 +1,10 @@
 import { FireflyApp } from "./core";
-import { Color, FireflyCanvas } from "./core/models";
+import { FireflyCanvas, HslColor } from "./core/models";
 
 const canvasElement = document.querySelector("body");
 
 const canvas = new FireflyCanvas({
-  color: new Color({
+  color: new HslColor({
     alpha: 1,
     hue: 0,
     lightness: 0.1,
