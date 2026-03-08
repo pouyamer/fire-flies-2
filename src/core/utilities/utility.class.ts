@@ -1,4 +1,4 @@
-import { HslColor, Range, RgbColor } from "../models";
+import { Firefly, HslColor, Range, RgbColor } from "../models";
 import { ChangingValueConfig, PossibleValue, SpeedConfig, ValueGenerator, ValueGeneratorParameters, WeightedValue } from "../types";
 
 export class Utilities {
@@ -73,8 +73,25 @@ export class Utilities {
       : Math.random() * (max - min) + min
   }
 
-  public static calculateDistance = (x1: number, y1: number, x2: number, y2: number) => {
-    return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+  public static calculateDistance(firefly1: Firefly, firefly2: Firefly): number
+  public static calculateDistance(x1: number, y1: number, x2: number, y2: number): number
+  public static calculateDistance(x1: number | Firefly, y1: number | Firefly, x2?: number, y2?: number): number {
+
+    const coordinatesParameters: {
+      _x1: number;
+      _y1: number;
+      _x2: number;
+      _y2: number
+    } = {
+      _x1: typeof x1 === 'number' ? x1 : x1.x,
+      _y1: typeof y1 === 'number' ? y1 : typeof x1 === 'number' ? NaN : x1.x,
+      _x2: (x2 !== undefined) ? x2 : typeof y1 === 'number' ? NaN : y1.x,
+      _y2: (y2 !== undefined) ? y2 : typeof y1 === 'number' ? NaN : y1.y
+    };
+
+    const {_x1, _y1, _x2, _y2} = coordinatesParameters;
+
+    return Math.sqrt((_x1 - _x2) ** 2 + (_y1 - _y2) ** 2);
   }
 
   public static getSign(input: number): number {

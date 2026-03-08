@@ -85,7 +85,7 @@ export class ColorBinderService {
           const keys = (this.app.colorConfigInfo.type === 'HSL' ? HSL_KEYS : RGB_KEYS) as ChangingValueKey<Firefly>[];
 
           keys.forEach((s) => {
-            ff[s].value = colorFromColorBinder[s] ?? ff[s].value;
+            ff[s].set((v) => colorFromColorBinder[s] ?? v)
           });
         }
       )

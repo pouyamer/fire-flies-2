@@ -7,13 +7,16 @@ export const boundsConfig: BoundsConfig = {
   onFireflyTouchedBounds: {
     all: ({app, firefly}) => {
       // app.setServicesOnSingleFireflyByServiceNames(firefly, ServiceName.Location);
+      // firefly.polarSpeedAmount.set(v => v*= 1.001)
+      // firefly.setValue('polarSpeedAmount', (v) => v + 1)
+      firefly.polarSpeedAngle.set(Math.random())
     },
   },
   applyPositionCorrection: {
-    bottom: false,
-    left: false,
-    right:false,
-    top: false,
+    bottom: true,
+    left: true,
+    right:true,
+    top: true,
   },
   onFireflyOutOfBounds: {
     // all: ({app, firefly}) => {

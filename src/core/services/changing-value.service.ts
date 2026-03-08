@@ -61,10 +61,10 @@ export class ChangingValueService
   }
 
   public setOnSingleFirefly(firefly: Firefly) {    
-    firefly[this.key].value = this.getValue(
+    firefly[this.key].set(this.getValue(
       firefly,
       this.config.value
-    );
+    ));
 
     firefly[this.key].max = (
       this.config.max !== null && 
@@ -104,17 +104,17 @@ export class ChangingValueService
         fireflyProp.max !== null &&
         nextValue >= fireflyProp.max
       ) {
-        fireflyProp.value = fireflyProp.max;
+        fireflyProp.set(fireflyProp.max);
         this.config.onMax?.(parameters)
       } else if (
         fireflyProp.min !== null &&
         nextValue <= fireflyProp.min
       ) {
-        fireflyProp.value = fireflyProp.min;
+        fireflyProp.set(fireflyProp.min);
         this.config.onMin?.(parameters);
       }
       else {
-        fireflyProp.value = nextValue;
+        fireflyProp.set(nextValue);
       }
 
       this.sideEffect?.(parameters)
