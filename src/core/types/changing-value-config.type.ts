@@ -4,7 +4,7 @@ import { PossibleValue } from "./possible-value.type";
 
 export type ChangingValueConfig = {
   value: PossibleValue<number>;
-  nextValueFn?: (parameters: ValueGeneratorParameters & { current: number }) => number;
+  nextValueFn?: (parameters: ValueGeneratorParameters & { current: number; iteration: number }) => number;
   max?: PossibleValue<number>;
   min?: PossibleValue<number>;
   onMax?: EventCallBack;

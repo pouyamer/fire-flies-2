@@ -24,9 +24,7 @@ export class Firefly {
   x: number;
   y: number;
   initialFireflySnapshot: Firefly | null;
-  rotatedAngle: number;
-  rotateSpeed: number;
-  rotateAcceleration: number;
+  rotation: ChangingNumericalValueItem;
   firefliesInCollision: Firefly[];
   drawMethod: 'fill' | 'stroke';
   life: number;
@@ -55,9 +53,7 @@ export class Firefly {
     this.speedY = model.speedY ?? new ChangingNumericalValueItem();
     this.polarSpeedAngle = model.polarSpeedAngle ?? new ChangingNumericalValueItem();
     this.polarSpeedAmount = model.polarSpeedAmount ?? new ChangingNumericalValueItem();
-    this.rotatedAngle = model.rotatedAngle ?? 0;
-    this.rotateSpeed = model.rotateSpeed ?? 0;
-    this.rotateAcceleration = model.rotateAcceleration ?? 0;
+    this.rotation = model.rotation ?? new ChangingNumericalValueItem();
     this.jitterX = model.jitterX ?? new ChangingNumericalValueItem();
     this.jitterY = model.jitterY ?? new ChangingNumericalValueItem();
     this.jitterPolarAmount = model.jitterPolarAmount ?? new ChangingNumericalValueItem();

@@ -1,9 +1,9 @@
 import { boundsConfig, collisionConfig, drawConfig, generalFireflyConfig, globalFireflyModifierConfig, hslColorConfig, jitterConfig, lifeConfig, locationConfig, neighbourhoodConfig, rgbColorConfig, rotationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "./configs";
 import { ServiceName } from "./enums";
 import { Firefly, FireflyCanvas } from "./models";
-import { BoundService, ChangingValueService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, RotationService, ShapeService, WindowService } from "./services";
+import { BoundService, ChangingValueService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, ShapeService, WindowService } from "./services";
 import { ColorBinderService } from "./services/color-binder.service";
-import { BoundsConfig, ChangingValueConfig, CollisionConfig, DrawConfig, GeneralFireflyConfig, GlobalFireflyModifierConfig, HslColorConfig, JitterConfig, LifeConfig, LocationConfig, NeighbourhoodConfig, RgbColorConfig, RotationConfig, ShapeConfig, SpeedConfig, WindowConfig } from "./types";
+import { BoundsConfig, ChangingValueConfig, CollisionConfig, DrawConfig, GeneralFireflyConfig, GlobalFireflyModifierConfig, HslColorConfig, JitterConfig, LifeConfig, LocationConfig, NeighbourhoodConfig, RgbColorConfig, ShapeConfig, SpeedConfig, WindowConfig } from "./types";
 import { Utilities } from "./utilities";
 
 interface Configs {
@@ -13,7 +13,7 @@ interface Configs {
   globalFireflyModifier: GlobalFireflyModifierConfig;
   jitter: JitterConfig;
   location: LocationConfig;
-  rotation: RotationConfig;
+  rotation: ChangingValueConfig;
   shape: ShapeConfig;
   size: ChangingValueConfig;
   speed: SpeedConfig;
@@ -56,7 +56,6 @@ export class FireflyApp {
     | BoundService
     | LocationService
     | WindowService
-    | RotationService
     | NeighbourhoodService
     | GlobalFireflyModifierService
     | DrawService
@@ -127,7 +126,7 @@ export class FireflyApp {
       /* ============================ */
       new LocationService(this.canvas, this.fireflies, this.configs.location, this),
       new WindowService(this.canvas, this.fireflies, this.configs.window, this.windowContext, this),
-      new RotationService(this.canvas, this.fireflies, this.configs.rotation, this),
+      new ChangingValueService("rotation", this.canvas, this.fireflies, this.configs.rotation, ServiceName.Rotation, this),
       new NeighbourhoodService(this.canvas, this.fireflies, this.configs.neighbourhood, this),
       new GlobalFireflyModifierService(this.canvas, this.fireflies, this.configs.globalFireflyModifier, this),
       new DrawService(this.canvas, this.fireflies, this.configs.draw, this),

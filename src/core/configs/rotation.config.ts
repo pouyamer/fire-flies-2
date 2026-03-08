@@ -1,7 +1,5 @@
-import { RotationConfig } from "../types";
+import { ChangingValueConfig } from "../types";
 
-export const rotationConfig: RotationConfig = {
-    acceleration_PI: 0,
-    speed_PI: .01,
-    startingAngle: 0,
+export const rotationConfig: ChangingValueConfig = {
+    value: 0,
 }

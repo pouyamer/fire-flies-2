@@ -60,7 +60,9 @@ export class ChangingValueService
     }
   }
 
-  public setOnSingleFirefly(firefly: Firefly) {    
+  public setOnSingleFirefly(firefly: Firefly) {  
+    firefly[this.key].resetIteration();
+      
     firefly[this.key].set(this.getValue(
       firefly,
       this.config.value
@@ -94,7 +96,8 @@ export class ChangingValueService
       canvas: this.canvas, 
       fireflies: this.fireflies,
       app: this.app,
-      current: fireflyProp.value
+      current: fireflyProp.value,
+      iteration: fireflyProp.iteration
     }
       
     if (fireflyProp.nextValueFn) {
@@ -118,6 +121,7 @@ export class ChangingValueService
       }
 
       this.sideEffect?.(parameters)
+      firefly[this.key].iterate();
     }
   }
 

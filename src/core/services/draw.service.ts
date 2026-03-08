@@ -84,7 +84,7 @@ export class DrawService
     else {
       switch(firefly.shapeValue.shape) {
       case Shape.RegularPolygram:
-        const angle = ((firefly.shapeValue.parameter - 2) * Math.PI) / (2 * firefly.shapeValue.parameter) + firefly.rotatedAngle
+        const angle = ((firefly.shapeValue.parameter - 2) * Math.PI) / (2 * firefly.shapeValue.parameter) + firefly.rotation.value
 
         const innerRadius = firefly.size.value / 2
         const outerRadius = firefly.size.value
@@ -111,9 +111,10 @@ export class DrawService
       case Shape.RegularPolygon:
         const halfSize = firefly.size.value
 
-        ctx.beginPath()
+        ctx.beginPath();
+        
         for (let i = 0; i < firefly.shapeValue.parameter; i++) {
-          const angle = ((firefly.shapeValue.parameter - 2) * Math.PI) / (2 * firefly.shapeValue.parameter) + firefly.rotatedAngle
+          const angle = ((firefly.shapeValue.parameter - 2) * Math.PI) / (2 * firefly.shapeValue.parameter) + firefly.rotation.value
           let dx = halfSize * Math.cos((i * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
           let dy = halfSize * Math.sin((i * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
           let outerX = x + +dx
