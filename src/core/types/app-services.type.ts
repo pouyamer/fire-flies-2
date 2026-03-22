@@ -1,6 +1,6 @@
 import { FireflyApp } from "../app"
 import { Service } from "../interfaces"
-import { Firefly, FireflyCanvas } from "../models"
+import { Firefly, FireflyCanvas, InteractiveLine } from "../models"
 
 export type AppServices =
   | {
@@ -28,4 +28,5 @@ export type AppServices =
     fireflies: Firefly[],
     canvas: FireflyCanvas,
     app: FireflyApp,
+    lines: InteractiveLine[],
   }

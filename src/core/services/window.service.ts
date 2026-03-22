@@ -91,13 +91,13 @@ export class WindowService
     this.windowContext.addEventListener("mousemove", (e: MouseEvent) => {
       clearTimeout(this.timeOut);
 
-      this.timeOut = setTimeout(
-        () => {
-          this.canvas.mouseX = null;
-          this.canvas.mouseY = null;
+      // this.timeOut = setTimeout(
+      //   () => {
+      //     this.canvas.mouseX = null;
+      //     this.canvas.mouseY = null;
 
-        }, 200
-      )
+      //   }, 200
+      // )
 
       this.canvas.mouseX = e.x;
       this.canvas.mouseY = e.y;

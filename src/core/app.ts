@@ -1,6 +1,6 @@
 import { boundsConfig, collisionConfig, drawConfig, generalFireflyConfig, globalFireflyModifierConfig, hslColorConfig, jitterConfig, lifeConfig, locationConfig, neighbourhoodConfig, rgbColorConfig, rotationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "./configs";
 import { ServiceName } from "./enums";
-import { Firefly, FireflyCanvas } from "./models";
+import { Firefly, FireflyCanvas, InteractiveLine } from "./models";
 import { BoundService, ChangingValueService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, ShapeService, WindowService } from "./services";
 import { ColorBinderService } from "./services/color-binder.service";
 import { BoundsConfig, ChangingValueConfig, CollisionConfig, DrawConfig, FireflyAppApi, GeneralFireflyConfig, GlobalFireflyModifierConfig, HslColorConfig, JitterConfig, LifeConfig, LocationConfig, NeighbourhoodConfig, RgbColorConfig, ShapeConfig, SpeedConfig, WindowConfig } from "./types";
@@ -49,6 +49,7 @@ export class FireflyApp {
   private canvas: FireflyCanvas
   private fireflies: Firefly[] = [];
   private configs: Configs = this.defaultConfigs;
+  private lines: InteractiveLine[] = [];
   private services: (
     | LifeService
     | ShapeService
@@ -61,7 +62,9 @@ export class FireflyApp {
     | DrawService
     | ColorBinderService
   )[] = [];
-  // private collision: Firefly[][] = [];
+
+
+  
   private paused: boolean = false;
 
   private api: FireflyAppApi;
@@ -81,6 +84,7 @@ export class FireflyApp {
       canvas: canvas,
       fireflies: this.fireflies,
       app: this,
+      lines: this.lines,
     }
 
     // services will execute here

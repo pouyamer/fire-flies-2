@@ -189,8 +189,40 @@ export class DrawService
   }
 
   public onFramePass(): void {
+    const ctx = this.appApi.canvas.renderingContext2d;
+
     if (this.config.clearBeforeDrawing) {
-      this.appApi.canvas.renderingContext2d?.clearRect(0, 0, this.appApi.canvas.width, this.appApi.canvas.height)
+      ctx?.clearRect(0, 0, this.appApi.canvas.width, this.appApi.canvas.height)
+    }
+
+    if (this.appApi.lines.length) {
+
+
+
+      ctx!.beginPath()
+
+      this.appApi.lines.forEach(line => {
+      //   line.color = const style = this.appApi.app.generalConfig.colorMode === 'HSL' 
+      // ? new HslColor({
+      //   hue: firefly.hue.value,
+      //   saturation: firefly.saturation.value,
+      //   lightness: firefly.lightness.value,
+      //   alpha: firefly.alpha.value,
+      // }).toString()
+      // : new RgbColor({
+      //   red: firefly.red.value,
+      //   green: firefly.green.value,
+      //   blue: firefly.blue.value,
+      //   alpha: firefly.alpha.value,
+      // }).toString();
+        ctx!.strokeStyle = line.color;
+        ctx!.lineWidth = line.lineWidth;
+        ctx?.moveTo(line.getTranslatedStart().x, line.getTranslatedStart().y);
+        ctx?.lineTo(line.getTranslatedEnd().x, line.getTranslatedEnd().y);
+        ctx?.stroke();
+      });
+
+
     }
 
     for(let i = 0; i < this.config.iterationPerFrame; i++) {

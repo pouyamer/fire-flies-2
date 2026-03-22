@@ -1,6 +1,6 @@
 import { GeneralFireflyConfig } from "../types";
 
 export const generalFireflyConfig: GeneralFireflyConfig = {
-    count: 5,
+    count: 400,
     colorMode: "HSL"
 }
