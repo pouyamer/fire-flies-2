@@ -1,11 +1,8 @@
-import { FireflyApp } from "../app";
 import { Firefly, FireflyCanvas } from "../models";
+import { FireflyAppApi } from "./app-services.type";
 
-export interface ValueGeneratorParameters {
+export type ValueGeneratorParameters = FireflyAppApi & {
   firefly: Firefly,
-  canvas: FireflyCanvas,
-  fireflies: Firefly[],
-  app: FireflyApp
 }
 
 export type GeneratorValueOnCanvasCallback<T> = (canvas: FireflyCanvas) => T;

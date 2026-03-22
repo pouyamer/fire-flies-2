@@ -1,8 +1,7 @@
-import { FireflyApp } from "../app";
 import { ServiceName, Shape } from "../enums";
 import { Service } from "../interfaces";
-import { Firefly, FireflyCanvas, HslColor, RgbColor } from "../models";
-import { DrawConfig, PossibleValue } from "../types";
+import { Firefly, HslColor, RgbColor } from "../models";
+import { DrawConfig, FireflyAppApi, PossibleValue } from "../types";
 import { Utilities } from "../utilities";
 
 export class DrawService
@@ -13,12 +12,10 @@ export class DrawService
   name = ServiceName.Draw;
 
   constructor(
-    private readonly canvas: FireflyCanvas,
-    fireflies: Firefly[],
+    private readonly appApi: FireflyAppApi,
     private readonly config: DrawConfig,
-    private readonly app: FireflyApp
   ) {
-    this.fireflies = [...fireflies];
+    this.fireflies = [...appApi.fireflies];
   }
 
   private getValue(firefly: Firefly, value: PossibleValue<number>) {
@@ -32,9 +29,7 @@ export class DrawService
     else {
       return Utilities.getNumericValue(value({
         firefly,
-        canvas: this.canvas,
-        fireflies: this.fireflies,
-        app: this.app
+        ...this.appApi,
       }));
     }
   }
@@ -151,10 +146,8 @@ export class DrawService
 
       if (typeof this.config.method === 'function') {
         const valueFromFunction = this.config.method({
-          app: this.app,
-          canvas: this.canvas,
           firefly,
-          fireflies: this.fireflies,
+          ...this.appApi,
         })
 
         return valueFromFunction === 'fill' ? ['fill', 0] : ['stroke', this.getValue(firefly, valueFromFunction.lineWidth)]
@@ -168,11 +161,11 @@ export class DrawService
   }
 
   public onFramePassForSingleFirefly(firefly: Firefly): void {
-    const { renderingContext2d: ctx } = this.canvas
+    const { renderingContext2d: ctx } = this.appApi.canvas;
 
     if (ctx) {
 
-      const style = this.app.generalConfig.colorMode === 'HSL' 
+      const style = this.appApi.app.generalConfig.colorMode === 'HSL' 
       ? new HslColor({
         hue: firefly.hue.value,
         saturation: firefly.saturation.value,
@@ -197,7 +190,7 @@ export class DrawService
 
   public onFramePass(): void {
     if (this.config.clearBeforeDrawing) {
-      this.canvas.renderingContext2d?.clearRect(0, 0, this.canvas.width, this.canvas.height)
+      this.appApi.canvas.renderingContext2d?.clearRect(0, 0, this.appApi.canvas.width, this.appApi.canvas.height)
     }
 
     for(let i = 0; i < this.config.iterationPerFrame; i++) {

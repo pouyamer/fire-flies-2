@@ -23,7 +23,7 @@ export class Firefly {
   jitterPolarAmount: ChangingNumericalValueItem;
   x: number;
   y: number;
-  initialFireflySnapshot: Firefly | null;
+  initialFireflySnapshot: unknown | null;
   rotation: ChangingNumericalValueItem;
   firefliesInCollision: Firefly[];
   drawMethod: 'fill' | 'stroke';
@@ -32,8 +32,8 @@ export class Firefly {
   neighbors: Firefly[];
   beforeEnteringNeighborhoodSnapshot: Firefly | null;
   strokeLineWidth: number;
-  
-
+  // Assign a tag that can be later used for filtering or doing certain operations
+  private _tags: string[] = [];
 
   constructor(model: Partial<Firefly> = {}) {
     this.key = model.key ?? null;
@@ -48,6 +48,7 @@ export class Firefly {
     this.initialFireflySnapshot = {
       ...this,
       initialFireflySnapshot: null,
+      _tags: []
     }
     this.speedX = model.speedX ?? new ChangingNumericalValueItem();
     this.speedY = model.speedY ?? new ChangingNumericalValueItem();
@@ -68,6 +69,46 @@ export class Firefly {
     this.drawMethod = model.drawMethod ?? 'fill';
     this.life = model.life ?? Infinity;
     this.strokeLineWidth = model.strokeLineWidth ?? 1;
+  }
+
+  public addTag(tag: string): void {
+    if (!this._tags.length) {
+      this._tags = [tag];
+      return;
+    }
+
+    if (this._tags.includes(tag)) return;
+
+    this._tags.push(tag);
+  }
+
+  public addTags(...tags: string[]): void {
+    for (const tag of tags) {
+      this.addTag(tag)
+    }
+  }
+
+  public removeTag(tag: string) {
+    if (
+      !this._tags.length ||
+      !this._tags.includes(tag)
+    ) return;
+
+    this._tags = this._tags.filter(t => t !== tag );
+  }
+
+  public removeTags(...tags: string[]): void {
+    for (const tag in tags) {
+      this.removeTag(tag);
+    }
+  }
+
+  public hasTag(tag: string): boolean {
+    return this._tags.includes(tag);
+  }
+
+  public hasTags(...tags: string[]): boolean {
+    return tags.reduce((acc, tag) => acc && this.hasTag(tag) , true)
   }
 
 }

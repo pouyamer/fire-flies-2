@@ -3,7 +3,7 @@ import { ServiceName } from "./enums";
 import { Firefly, FireflyCanvas } from "./models";
 import { BoundService, ChangingValueService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, ShapeService, WindowService } from "./services";
 import { ColorBinderService } from "./services/color-binder.service";
-import { BoundsConfig, ChangingValueConfig, CollisionConfig, DrawConfig, GeneralFireflyConfig, GlobalFireflyModifierConfig, HslColorConfig, JitterConfig, LifeConfig, LocationConfig, NeighbourhoodConfig, RgbColorConfig, ShapeConfig, SpeedConfig, WindowConfig } from "./types";
+import { BoundsConfig, ChangingValueConfig, CollisionConfig, DrawConfig, FireflyAppApi, GeneralFireflyConfig, GlobalFireflyModifierConfig, HslColorConfig, JitterConfig, LifeConfig, LocationConfig, NeighbourhoodConfig, RgbColorConfig, ShapeConfig, SpeedConfig, WindowConfig } from "./types";
 import { Utilities } from "./utilities";
 
 interface Configs {
@@ -64,6 +64,8 @@ export class FireflyApp {
   // private collision: Firefly[][] = [];
   private paused: boolean = false;
 
+  private api: FireflyAppApi;
+
 
   constructor(
     canvas: FireflyCanvas,
@@ -74,6 +76,13 @@ export class FireflyApp {
     this.canvas = canvas;
     this.configs = Utilities.deepMerge(this.defaultConfigs, configs);
     this.createFireflies();
+
+    this.api = {
+      canvas: canvas,
+      fireflies: this.fireflies,
+      app: this,
+    }
+
     // services will execute here
     this.buildServices();
     this.setServices();
@@ -99,37 +108,37 @@ export class FireflyApp {
 
 
   private createFireflies(): void {
-    this.fireflies = Array(this.configs.generalFirefly.count).fill(0).map(
+    this.fireflies = Array.from({ length: this.configs.generalFirefly.count }).map(
       _ => new Firefly()
     )
   }
 
   private buildServices() {
     this.services = [
-      new LifeService(this.canvas, this.fireflies, this.configs.life, this),
-      new ShapeService(this.canvas, this.fireflies, this.configs.shape, this),
-      new ChangingValueService("size", this.canvas, this.fireflies, this.configs.size, ServiceName.Size, this),
-      new ColorBinderService(this.canvas, this.fireflies, this),
-      new BoundService(this.canvas, this.fireflies, this.configs.bound, this),
-      // new CollisionService(this.canvas, this.fireflies, this.configs.collision, this, this.collision),
+      new LifeService(this.api, this.configs.life),
+      new ShapeService(this.api, this.configs.shape),
+      new ChangingValueService(this.api, "size", this.configs.size, ServiceName.Size),
+      new ColorBinderService(this.api),
+      new BoundService(this.api, this.configs.bound),
+      // new CollisionService(this.api, this.configs.collision, this, this.collision),
       /* ========= Speed ============ */
-      new ChangingValueService("speedX", this.canvas, this.fireflies, this.configs.speed.speedX, ServiceName.SpeedX, this),
-      new ChangingValueService("speedY", this.canvas, this.fireflies, this.configs.speed.speedY, ServiceName.SpeedY, this),
-      new ChangingValueService("polarSpeedAngle", this.canvas, this.fireflies, this.configs.speed.polarSpeedAngle, ServiceName.PolarSpeedAngle, this),
-      new ChangingValueService("polarSpeedAmount", this.canvas, this.fireflies, this.configs.speed.polarSpeedAmount, ServiceName.PolarSpeedAmount, this),
+      new ChangingValueService(this.api, "speedX", this.configs.speed.speedX, ServiceName.SpeedX),
+      new ChangingValueService(this.api, "speedY", this.configs.speed.speedY, ServiceName.SpeedY),
+      new ChangingValueService(this.api, "polarSpeedAngle", this.configs.speed.polarSpeedAngle, ServiceName.PolarSpeedAngle),
+      new ChangingValueService(this.api, "polarSpeedAmount", this.configs.speed.polarSpeedAmount, ServiceName.PolarSpeedAmount),
       /* ============================ */
       /* ========= Jitter ============ */
-      new ChangingValueService("jitterX", this.canvas, this.fireflies, this.configs.jitter.jitterX, ServiceName.JitterY, this),
-      new ChangingValueService("jitterY", this.canvas, this.fireflies, this.configs.jitter.jitterY, ServiceName.JitterY, this),
-      new ChangingValueService("jitterPolarAngle", this.canvas, this.fireflies, this.configs.jitter.jitterPolarAngle, ServiceName.JitterPolarAngle, this),
-      new ChangingValueService("jitterPolarAmount", this.canvas, this.fireflies, this.configs.jitter.jitterPolarAmount, ServiceName.JitterPolarAmount, this),
+      new ChangingValueService(this.api, "jitterX", this.configs.jitter.jitterX, ServiceName.JitterY),
+      new ChangingValueService(this.api, "jitterY", this.configs.jitter.jitterY, ServiceName.JitterY),
+      new ChangingValueService(this.api, "jitterPolarAngle", this.configs.jitter.jitterPolarAngle, ServiceName.JitterPolarAngle),
+      new ChangingValueService(this.api, "jitterPolarAmount", this.configs.jitter.jitterPolarAmount, ServiceName.JitterPolarAmount),
       /* ============================ */
-      new LocationService(this.canvas, this.fireflies, this.configs.location, this),
-      new WindowService(this.canvas, this.fireflies, this.configs.window, this.windowContext, this),
-      new ChangingValueService("rotation", this.canvas, this.fireflies, this.configs.rotation, ServiceName.Rotation, this),
-      new NeighbourhoodService(this.canvas, this.fireflies, this.configs.neighbourhood, this),
-      new GlobalFireflyModifierService(this.canvas, this.fireflies, this.configs.globalFireflyModifier, this),
-      new DrawService(this.canvas, this.fireflies, this.configs.draw, this),
+      new ChangingValueService( this.api, "rotation", this.configs.rotation, ServiceName.Rotation),
+      new LocationService(this.api, this.configs.location),
+      new WindowService(this.api, this.configs.window, this.windowContext),
+      new NeighbourhoodService(this.api, this.configs.neighbourhood),
+      new GlobalFireflyModifierService(this.api, this.configs.globalFireflyModifier),
+      new DrawService(this.api, this.configs.draw),
     ]
   }
 

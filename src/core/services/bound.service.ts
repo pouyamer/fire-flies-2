@@ -2,20 +2,21 @@ import { FireflyApp } from "../app";
 import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
-import { BoundsConfig, Direction } from "../types";
+import { BoundsConfig, Direction, FireflyAppApi } from "../types";
 
 export class BoundService implements Service {
 
   private fireflies: Firefly[];
   name = ServiceName.Bound;
+  private canvas: FireflyCanvas;
 
+  
   constructor(
-    private readonly canvas: FireflyCanvas,
-    fireflies: Firefly[],
+    private readonly appApi: FireflyAppApi,
     private readonly config: BoundsConfig,
-    private readonly app: FireflyApp
   ) {
-    this.fireflies = [...fireflies];
+    this.fireflies = [...appApi.fireflies];
+    this.canvas = this.appApi.canvas;
   }
 
   public addFireflies(fireflies: Firefly[]): void {
@@ -139,9 +140,7 @@ export class BoundService implements Service {
         
           onOutOfBounds?.({
             firefly: firefly,
-            canvas: this.canvas, 
-            fireflies: this.fireflies,
-            app: this.app
+            ...this.appApi,
           });
       }
     }
@@ -152,10 +151,8 @@ export class BoundService implements Service {
       typeof this.config.onFireflyOutOfBounds !== "function" 
     ) {
         this.config.onFireflyOutOfBounds[direction]?.({
-          firefly: firefly,
-          canvas: this.canvas, 
-          fireflies: this.fireflies,
-          app: this.app
+            firefly: firefly,
+            ...this.appApi,
         });
     }
   }
@@ -173,10 +170,8 @@ export class BoundService implements Service {
           : this.config.onFireflyTouchedBounds?.all;
         
         onTouchedBounds?.({
-          firefly: firefly,
-          canvas: this.canvas, 
-          fireflies: this.fireflies,
-          app: this.app
+            firefly: firefly,
+            ...this.appApi,
         });
       }
     }
@@ -187,10 +182,8 @@ export class BoundService implements Service {
       typeof this.config.onFireflyTouchedBounds !== "function" 
     ) {
         this.config.onFireflyTouchedBounds[direction]?.({
-          firefly: firefly,
-          canvas: this.canvas, 
-          fireflies: this.fireflies,
-          app: this.app
+            firefly: firefly,
+            ...this.appApi,
         });
     }
   }

@@ -2,24 +2,24 @@ import { FireflyApp } from "../app";
 import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
-import { ValueGeneratorParameters, WindowConfig } from "../types";
+import { FireflyAppApi, ValueGeneratorParameters, WindowConfig } from "../types";
 
 export class WindowService
   implements Service {
 
   private fireflies: Firefly[];
   name = ServiceName.Window;
+  private canvas: FireflyCanvas;
 
   private mouseHoveredFirefliesKeys: Firefly["key"][] = [];
 
   constructor(
-    private readonly canvas: FireflyCanvas,
-    fireflies: Firefly[],
+    private readonly appApi: FireflyAppApi,
     private readonly config: WindowConfig,
     private readonly windowContext: Window,
-    private readonly app: FireflyApp
   ) {
-    this.fireflies = [...fireflies];
+    this.fireflies = [...appApi.fireflies];
+    this.canvas = appApi.canvas;
   }
 
   public addFireflies(fireflies: Firefly[]): void {
@@ -41,7 +41,7 @@ export class WindowService
     this.windowContext.addEventListener("resize", () => {
       this.canvas.setWidthAndHeight(this.windowContext.innerWidth, this.windowContext.innerHeight)
       for (let ff of this.fireflies) {
-        this.app.setServicesOnSingleFireflyByServiceNames(ff, ServiceName.Location, ServiceName.Bound)
+        this.appApi.app.setServicesOnSingleFireflyByServiceNames(ff, ServiceName.Location, ServiceName.Bound)
       }
     })
   }
@@ -59,16 +59,14 @@ export class WindowService
 
   private setMouseClickEventListener(): void {
     this.windowContext.addEventListener("click", (/* e: MouseEvent */) => {
-      this.app.togglePauseApplication();
+      this.appApi.app.togglePauseApplication();
     })
   }
 
   private handleOnFireflyHovered(ff: Firefly): void {
     const parameters: ValueGeneratorParameters = {
-      app: this.app,
-      canvas: this.canvas,
+      ...this.appApi,
       firefly: ff,
-      fireflies: this.fireflies
     }
 
     if (this.isMouseInsideFirefly(ff)) {

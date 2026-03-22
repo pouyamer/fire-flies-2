@@ -2,7 +2,7 @@ import { FireflyApp } from "../app";
 import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
-import { ChangingValueConfig, ChangingValueKey, PossibleValue, ValueGeneratorParameters } from "../types";
+import { ChangingValueConfig, ChangingValueKey, FireflyAppApi, PossibleValue, ValueGeneratorParameters } from "../types";
 import { Utilities } from "../utilities";
 
 export class ChangingValueService
@@ -12,18 +12,16 @@ export class ChangingValueService
   name;
 
   constructor(
+    private readonly appApi: FireflyAppApi,
     private readonly key: ChangingValueKey<Firefly>,
-    private readonly canvas: FireflyCanvas,
-    fireflies: Firefly[],
     private readonly config: ChangingValueConfig,
     name: ServiceName,
-    private readonly app: FireflyApp,
     private readonly sideEffect?: (parameters: ValueGeneratorParameters & {
     current: number;
 }) => void
   ) {
     this.name = name;
-    this.fireflies = [...fireflies];
+    this.fireflies = [...appApi.fireflies];
   }
 
   public addFireflies(fireflies: Firefly[]): void {
@@ -53,9 +51,7 @@ export class ChangingValueService
     else {
       return Utilities.getNumericValue(value({
         firefly,
-        canvas: this.canvas,
-        fireflies: this.fireflies,
-        app: this.app
+        ...this.appApi
       }));
     }
   }
@@ -93,9 +89,7 @@ export class ChangingValueService
 
     const parameters = {
       firefly,
-      canvas: this.canvas, 
-      fireflies: this.fireflies,
-      app: this.app,
+      ...this.appApi,
       current: fireflyProp.value,
       iteration: fireflyProp.iteration
     }

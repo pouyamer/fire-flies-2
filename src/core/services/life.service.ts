@@ -2,7 +2,7 @@ import { FireflyApp } from "../app";
 import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
-import { LifeConfig, PossibleValue } from "../types";
+import { FireflyAppApi, LifeConfig, PossibleValue } from "../types";
 import { Utilities } from "../utilities";
 
 export class LifeService 
@@ -11,12 +11,10 @@ export class LifeService
     private fireflies: Firefly[];
 
     constructor(
-      private readonly canvas: FireflyCanvas,
-      fireflies: Firefly[],
+      private readonly appApi: FireflyAppApi,
       private readonly config: LifeConfig,
-      private readonly app: FireflyApp
     ) {
-      this.fireflies = [...fireflies];
+      this.fireflies = [...appApi.fireflies];
     }
 
     public addFireflies(fireflies: Firefly[]): void {
@@ -46,9 +44,7 @@ export class LifeService
       else {
         return Utilities.getNumericValue(value({
           firefly: firefly,
-          canvas: this.canvas,
-          fireflies: this.fireflies,
-          app: this.app
+          ...this.appApi,
         }));
       }
     }
@@ -74,20 +70,16 @@ export class LifeService
     
       if (this.config.nextValueFn) {
         const nextValue = this.config.nextValueFn({
-          app: this.app,
-          canvas: this.canvas,
+          ...this.appApi,
           firefly: firefly,
-          fireflies: this.fireflies
         })
 
         if (nextValue <= 0) {
           this.config.onFireflyDead?.({
-            app: this.app,
-            canvas: this.canvas,
+            ...this.appApi,
             firefly: firefly,
-            fireflies: this.fireflies
           });
-          this.app.removeFirefly(firefly)
+          this.appApi.app.removeFirefly(firefly)
         }
 
         firefly.life = nextValue

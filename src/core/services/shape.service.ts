@@ -2,7 +2,7 @@ import { FireflyApp } from "../app";
 import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
-import { ShapeConfig, ShapeValue, ValueGenerator, WeightedValue } from "../types";
+import { FireflyAppApi, ShapeConfig, ShapeValue, ValueGenerator, WeightedValue } from "../types";
 import { Utilities } from "../utilities";
 
 export class ShapeService
@@ -12,12 +12,10 @@ export class ShapeService
   name = ServiceName.Shape;
 
   constructor(
-    private readonly canvas: FireflyCanvas,
-    fireflies: Firefly[],
+    private readonly appApi: FireflyAppApi,
     private readonly config: ShapeConfig,
-    private readonly app: FireflyApp,
   ) { 
-    this.fireflies = [...fireflies];
+    this.fireflies = [...appApi.fireflies];
   }
 
   public addFireflies(fireflies: Firefly[]): void {
@@ -39,10 +37,8 @@ export class ShapeService
   private getValue(firefly: Firefly, value: ShapeValue | ShapeValue[] | ValueGenerator<ShapeValue | ShapeValue[]> | WeightedValue<ShapeValue>[]): ShapeValue {
     const rawValue = typeof value === 'function' 
       ? value({
-        app: this.app,
-        canvas: this.canvas,
         firefly: firefly,
-        fireflies: this.fireflies
+        ...this.appApi,
       })
       : value
 
