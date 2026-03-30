@@ -1,8 +1,7 @@
-import { FireflyApp } from "../app";
 import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
-import { Firefly, FireflyCanvas } from "../models";
-import { FireflyAppApi, LocationConfig, PossibleValue } from "../types";
+import { Firefly } from "../models";
+import { FireflyAppApiGetter, LocationConfig, PossibleValue } from "../types";
 import { Utilities } from "../utilities";
 
 export class LocationService
@@ -12,10 +11,10 @@ export class LocationService
   private fireflies: Firefly[];
 
   constructor(
-    private readonly appApi: FireflyAppApi,
+    private readonly appApi: FireflyAppApiGetter,
     private readonly config: LocationConfig,
   ) { 
-    this.fireflies = [...appApi.fireflies];
+    this.fireflies = [...appApi('fireflies')];
   }
 
   public addFireflies(fireflies: Firefly[]): void {
@@ -44,7 +43,7 @@ export class LocationService
     else {
       return Utilities.getNumericValue(value({
         firefly,
-        ...this.appApi,
+        ...this.appApi(),
       }));
     }
   }

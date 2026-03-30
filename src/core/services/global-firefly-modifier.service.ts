@@ -1,7 +1,7 @@
 import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly } from "../models";
-import { FireflyAppApi, GlobalFireflyModifierConfig } from "../types";
+import { FireflyAppApiGetter, GlobalFireflyModifierConfig } from "../types";
 
 export class GlobalFireflyModifierService implements Service {
   
@@ -9,10 +9,10 @@ export class GlobalFireflyModifierService implements Service {
   name = ServiceName.GlobalFireflyModifier;
 
   constructor(
-    private readonly appApi: FireflyAppApi,
+    private readonly appApi: FireflyAppApiGetter,
     private readonly config: GlobalFireflyModifierConfig,
   ){
-    this.fireflies = [...appApi.fireflies];
+    this.fireflies = [...appApi('fireflies')];
   }
 
   public addFireflies(fireflies: Firefly[]): void {
@@ -33,7 +33,7 @@ export class GlobalFireflyModifierService implements Service {
   onFramePassForSingleFirefly(firefly: Firefly): void {
     this.config.onFramePassModifier({
       firefly: firefly,
-      ...this.appApi,
+      ...this.appApi(),
     })
   }
 
@@ -41,7 +41,7 @@ export class GlobalFireflyModifierService implements Service {
     if (this.config.onSetModifier) {
       this.config.onSetModifier({
         firefly: firefly,
-      ...this.appApi,
+      ...this.appApi(),
       })
     }
   }

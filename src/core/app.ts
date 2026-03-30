@@ -1,9 +1,9 @@
 import { boundsConfig, collisionConfig, drawConfig, generalFireflyConfig, globalFireflyModifierConfig, hslColorConfig, jitterConfig, lifeConfig, locationConfig, neighbourhoodConfig, rgbColorConfig, rotationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "./configs";
 import { ServiceName } from "./enums";
-import { Firefly, FireflyCanvas, InteractiveLine } from "./models";
+import { Firefly, FireflyCanvas } from "./models";
 import { BoundService, ChangingValueService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, ShapeService, WindowService } from "./services";
 import { ColorBinderService } from "./services/color-binder.service";
-import { BoundsConfig, ChangingValueConfig, CollisionConfig, DrawConfig, FireflyAppApi, GeneralFireflyConfig, GlobalFireflyModifierConfig, HslColorConfig, JitterConfig, LifeConfig, LocationConfig, NeighbourhoodConfig, RgbColorConfig, ShapeConfig, SpeedConfig, WindowConfig } from "./types";
+import { BoundsConfig, ChangingValueConfig, CollisionConfig, DrawConfig, FireflyAppApi, FireflyAppApiGetter, GeneralFireflyConfig, GlobalFireflyModifierConfig, HslColorConfig, JitterConfig, LifeConfig, Line, LocationConfig, NeighbourhoodConfig, RgbColorConfig, ShapeConfig, SpeedConfig, WindowConfig } from "./types";
 import { Utilities } from "./utilities";
 
 interface Configs {
@@ -49,7 +49,7 @@ export class FireflyApp {
   private canvas: FireflyCanvas
   private fireflies: Firefly[] = [];
   private configs: Configs = this.defaultConfigs;
-  private lines: InteractiveLine[] = [];
+  private lines: Line[] = [];
   private services: (
     | LifeService
     | ShapeService
@@ -64,10 +64,37 @@ export class FireflyApp {
   )[] = [];
 
 
-  
+
   private paused: boolean = false;
 
-  private api: FireflyAppApi;
+  private _api(): FireflyAppApi;
+  private _api(query: 'fireflies'): Firefly[];
+  private _api(query: 'canvas'): FireflyCanvas;
+  private _api(query: 'app'): FireflyApp;
+  private _api(query: 'lines'): Line[];
+  private _api(query?: keyof FireflyAppApi): FireflyAppApi[keyof FireflyAppApi] | FireflyAppApi  {
+
+    if (!query) {
+      return {
+        fireflies: this.fireflies,
+        canvas: this.canvas,
+        app: this,
+        lines: this.lines,
+      }
+    }
+    switch (query) {
+      case "fireflies":
+        return this.fireflies;
+      case "canvas":
+        return this.canvas;
+      case "app":
+        return this;
+      case "lines":
+        return this.lines;
+    }
+  }
+
+  private api: FireflyAppApiGetter = this._api.bind(this)
 
 
   constructor(
@@ -80,17 +107,11 @@ export class FireflyApp {
     this.configs = Utilities.deepMerge(this.defaultConfigs, configs);
     this.createFireflies();
 
-    this.api = {
-      canvas: canvas,
-      fireflies: this.fireflies,
-      app: this,
-      lines: this.lines,
-    }
-
     // services will execute here
     this.buildServices();
     this.setServices();
   }
+
 
   public get generalConfig(): GeneralFireflyConfig {
     return this.configs.generalFirefly;
@@ -104,6 +125,14 @@ export class FireflyApp {
       : {
         type: 'RGB', config: this.configs.rgbColor,
       }
+  }
+
+  public disposeLine(line: Line): void {
+    this.lines =  this.lines.filter(l => line !== l)
+  }
+
+  public addLine(line: Line): void {
+    this.lines.push(line)
   }
 
   public getConfig(key: keyof Configs) {
@@ -137,7 +166,7 @@ export class FireflyApp {
       new ChangingValueService(this.api, "jitterPolarAngle", this.configs.jitter.jitterPolarAngle, ServiceName.JitterPolarAngle),
       new ChangingValueService(this.api, "jitterPolarAmount", this.configs.jitter.jitterPolarAmount, ServiceName.JitterPolarAmount),
       /* ============================ */
-      new ChangingValueService( this.api, "rotation", this.configs.rotation, ServiceName.Rotation),
+      new ChangingValueService(this.api, "rotation", this.configs.rotation, ServiceName.Rotation),
       new LocationService(this.api, this.configs.location),
       new WindowService(this.api, this.configs.window, this.windowContext),
       new NeighbourhoodService(this.api, this.configs.neighbourhood),

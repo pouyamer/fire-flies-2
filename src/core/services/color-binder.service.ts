@@ -1,6 +1,6 @@
 import { ServiceName } from "../enums";
 import { Firefly } from "../models";
-import { ChangingValueKey, FireflyAppApi } from "../types";
+import { ChangingValueKey, FireflyAppApiGetter } from "../types";
 import { ChangingValueService } from "./changing-value.service";
 
 type ColorServiceName = ServiceName.Hue | ServiceName.Saturation | ServiceName.Lightness | ServiceName.Alpha;
@@ -19,12 +19,12 @@ export class ColorBinderService {
 
   private readonly services: ChangingValueService[];
   constructor(
-    private readonly appApi: FireflyAppApi,
+    private readonly appApi: FireflyAppApiGetter,
   ) {
-    this.fireflies = [...appApi.fireflies];
+    this.fireflies = [...appApi('fireflies')];
 
-    const colorConfig: any = appApi.app.colorConfigInfo.config;
-    const textNames = appApi.app.colorConfigInfo.type === 'HSL' ? HSL_KEYS : RGB_KEYS;
+    const colorConfig: any = appApi('app').colorConfigInfo.config;
+    const textNames = appApi('app').colorConfigInfo.type === 'HSL' ? HSL_KEYS : RGB_KEYS;
 
     this.services = textNames.map(n => new ChangingValueService(appApi, n as ChangingValueKey<Firefly>, colorConfig[n], n as ServiceName));
   }
@@ -60,12 +60,12 @@ export class ColorBinderService {
 
   public onFramePass(): void {
     this.services.forEach(s => s.onFramePass());
-    const colorBinder = this.appApi.app.colorConfigInfo.config.colorBinder;
+    const colorBinder = this.appApi('app').colorConfigInfo.config.colorBinder;
     if (colorBinder) {
       this.fireflies.forEach(
         ff => {
 
-          const parameters = this.appApi.app.colorConfigInfo.type === 'HSL' ? {
+          const parameters = this.appApi('app').colorConfigInfo.type === 'HSL' ? {
             hue: ff.hue.value,
             saturation: ff.saturation.value,
             lightness: ff.lightness.value,
@@ -79,7 +79,7 @@ export class ColorBinderService {
 
           const colorFromColorBinder = colorBinder(parameters as any) as any;
 
-          const keys = (this.appApi.app.colorConfigInfo.type === 'HSL' ? HSL_KEYS : RGB_KEYS) as ChangingValueKey<Firefly>[];
+          const keys = (this.appApi('app').colorConfigInfo.type === 'HSL' ? HSL_KEYS : RGB_KEYS) as ChangingValueKey<Firefly>[];
 
           keys.forEach((s) => {
             ff[s].set((v) => colorFromColorBinder[s] ?? v)

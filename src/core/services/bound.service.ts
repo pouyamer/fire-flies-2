@@ -1,22 +1,19 @@
-import { FireflyApp } from "../app";
 import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
-import { Firefly, FireflyCanvas } from "../models";
-import { BoundsConfig, Direction, FireflyAppApi } from "../types";
+import { Firefly } from "../models";
+import { BoundsConfig, Direction, FireflyAppApiGetter } from "../types";
 
 export class BoundService implements Service {
 
   private fireflies: Firefly[];
   name = ServiceName.Bound;
-  private canvas: FireflyCanvas;
 
   
   constructor(
-    private readonly appApi: FireflyAppApi,
+    private readonly appApi: FireflyAppApiGetter,
     private readonly config: BoundsConfig,
   ) {
-    this.fireflies = [...appApi.fireflies];
-    this.canvas = this.appApi.canvas;
+    this.fireflies = [...appApi('fireflies')];
   }
 
   public addFireflies(fireflies: Firefly[]): void {
@@ -38,62 +35,64 @@ export class BoundService implements Service {
     firefly: Firefly,
     direction: "top" | "bottom" | "left" | "right"
   ): Boolean {
+    const canvas = this.appApi('canvas');
+
     switch (direction) {
       case "top":
         // correction of firefly getting out of bounds
         if (
           this.config.applyPositionCorrection?.top &&
-          this.canvas.topBound !== null &&
-          firefly.y - firefly.size.value < this.canvas.topBound - .1
+          canvas.topBound !== null &&
+          firefly.y - firefly.size.value < canvas.topBound - .1
         ) {
-          firefly.y = this.canvas.topBound + firefly.size.value
+          firefly.y = canvas.topBound + firefly.size.value
         }
         
         return (
-          this.canvas.topBound !== null &&
-          firefly.y - firefly.size.value == this.canvas.topBound
+          canvas.topBound !== null &&
+          firefly.y - firefly.size.value == canvas.topBound
         );
       case "bottom":
 
         if (
           this.config.applyPositionCorrection?.bottom &&
-          this.canvas.bottomBound !== null &&
-          firefly.y + firefly.size.value > this.canvas.bottomBound - .1
+          canvas.bottomBound !== null &&
+          firefly.y + firefly.size.value > canvas.bottomBound - .1
         ) {
-          firefly.y = this.canvas.bottomBound - firefly.size.value
+          firefly.y = canvas.bottomBound - firefly.size.value
         }
 
         return (
-          this.canvas.bottomBound !== null &&
-          firefly.y + firefly.size.value == this.canvas.bottomBound
+          canvas.bottomBound !== null &&
+          firefly.y + firefly.size.value == canvas.bottomBound
         );
       case "left":
         
         if (
           this.config.applyPositionCorrection?.left &&
-          this.canvas.leftBound !== null &&
-          firefly.x - firefly.size.value <= this.canvas.leftBound - .1
+          canvas.leftBound !== null &&
+          firefly.x - firefly.size.value <= canvas.leftBound - .1
         ) {
-          firefly.x = this.canvas.leftBound + firefly.size.value
+          firefly.x = canvas.leftBound + firefly.size.value
         }
         
         return (
-          this.canvas.leftBound !== null &&
-          firefly.x - firefly.size.value <= this.canvas.leftBound
+          canvas.leftBound !== null &&
+          firefly.x - firefly.size.value <= canvas.leftBound
         );
       case "right":
 
         if (
           this.config.applyPositionCorrection?.right &&
-          this.canvas.rightBound !== null &&
-          firefly.x + firefly.size.value >= this.canvas.rightBound - .1
+          canvas.rightBound !== null &&
+          firefly.x + firefly.size.value >= canvas.rightBound - .1
         ) {
-          firefly.x = this.canvas.rightBound - firefly.size.value
+          firefly.x = canvas.rightBound - firefly.size.value
         }
 
         return (
-          this.canvas.rightBound !== null &&
-          firefly.x + firefly.size.value >= this.canvas.rightBound
+          canvas.rightBound !== null &&
+          firefly.x + firefly.size.value >= canvas.rightBound
         )
     }
   }
@@ -102,26 +101,27 @@ export class BoundService implements Service {
     firefly: Firefly,
     direction: "top" | "bottom" | "left" | "right"
   ): boolean {
+    const canvas = this.appApi('canvas')
     switch(direction) {
       case "top":
         return (
-          this.canvas.topBound !== null &&
-          firefly.y + firefly.size.value <= this.canvas.topBound
+          canvas.topBound !== null &&
+          firefly.y + firefly.size.value <= canvas.topBound
         );
       case "bottom":
         return (
-          this.canvas.bottomBound !== null &&
-          firefly.y - firefly.size.value >= this.canvas.bottomBound
+          canvas.bottomBound !== null &&
+          firefly.y - firefly.size.value >= canvas.bottomBound
         )
       case "left":
         return (
-          this.canvas.leftBound !== null &&
-          firefly.x + firefly.size.value <= this.canvas.leftBound
+          canvas.leftBound !== null &&
+          firefly.x + firefly.size.value <= canvas.leftBound
         );
       case "right":
         return (
-          this.canvas.rightBound !== null &&
-          firefly.x - firefly.size.value >= this.canvas.rightBound
+          canvas.rightBound !== null &&
+          firefly.x - firefly.size.value >= canvas.rightBound
         )
     }
   }
@@ -140,7 +140,7 @@ export class BoundService implements Service {
         
           onOutOfBounds?.({
             firefly: firefly,
-            ...this.appApi,
+            ...this.appApi(),
           });
       }
     }
@@ -152,7 +152,7 @@ export class BoundService implements Service {
     ) {
         this.config.onFireflyOutOfBounds[direction]?.({
             firefly: firefly,
-            ...this.appApi,
+            ...this.appApi(),
         });
     }
   }
@@ -171,7 +171,7 @@ export class BoundService implements Service {
         
         onTouchedBounds?.({
             firefly: firefly,
-            ...this.appApi,
+            ...this.appApi(),
         });
       }
     }
@@ -183,7 +183,7 @@ export class BoundService implements Service {
     ) {
         this.config.onFireflyTouchedBounds[direction]?.({
             firefly: firefly,
-            ...this.appApi,
+            ...this.appApi(),
         });
     }
   }
@@ -193,31 +193,33 @@ export class BoundService implements Service {
 
   public setOnEveryFirefly() {
 
-    const {left, top, right, bottom} = this.config
+    const {left, top, right, bottom} = this.config;
 
-    this.canvas.leftBound = (left !== null && left !== undefined)
+    const canvas = this.appApi('canvas');
+
+    canvas.leftBound = (left !== null && left !== undefined)
       ? typeof left === 'number'
         ? left
-        : left(this.canvas)
+        : left(canvas)
       : null;
 
 
-    this.canvas.topBound = (top !== null && top !== undefined)
+    canvas.topBound = (top !== null && top !== undefined)
       ? typeof top === 'number'
         ? top
-        : top(this.canvas)
+        : top(canvas)
       : null;
 
-    this.canvas.rightBound = (right !== null && right !== undefined)
+    canvas.rightBound = (right !== null && right !== undefined)
       ? typeof right === 'number'
         ? right
-        : right(this.canvas)
+        : right(canvas)
       : null;
 
-    this.canvas.bottomBound = (bottom !== null && bottom !== undefined)
+    canvas.bottomBound = (bottom !== null && bottom !== undefined)
       ? typeof bottom === 'number'
         ? bottom
-        : bottom(this.canvas)
+        : bottom(canvas)
       : null;
 
 

@@ -1,6 +1,7 @@
 import { FireflyApp } from "../app"
 import { Service } from "../interfaces"
-import { Firefly, FireflyCanvas, InteractiveLine } from "../models"
+import { Firefly, FireflyCanvas } from "../models"
+import { Line } from "./line.type"
 
 export type AppServices =
   | {
@@ -24,9 +25,15 @@ export type AppServices =
     }
   }
 
-  export interface FireflyAppApi {
-    fireflies: Firefly[],
-    canvas: FireflyCanvas,
-    app: FireflyApp,
-    lines: InteractiveLine[],
-  }
+export interface FireflyAppApi {
+  fireflies: Firefly[],
+  canvas: FireflyCanvas,
+  app: FireflyApp,
+  lines: Line[],
+}
+
+export type FireflyAppApiGetter = (() => FireflyAppApi)
+  & ((query: 'fireflies') => Firefly[])
+  & ((query: 'canvas') => FireflyCanvas)
+  & ((query: 'app') => FireflyApp)
+  & ((query: 'lines') => Line[])

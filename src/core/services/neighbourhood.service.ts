@@ -1,8 +1,7 @@
-import { FireflyApp } from "../app";
 import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
-import { Firefly, FireflyCanvas } from "../models";
-import { FireflyAppApi, NeighbourhoodConfig } from "../types";
+import { Firefly } from "../models";
+import { FireflyAppApiGetter, NeighbourhoodConfig } from "../types";
 
 
 export class NeighbourhoodService
@@ -16,10 +15,10 @@ export class NeighbourhoodService
 
 
   constructor(
-    private readonly appApi: FireflyAppApi,
+    private readonly appApi: FireflyAppApiGetter,
     private readonly config: NeighbourhoodConfig,
   ) {
-    this.fireflies = [...appApi.fireflies];
+    this.fireflies = [...appApi('fireflies')];
   }
 
   public addFireflies(fireflies: Firefly[]): void {
@@ -48,7 +47,7 @@ export class NeighbourhoodService
   }
 
   setOnEveryFirefly(): void {
-    this.candidateFireflies = this.config.candidatePicker(this.appApi)
+    this.candidateFireflies = this.config.candidatePicker(this.appApi())
   }
 
   onFramePassForSingleFirefly(/* firefly: Firefly */): void {
@@ -59,7 +58,7 @@ export class NeighbourhoodService
 
     // handle candidates
     if (this.config.candidatePickingStrategy === 'reactive') {
-      this.candidateFireflies = this.config.candidatePicker(this.appApi)
+      this.candidateFireflies = this.config.candidatePicker(this.appApi())
     }
       const oldCondidates = this.candidateFireflies;
 
@@ -73,7 +72,7 @@ export class NeighbourhoodService
           ff.neighboredBy = null;
           this.config.onNeighbourhoodExit?.({
             firefly: ff,
-            ...this.appApi,
+            ...this.appApi(),
           })
         }
       )
@@ -82,14 +81,14 @@ export class NeighbourhoodService
       this.candidateFireflies.forEach(
         c => this.config.onCandidatePicked?.({
           firefly: c,
-          ...this.appApi,
+          ...this.appApi(),
         })
       )
 
       pastCandidates.forEach(
         pc => this.config.onCandidateDismissed?.({
           firefly: pc,
-          ...this.appApi,
+          ...this.appApi(),
         })
       )
     
@@ -125,28 +124,28 @@ export class NeighbourhoodService
       nonNeighbours.forEach(nnf => {
         this.config.onNotInNeighbourhood?.({
           firefly: nnf,
-          ...this.appApi,
+          ...this.appApi(),
         })
       })
       
       newNeighbours.forEach(nf => {
         this.config.onNeighbourhoodEnter?.({
           firefly: nf,
-          ...this.appApi,
+          ...this.appApi(),
         });
       })
       
       neighbours.forEach(nff => {
         this.config.onNeighbourhood?.({
           firefly: nff,
-          ...this.appApi,
+          ...this.appApi(),
         })
       })
 
       pastNeighbours.forEach(pf => {
         this.config.onNeighbourhoodExit?.({
           firefly: pf,
-          ...this.appApi,
+          ...this.appApi(),
         })
       })
 

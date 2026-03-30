@@ -1,21 +1,21 @@
 import { ServiceName, Shape } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, HslColor, RgbColor } from "../models";
-import { DrawConfig, FireflyAppApi, PossibleValue } from "../types";
+import { DrawConfig, FireflyAppApiGetter, PossibleValue } from "../types";
 import { Utilities } from "../utilities";
 
 export class DrawService
   implements Service {
 
   private fireflies: Firefly[];
-    
+
   name = ServiceName.Draw;
 
   constructor(
-    private readonly appApi: FireflyAppApi,
+    private readonly appApi: FireflyAppApiGetter,
     private readonly config: DrawConfig,
   ) {
-    this.fireflies = [...appApi.fireflies];
+    this.fireflies = [...appApi('fireflies')];
   }
 
   private getValue(firefly: Firefly, value: PossibleValue<number>) {
@@ -29,24 +29,24 @@ export class DrawService
     else {
       return Utilities.getNumericValue(value({
         firefly,
-        ...this.appApi,
+        ...this.appApi(),
       }));
     }
   }
 
   public addFireflies(fireflies: Firefly[]): void {
-    const fireflyKeys = this.fireflies.map(({key}) => key);
+    const fireflyKeys = this.fireflies.map(({ key }) => key);
 
-    for(const ff of fireflies) {
+    for (const ff of fireflies) {
       if (!fireflyKeys.includes(ff.key)) fireflies.push(ff);
       this.setOnSingleFirefly(ff);
     }
   }
 
   public removeFireflies(fireflies: Firefly[]): void {
-    const removingFireflyKeys = fireflies.map(({key}) => key);
-    
-    this.fireflies = this.fireflies.filter(({key}) => !removingFireflyKeys.includes(key));
+    const removingFireflyKeys = fireflies.map(({ key }) => key);
+
+    this.fireflies = this.fireflies.filter(({ key }) => !removingFireflyKeys.includes(key));
   }
 
   private drawFirefly(
@@ -58,7 +58,7 @@ export class DrawService
 
 
     if (typeof firefly.shapeValue === "string") {
-      switch(firefly.shapeValue) {
+      switch (firefly.shapeValue) {
         case Shape.Circle:
           ctx.beginPath()
           ctx.arc(x, y, size.value, 0, 2 * Math.PI)
@@ -68,7 +68,7 @@ export class DrawService
 
         case Shape.Square:
           ctx.fillRect(x, y, size.value, size.value);
-          firefly.drawMethod === "stroke" 
+          firefly.drawMethod === "stroke"
             ? ctx.strokeRect(x, y, size.value, size.value)
             : ctx.fillRect(x, y, size.value, size.value)
           break;
@@ -77,52 +77,52 @@ export class DrawService
       }
     }
     else {
-      switch(firefly.shapeValue.shape) {
-      case Shape.RegularPolygram:
-        const angle = ((firefly.shapeValue.parameter - 2) * Math.PI) / (2 * firefly.shapeValue.parameter) + firefly.rotation.value
-
-        const innerRadius = firefly.size.value / 2
-        const outerRadius = firefly.size.value
-
-        ctx.beginPath()
-        for (let i = 0; i < firefly.shapeValue.parameter; i++) {
-          let dx = outerRadius * Math.cos((i * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
-          let dy = outerRadius * Math.sin((i * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
-          let outerX = x + dx
-          let outerY = y + dy
-
-          dx = innerRadius * Math.cos(((i + 0.5) * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
-          dy = innerRadius * Math.sin(((i + 0.5) * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
-          let innerX = x + dx
-          let innerY = y + dy
-
-          ctx.lineTo(outerX, outerY)
-          ctx.lineTo(innerX, innerY)
-        }
-
-        firefly.drawMethod === "stroke" ? ctx.stroke() : ctx.fill()
-
-        break;
-      case Shape.RegularPolygon:
-        const halfSize = firefly.size.value
-
-        ctx.beginPath();
-        
-        for (let i = 0; i < firefly.shapeValue.parameter; i++) {
+      switch (firefly.shapeValue.shape) {
+        case Shape.RegularPolygram:
           const angle = ((firefly.shapeValue.parameter - 2) * Math.PI) / (2 * firefly.shapeValue.parameter) + firefly.rotation.value
-          let dx = halfSize * Math.cos((i * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
-          let dy = halfSize * Math.sin((i * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
-          let outerX = x + +dx
-          let outerY = y + dy
-          if (i === 0) {
-            ctx.moveTo(outerX, outerY)
-          } else {
+
+          const innerRadius = firefly.size.value / 2
+          const outerRadius = firefly.size.value
+
+          ctx.beginPath()
+          for (let i = 0; i < firefly.shapeValue.parameter; i++) {
+            let dx = outerRadius * Math.cos((i * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
+            let dy = outerRadius * Math.sin((i * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
+            let outerX = x + dx
+            let outerY = y + dy
+
+            dx = innerRadius * Math.cos(((i + 0.5) * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
+            dy = innerRadius * Math.sin(((i + 0.5) * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
+            let innerX = x + dx
+            let innerY = y + dy
+
             ctx.lineTo(outerX, outerY)
+            ctx.lineTo(innerX, innerY)
           }
-        }
-        ctx.closePath()
-        firefly.drawMethod === "stroke" ? ctx.stroke() : ctx.fill()
-        break;
+
+          firefly.drawMethod === "stroke" ? ctx.stroke() : ctx.fill()
+
+          break;
+        case Shape.RegularPolygon:
+          const halfSize = firefly.size.value
+
+          ctx.beginPath();
+
+          for (let i = 0; i < firefly.shapeValue.parameter; i++) {
+            const angle = ((firefly.shapeValue.parameter - 2) * Math.PI) / (2 * firefly.shapeValue.parameter) + firefly.rotation.value
+            let dx = halfSize * Math.cos((i * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
+            let dy = halfSize * Math.sin((i * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
+            let outerX = x + +dx
+            let outerY = y + dy
+            if (i === 0) {
+              ctx.moveTo(outerX, outerY)
+            } else {
+              ctx.lineTo(outerX, outerY)
+            }
+          }
+          ctx.closePath()
+          firefly.drawMethod === "stroke" ? ctx.stroke() : ctx.fill()
+          break;
       }
     }
   }
@@ -130,7 +130,7 @@ export class DrawService
   public setOnEveryFirefly(): void {
 
 
-    for(let ff of this.fireflies) {
+    for (let ff of this.fireflies) {
       this.setOnSingleFirefly(ff);
     }
   }
@@ -140,14 +140,14 @@ export class DrawService
     const methodAndStrokeLineWidth = ((): [('fill' | 'stroke'), number] => {
       this.config.method
 
-      if(this.config.method === 'fill') {
+      if (this.config.method === 'fill') {
         return ['fill', 0];
       }
 
       if (typeof this.config.method === 'function') {
         const valueFromFunction = this.config.method({
           firefly,
-          ...this.appApi,
+          ...this.appApi(),
         })
 
         return valueFromFunction === 'fill' ? ['fill', 0] : ['stroke', this.getValue(firefly, valueFromFunction.lineWidth)]
@@ -161,71 +161,53 @@ export class DrawService
   }
 
   public onFramePassForSingleFirefly(firefly: Firefly): void {
-    const { renderingContext2d: ctx } = this.appApi.canvas;
+    const { renderingContext2d: ctx } = this.appApi('canvas');
 
     if (ctx) {
 
-      const style = this.appApi.app.generalConfig.colorMode === 'HSL' 
-      ? new HslColor({
-        hue: firefly.hue.value,
-        saturation: firefly.saturation.value,
-        lightness: firefly.lightness.value,
-        alpha: firefly.alpha.value,
-      }).toString()
-      : new RgbColor({
-        red: firefly.red.value,
-        green: firefly.green.value,
-        blue: firefly.blue.value,
-        alpha: firefly.alpha.value,
-      }).toString();
+      const style = this.appApi('app').generalConfig.colorMode === 'HSL'
+        ? new HslColor({
+          hue: firefly.hue.value,
+          saturation: firefly.saturation.value,
+          lightness: firefly.lightness.value,
+          alpha: firefly.alpha.value,
+        }).toString()
+        : new RgbColor({
+          red: firefly.red.value,
+          green: firefly.green.value,
+          blue: firefly.blue.value,
+          alpha: firefly.alpha.value,
+        }).toString();
 
       ctx.lineWidth = firefly.strokeLineWidth;
-      firefly.drawMethod === "fill" 
+      firefly.drawMethod === "fill"
         ? ctx.fillStyle = style
         : ctx.strokeStyle = style
-      
+
       this.drawFirefly(firefly, ctx)
     }
   }
 
   public onFramePass(): void {
-    const ctx = this.appApi.canvas.renderingContext2d;
+    const ctx = this.appApi('canvas').renderingContext2d;
+
+    if (!ctx) return;
 
     if (this.config.clearBeforeDrawing) {
-      ctx?.clearRect(0, 0, this.appApi.canvas.width, this.appApi.canvas.height)
+      ctx.clearRect(0, 0, this.appApi('canvas').width, this.appApi('canvas').height)
     }
 
-    if (this.appApi.lines.length) {
+    if (this.appApi('lines').length) {
 
 
+      // console.log({lines: this.appApi.lines})
 
-      ctx!.beginPath()
-
-      this.appApi.lines.forEach(line => {
-      //   line.color = const style = this.appApi.app.generalConfig.colorMode === 'HSL' 
-      // ? new HslColor({
-      //   hue: firefly.hue.value,
-      //   saturation: firefly.saturation.value,
-      //   lightness: firefly.lightness.value,
-      //   alpha: firefly.alpha.value,
-      // }).toString()
-      // : new RgbColor({
-      //   red: firefly.red.value,
-      //   green: firefly.green.value,
-      //   blue: firefly.blue.value,
-      //   alpha: firefly.alpha.value,
-      // }).toString();
-        ctx!.strokeStyle = line.color;
-        ctx!.lineWidth = line.lineWidth;
-        ctx?.moveTo(line.getTranslatedStart().x, line.getTranslatedStart().y);
-        ctx?.lineTo(line.getTranslatedEnd().x, line.getTranslatedEnd().y);
-        ctx?.stroke();
+      this.appApi('lines').forEach(line => {
+        line.draw(ctx)
       });
-
-
     }
 
-    for(let i = 0; i < this.config.iterationPerFrame; i++) {
+    for (let i = 0; i < this.config.iterationPerFrame; i++) {
       for (let ff of this.fireflies) {
         this.onFramePassForSingleFirefly(ff);
       }
