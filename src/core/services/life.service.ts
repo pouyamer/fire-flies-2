@@ -13,12 +13,10 @@ export class LifeService
       private readonly appApi: FireflyAppApiGetter,
       private readonly config: LifeConfig,
     ) {
-      console.log(appApi())
       this.fireflies = [...appApi('fireflies')];
     }
 
     public addFireflies(fireflies: Firefly[]): void {
-      console.log('add')
       const fireflyKeys = this.fireflies.map(({key}) => key);
 
       for(const ff of fireflies) {

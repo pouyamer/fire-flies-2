@@ -4,9 +4,9 @@ import { Utilities } from "../utilities";
 export const hslColorConfig: HslColorConfig = {
   hue: {
     value: 200,
-    nextValueFn: ({ firefly }) => {
-      return firefly.hasTag("red") ? 0 : 100
-    },
+    // nextValueFn: ({ firefly }) => {
+    //   return 20
+    // },
   },
   saturation: {
     value: Utilities.range(60, 80),

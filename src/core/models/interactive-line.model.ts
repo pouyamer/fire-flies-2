@@ -162,3 +162,35 @@ export class FireflyConnectorLine extends InteractiveLine {
     )
   }
 }
+
+
+
+// ------------------------ Arc Protocol -----------------
+
+function drawArc(
+    ctx: CanvasRenderingContext2D,
+  start: CartersianCoordinates,
+  end: CartersianCoordinates,
+  color: string,
+  lineWidth: number,
+  counterClockWise?: boolean
+): void {
+    ctx.lineWidth = lineWidth;
+  ctx.fillStyle = color;
+
+  ctx.beginPath();
+  const radius = Utilities.calculateDistance(start.x, start.y , end.x, end.y) /2;
+  const cX = (start.x + end.x) / 2
+  const cY = (start.y + end.y) / 2
+
+  const startAngle = Math.atan2(cY - start.y, cX - start.x);
+  const endAngle = Math.atan2(cY - end.y, cX - end.x);
+
+  console.log({startAngle, endAngle})
+
+
+  ctx.arc(cX, cY, radius, startAngle , endAngle, false)
+  ctx.fill();
+}
+
+ // todo: make simpleLine, interactive and firefly connector arc; (add line also to a SimpleConnector, InteractorConnector, and FireflyConnector)

@@ -32,6 +32,8 @@ export class Firefly {
   neighbors: Firefly[];
   beforeEnteringNeighborhoodSnapshot: Firefly | null;
   strokeLineWidth: number;
+  // Read & Write to an object that you can use its value later
+  private _info: Record<string, any> = {}
   // Assign a tag that can be later used for filtering or doing certain operations
   private _tags: string[] = [];
 
@@ -69,6 +71,10 @@ export class Firefly {
     this.drawMethod = model.drawMethod ?? 'fill';
     this.life = model.life ?? Infinity;
     this.strokeLineWidth = model.strokeLineWidth ?? 1;
+    }
+
+  public get info() {
+    return this._info;
   }
 
   public addTag(tag: string): void {
@@ -109,6 +115,24 @@ export class Firefly {
 
   public hasTags(...tags: string[]): boolean {
     return tags.reduce((acc, tag) => acc && this.hasTag(tag) , true)
+  }
+
+  public writeInfo(key: string, value: any): Record<string, any> {
+    if (key in this._info) {
+      this._info[key] = value;
+      return this._info;
+    }
+
+    this._info = {
+      ...this._info,
+      [key]: value,
+    };
+
+    return this._info;
+  }
+
+  public getInfoByKey(key: string): any {
+    return this._info?.[key];
   }
 
 }

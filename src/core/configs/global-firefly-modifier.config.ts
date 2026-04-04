@@ -2,6 +2,8 @@ import { FireflyConnectorLine } from "../models";
 import { GlobalFireflyModifierConfig } from "../types";
 import { Utilities } from "../utilities";
 
+const distance = 100
+
 export const globalFireflyModifierConfig: GlobalFireflyModifierConfig = {
   onSetModifier: ({ firefly, fireflies, lines, canvas }) => {
 
@@ -45,7 +47,7 @@ export const globalFireflyModifierConfig: GlobalFireflyModifierConfig = {
 
 
     fireflies.filter(ff => ff !== firefly).filter(
-      ff => Utilities.calculateDistance(firefly.x, firefly.y, ff.x, ff.y) <= 85
+      ff => Utilities.calculateDistance(firefly.x, firefly.y, ff.x, ff.y) <= distance
     ).forEach(ff => {
 
       if (lines.find(l => (l.start === ff && l.end === firefly) || (l.start === firefly && l.end === ff))) {
@@ -58,14 +60,14 @@ export const globalFireflyModifierConfig: GlobalFireflyModifierConfig = {
       }))
     })
 
-    lines.filter(l => l.length <= 85).forEach(
+    lines.filter(l => l.length <= distance).forEach(
       l => {
-        l.color = `hsl(0, 70%, 65%, ${(85 - l.length) / 85})`
+        l.color = `hsl(0, 70%, 65%, ${(distance - l.length) / distance})`
       }
     )
 
 
-    lines.filter(l => l.length > 85).forEach(
+    lines.filter(l => l.length > distance).forEach(
       l => {
         app.disposeLine(l)
       }
