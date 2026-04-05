@@ -1,5 +1,10 @@
-import { FireflyConnectorLine, InteractiveLine, SimpleLine } from "../models";
+import { FireflyArc, FireflyLine, InteractiveArc, InteractiveLine, SimpleArc, SimpleLine } from "../models";
 
-export type Line = FireflyConnectorLine | InteractiveLine | SimpleLine;
+export type Line = FireflyLine | InteractiveLine | SimpleLine;
 
-export type LineTypeName = "FireflyConnectorLine" | "InteractiveLine" | "SimpleLine"
+export type Arc = FireflyArc | InteractiveArc | SimpleArc;
+
+export type CartersianCoordinates = {
+  x: number;
+  y: number
+}

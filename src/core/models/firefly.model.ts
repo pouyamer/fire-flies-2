@@ -1,6 +1,7 @@
 import { Shape } from "../enums";
 import { ShapeValue } from "../types";
 import { ChangingNumericalValueItem } from "./changing-numerical-value-item.model";
+import { FireflyServiceToggle } from "./firefly-service-toggle.model";
 
 export class Firefly {
   key: string | null;
@@ -32,6 +33,7 @@ export class Firefly {
   neighbors: Firefly[];
   beforeEnteringNeighborhoodSnapshot: Firefly | null;
   strokeLineWidth: number;
+  _serviceToggle = new FireflyServiceToggle();
   // Read & Write to an object that you can use its value later
   private _info: Record<string, any> = {}
   // Assign a tag that can be later used for filtering or doing certain operations
@@ -71,7 +73,7 @@ export class Firefly {
     this.drawMethod = model.drawMethod ?? 'fill';
     this.life = model.life ?? Infinity;
     this.strokeLineWidth = model.strokeLineWidth ?? 1;
-    }
+  }
 
   public get info() {
     return this._info;
@@ -100,7 +102,7 @@ export class Firefly {
       !this._tags.includes(tag)
     ) return;
 
-    this._tags = this._tags.filter(t => t !== tag );
+    this._tags = this._tags.filter(t => t !== tag);
   }
 
   public removeTags(...tags: string[]): void {
@@ -114,19 +116,21 @@ export class Firefly {
   }
 
   public hasTags(...tags: string[]): boolean {
-    return tags.reduce((acc, tag) => acc && this.hasTag(tag) , true)
+    return tags.reduce((acc, tag) => acc && this.hasTag(tag), true)
   }
 
-  public writeInfo(key: string, value: any): Record<string, any> {
-    if (key in this._info) {
-      this._info[key] = value;
-      return this._info;
-    }
+  public writeInfo(...keyValuePairs: [string, any][]): Record<string, any> {
 
-    this._info = {
-      ...this._info,
-      [key]: value,
-    };
+    keyValuePairs.forEach(([key, value]) => {
+      if (key in this._info) {
+        this._info[key] = value;
+      }
+
+      this._info = {
+        ...this._info,
+        [key]: value,
+      };
+    })
 
     return this._info;
   }
@@ -134,5 +138,4 @@ export class Firefly {
   public getInfoByKey(key: string): any {
     return this._info?.[key];
   }
-
 }

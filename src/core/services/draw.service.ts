@@ -2,7 +2,7 @@ import { ServiceName, Shape } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, HslColor, RgbColor } from "../models";
 import { DrawConfig, FireflyAppApiGetter, PossibleValue } from "../types";
-import { Utilities } from "../utilities";
+import { getNumericValue, isRange } from "../utilities";
 
 export class DrawService
   implements Service {
@@ -20,14 +20,14 @@ export class DrawService
 
   private getValue(firefly: Firefly, value: PossibleValue<number>) {
     if (
-      Utilities.isRange(value) ||
+      isRange(value) ||
       typeof value === "number" ||
       Array.isArray(value)
     ) {
-      return Utilities.getNumericValue(value);
+      return getNumericValue(value);
     }
     else {
-      return Utilities.getNumericValue(value({
+      return getNumericValue(value({
         firefly,
         ...this.appApi(),
       }));
@@ -198,12 +198,14 @@ export class DrawService
     }
 
     if (this.appApi('lines').length) {
-
-
-      // console.log({lines: this.appApi.lines})
-
       this.appApi('lines').forEach(line => {
         line.draw(ctx)
+      });
+    }
+
+    if (this.appApi('arcs').length) {
+      this.appApi('arcs').forEach(arc => {
+        arc.draw(ctx)
       });
     }
 

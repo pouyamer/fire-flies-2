@@ -1,67 +1,19 @@
-import { boundsConfig, collisionConfig, drawConfig, generalFireflyConfig, globalFireflyModifierConfig, hslColorConfig, jitterConfig, lifeConfig, locationConfig, neighbourhoodConfig, rgbColorConfig, rotationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "./configs";
+import { FIREFLY_SERVICE_DEFAULT_CONFIGS } from "./constants";
 import { ServiceName } from "./enums";
 import { Firefly, FireflyCanvas } from "./models";
 import { BoundService, ChangingValueService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, ShapeService, WindowService } from "./services";
 import { ColorBinderService } from "./services/color-binder.service";
-import { BoundsConfig, ChangingValueConfig, CollisionConfig, DrawConfig, FireflyAppApi, FireflyAppApiGetter, GeneralFireflyConfig, GlobalFireflyModifierConfig, HslColorConfig, JitterConfig, LifeConfig, Line, LocationConfig, NeighbourhoodConfig, RgbColorConfig, ShapeConfig, SpeedConfig, WindowConfig } from "./types";
-import { Utilities } from "./utilities";
-
-interface Configs {
-  bound: BoundsConfig;
-  collision: CollisionConfig;
-  generalFirefly: GeneralFireflyConfig;
-  globalFireflyModifier: GlobalFireflyModifierConfig;
-  jitter: JitterConfig;
-  location: LocationConfig;
-  rotation: ChangingValueConfig;
-  shape: ShapeConfig;
-  size: ChangingValueConfig;
-  speed: SpeedConfig;
-  window: WindowConfig;
-  neighbourhood: NeighbourhoodConfig;
-  draw: DrawConfig;
-  life: LifeConfig;
-  hslColor: HslColorConfig,
-  rgbColor: RgbColorConfig;
-}
+import { Arc, FireflyAppApi, FireflyAppApiGetter, FireflyServiceConfigs, GeneralFireflyConfig, HslColorConfig, Line, RgbColorConfig, ServiceType } from "./types";
+import { deepMerge } from "./utilities";
 
 export class FireflyApp {
 
-  private readonly defaultConfigs: Configs = {
-    bound: boundsConfig,
-    collision: collisionConfig,
-    draw: drawConfig,
-    globalFireflyModifier: globalFireflyModifierConfig,
-    jitter: jitterConfig,
-    location: locationConfig,
-    rotation: rotationConfig,
-    shape: shapeConfig,
-    size: sizeConfig,
-    speed: speedConfig,
-    window: windowConfig,
-    generalFirefly: generalFireflyConfig,
-    neighbourhood: neighbourhoodConfig,
-    life: lifeConfig,
-    hslColor: hslColorConfig,
-    rgbColor: rgbColorConfig,
-  }
-
   private canvas: FireflyCanvas
   private fireflies: Firefly[] = [];
-  private configs: Configs = this.defaultConfigs;
+  private configs: FireflyServiceConfigs = FIREFLY_SERVICE_DEFAULT_CONFIGS;
   private lines: Line[] = [];
-  private services: (
-    | LifeService
-    | ShapeService
-    | ChangingValueService
-    | BoundService
-    | LocationService
-    | WindowService
-    | NeighbourhoodService
-    | GlobalFireflyModifierService
-    | DrawService
-    | ColorBinderService
-  )[] = [];
+  private arcs: Arc[] = [];
+  private services: ServiceType[] = [];
 
 
 
@@ -72,6 +24,7 @@ export class FireflyApp {
   private _api(query: 'canvas'): FireflyCanvas;
   private _api(query: 'app'): FireflyApp;
   private _api(query: 'lines'): Line[];
+  private _api(query: 'arcs'): Arc[];
   private _api(query?: keyof FireflyAppApi): FireflyAppApi[keyof FireflyAppApi] | FireflyAppApi  {
 
     if (!query) {
@@ -80,6 +33,7 @@ export class FireflyApp {
         canvas: this.canvas,
         app: this,
         lines: this.lines,
+        arcs: this.arcs
       }
     }
     switch (query) {
@@ -91,6 +45,8 @@ export class FireflyApp {
         return this;
       case "lines":
         return this.lines;
+      case "arcs":
+        return this.arcs
     }
   }
 
@@ -100,11 +56,11 @@ export class FireflyApp {
   constructor(
     canvas: FireflyCanvas,
     private readonly windowContext: Window & typeof globalThis,
-    configs: Partial<Configs> = this.defaultConfigs
+    configs: Partial<FireflyServiceConfigs> = FIREFLY_SERVICE_DEFAULT_CONFIGS
   ) {
 
     this.canvas = canvas;
-    this.configs = Utilities.deepMerge(this.defaultConfigs, configs);
+    this.configs = deepMerge(FIREFLY_SERVICE_DEFAULT_CONFIGS, configs);
     this.createFireflies();
 
     // services will execute here
@@ -135,7 +91,15 @@ export class FireflyApp {
     this.lines.push(line)
   }
 
-  public getConfig(key: keyof Configs) {
+  public disposeArc(arc: Arc): void {
+    this.arcs =  this.arcs.filter(a => arc !== a)
+  }
+
+  public addArc(arc: Arc): void {
+    this.arcs.push(arc)
+  }
+
+  public getConfig(key: keyof FireflyServiceConfigs) {
     return this.configs[key];
   }
 

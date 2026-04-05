@@ -2,7 +2,7 @@ import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly } from "../models";
 import { FireflyAppApiGetter, LocationConfig, PossibleValue } from "../types";
-import { Utilities } from "../utilities";
+import { getNumericValue, isRange, polarToCartesian } from "../utilities";
 
 export class LocationService
   implements Service {
@@ -34,14 +34,14 @@ export class LocationService
 
   private getValue(firefly: Firefly, value: PossibleValue<number>) {
     if (
-      Utilities.isRange(value) ||
+      isRange(value) ||
       typeof value === "number" ||
       Array.isArray(value)
     ) {
-      return Utilities.getNumericValue(value);
+      return getNumericValue(value);
     }
     else {
-      return Utilities.getNumericValue(value({
+      return getNumericValue(value({
         firefly,
         ...this.appApi(),
       }));
@@ -56,12 +56,12 @@ export class LocationService
   }
 
   public onFramePassForSingleFirefly(firefly: Firefly): void {
-    const cartesianFromPolarSpeedValue = Utilities.toCartesian(
+    const cartesianFromPolarSpeedValue = polarToCartesian(
       firefly.polarSpeedAmount.value,
       firefly.polarSpeedAngle.value,
     )
 
-    const cartesianFromPolarJitterValue = Utilities.toCartesian(
+    const cartesianFromPolarJitterValue = polarToCartesian(
       firefly.jitterPolarAmount.value,
       firefly.jitterPolarAngle.value,
     );

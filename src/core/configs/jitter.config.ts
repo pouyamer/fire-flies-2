@@ -1,5 +1,4 @@
 import { JitterConfig } from "../types";
-import { Utilities } from "../utilities";
 
 export const jitterConfig: JitterConfig = {
     jitterX: {

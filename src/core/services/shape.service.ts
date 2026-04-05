@@ -2,7 +2,7 @@ import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly } from "../models";
 import { FireflyAppApiGetter, ShapeConfig, ShapeValue, ValueGenerator, WeightedValue } from "../types";
-import { Utilities } from "../utilities";
+import { chooseBetweenMultipleValues, getValueFromWeightedValues, isWeightedValues } from "../utilities";
 
 export class ShapeService
   implements Service {
@@ -42,11 +42,11 @@ export class ShapeService
       : value
 
       if (Array.isArray(rawValue)) {
-        if (Utilities.isWeightedValues<ShapeValue>(rawValue)) {
-          return Utilities.getValueFromWeightedValues<ShapeValue>(rawValue)
+        if (isWeightedValues<ShapeValue>(rawValue)) {
+          return getValueFromWeightedValues<ShapeValue>(rawValue)
         }
         else {
-          return Utilities.chooseBetweenMultipleValues(rawValue);
+          return chooseBetweenMultipleValues(rawValue);
         }
       }
       else {

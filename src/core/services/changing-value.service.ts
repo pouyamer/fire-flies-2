@@ -2,7 +2,7 @@ import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly } from "../models";
 import { ChangingValueConfig, ChangingValueKey, FireflyAppApiGetter, PossibleValue, ValueGeneratorParameters } from "../types";
-import { Utilities } from "../utilities";
+import { getNumericValue, isRange } from "../utilities";
 
 export class ChangingValueService
   implements Service {
@@ -41,14 +41,14 @@ export class ChangingValueService
   // the inner get value sets args for Utilities.getNumericValue in valueGenerator mode
   private getValue(firefly: Firefly, value: PossibleValue<number>) {
     if (
-      Utilities.isRange(value) ||
+      isRange(value) ||
       typeof value === "number" ||
       Array.isArray(value)
     ) {
-      return Utilities.getNumericValue(value);
+      return getNumericValue(value);
     }
     else {
-      return Utilities.getNumericValue(value({
+      return getNumericValue(value({
         firefly,
         ...this.appApi()
       }));

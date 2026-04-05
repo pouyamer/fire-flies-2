@@ -1,3 +1,5 @@
+import { range } from "../utilities";
+
 export class Range {
   public min: number;
   public max: number;
@@ -13,5 +15,9 @@ export class Range {
       this.min = first.min ?? 0;
       this.max = first.max ?? 0;
     }
+  }
+
+  public static create(min: number, max: number) {
+    return range(min, max);
   }
 }
