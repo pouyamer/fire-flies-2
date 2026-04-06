@@ -1,6 +1,6 @@
 import { FireflyApp } from "../app"
 import { Firefly, FireflyCanvas } from "../models"
-import { BoundService, ChangingValueService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, ShapeService, WindowService } from "../services";
+import { BoundService, ChangingValueService, CollisionService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, ShapeService, WindowService } from "../services";
 import { ColorBinderService } from "../services/color-binder.service";
 import { BoundsConfig } from "./bounds-config.type";
 import { ChangingValueConfig } from "./changing-value-config.type";
@@ -65,3 +65,4 @@ export type ServiceType =
   | GlobalFireflyModifierService
   | DrawService
   | ColorBinderService
+  | CollisionService

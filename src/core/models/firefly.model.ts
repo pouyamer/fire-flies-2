@@ -33,7 +33,7 @@ export class Firefly {
   neighbors: Firefly[];
   beforeEnteringNeighborhoodSnapshot: Firefly | null;
   strokeLineWidth: number;
-  _serviceToggle = new FireflyServiceToggle();
+  serviceToggle = new FireflyServiceToggle();
   // Read & Write to an object that you can use its value later
   private _info: Record<string, any> = {}
   // Assign a tag that can be later used for filtering or doing certain operations

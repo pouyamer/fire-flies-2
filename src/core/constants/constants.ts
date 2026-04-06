@@ -1,4 +1,4 @@
-import { FireflyCanvas } from "../models";
+import { FireflyCanvas, FireflyServiceToggleKey } from "../models";
 import { ChangingValueConfig, EventCallBack, FireflyNeighbourhoodPicker, LocationConfig, ValueGenerator } from "../types";
 import { calculateDistance } from "../utilities";
 
@@ -156,3 +156,32 @@ export const DEFAULT_COORDINATES = {
   x: 0,
   y: 0,
 }
+
+export const ALL_SERVICE_KEYS: FireflyServiceToggleKey[] = [
+  "bounds",
+  "collision",
+  "draw",
+  "globalFireflyModifier",
+  "life",
+  "location",
+  "neighbourhood",
+  "red",
+  "green",
+  "blue",
+  "alpha",
+  "hue",
+  "saturation",
+  "lightness",
+  "shape",
+  "window",
+  "jitterX",
+  "jitterY",
+  "jitterPolarAngle",
+  "jitterPolarAmount",
+  "size",
+  "speedX",
+  "speedY",
+  "polarSpeedAngle",
+  "polarSpeedAmount",
+  "rotation",
+]

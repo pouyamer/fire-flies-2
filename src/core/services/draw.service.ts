@@ -1,4 +1,4 @@
-import { ServiceName, Shape } from "../enums";
+import { Shape } from "../enums";
 import { Service } from "../interfaces";
 import { Firefly, HslColor, RgbColor } from "../models";
 import { DrawConfig, FireflyAppApiGetter, PossibleValue } from "../types";
@@ -7,15 +7,12 @@ import { getNumericValue, isRange } from "../utilities";
 export class DrawService
   implements Service {
 
-  private fireflies: Firefly[];
-
-  name = ServiceName.Draw;
+  private fireflies: Firefly[] = [];
 
   constructor(
     private readonly appApi: FireflyAppApiGetter,
     private readonly config: DrawConfig,
   ) {
-    this.fireflies = [...appApi('fireflies')];
   }
 
   private getValue(firefly: Firefly, value: PossibleValue<number>) {
@@ -32,21 +29,6 @@ export class DrawService
         ...this.appApi(),
       }));
     }
-  }
-
-  public addFireflies(fireflies: Firefly[]): void {
-    const fireflyKeys = this.fireflies.map(({ key }) => key);
-
-    for (const ff of fireflies) {
-      if (!fireflyKeys.includes(ff.key)) fireflies.push(ff);
-      this.setOnSingleFirefly(ff);
-    }
-  }
-
-  public removeFireflies(fireflies: Firefly[]): void {
-    const removingFireflyKeys = fireflies.map(({ key }) => key);
-
-    this.fireflies = this.fireflies.filter(({ key }) => !removingFireflyKeys.includes(key));
   }
 
   private drawFirefly(
@@ -126,6 +108,10 @@ export class DrawService
       }
     }
   }
+  
+  public addFirefly(firefly: Firefly): void {
+    this.fireflies.push(firefly);
+  }
 
   public setOnEveryFirefly(): void {
 
@@ -137,7 +123,7 @@ export class DrawService
 
   public setOnSingleFirefly(firefly: Firefly): void {
 
-    const methodAndStrokeLineWidth = ((): [('fill' | 'stroke'), number] => {
+    const [drawMethod, strokeLineWidth] = ((): [('fill' | 'stroke'), number] => {
       this.config.method
 
       if (this.config.method === 'fill') {
@@ -156,8 +142,8 @@ export class DrawService
       return ['stroke', this.getValue(firefly, this.config.method.lineWidth)]
     })()
 
-    firefly.drawMethod = methodAndStrokeLineWidth[0]
-    firefly.strokeLineWidth = methodAndStrokeLineWidth[1]
+    firefly.drawMethod = drawMethod
+    firefly.strokeLineWidth = strokeLineWidth
   }
 
   public onFramePassForSingleFirefly(firefly: Firefly): void {
@@ -211,7 +197,7 @@ export class DrawService
 
     for (let i = 0; i < this.config.iterationPerFrame; i++) {
       for (let ff of this.fireflies) {
-        this.onFramePassForSingleFirefly(ff);
+        ff.serviceToggle.get('draw') && this.onFramePassForSingleFirefly(ff);
       }
     }
   }

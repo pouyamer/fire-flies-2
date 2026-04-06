@@ -1,41 +1,22 @@
-import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
-import { Firefly } from "../models";
+import { Firefly, FireflyServiceToggle, FireflyServiceToggleKey } from "../models";
 import { ChangingValueConfig, ChangingValueKey, FireflyAppApiGetter, PossibleValue, ValueGeneratorParameters } from "../types";
 import { getNumericValue, isRange } from "../utilities";
 
 export class ChangingValueService
   implements Service {
 
-  private fireflies: Firefly[];
-  name;
+  private fireflies: Firefly[] = [];
 
   constructor(
     private readonly appApi: FireflyAppApiGetter,
     private readonly key: ChangingValueKey<Firefly>,
     private readonly config: ChangingValueConfig,
-    name: ServiceName,
+    public readonly serviceToggleKey: FireflyServiceToggleKey,
     private readonly sideEffect?: (parameters: ValueGeneratorParameters & {
     current: number;
 }) => void
   ) {
-    this.name = name;
-    this.fireflies = [...appApi('fireflies')];
-  }
-
-  public addFireflies(fireflies: Firefly[]): void {
-    const fireflyKeys = this.fireflies.map(({key}) => key);
-
-    for(const ff of fireflies) {
-      if (!fireflyKeys.includes(ff.key)) fireflies.push(ff);
-      this.setOnSingleFirefly(ff);
-    }
-  }
-
-  public removeFireflies(fireflies: Firefly[]): void {
-    const removingFireflyKeys = fireflies.map(({key}) => key);
-    
-    this.fireflies = this.fireflies.filter(({key}) => !removingFireflyKeys.includes(key));
   }
 
   // the inner get value sets args for Utilities.getNumericValue in valueGenerator mode
@@ -53,6 +34,13 @@ export class ChangingValueService
         ...this.appApi()
       }));
     }
+  }
+
+  public addFirefly(firefly: Firefly): void {
+    this.fireflies = [
+      ...this.fireflies,
+      firefly
+    ]
   }
 
   public setOnSingleFirefly(firefly: Firefly) {  
@@ -120,7 +108,9 @@ export class ChangingValueService
 
   public onFramePass(): void {
     for (let ff of this.fireflies) {
-      this.onFramePassForSingleFirefly(ff)
+      if (ff.serviceToggle.get(this.serviceToggleKey)) {
+        this.onFramePassForSingleFirefly(ff)
+      }
     }
   }
 }

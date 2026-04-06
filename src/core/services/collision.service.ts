@@ -1,10 +1,8 @@
-import { ServiceName } from "../enums";
 import { Service } from "../interfaces";
+import { Firefly } from "../models";
 
 export class CollisionService 
   implements Service {
-
-  public name = ServiceName.Collision;
 
   constructor(
     // canvas: FireflyCanvas,
@@ -13,6 +11,10 @@ export class CollisionService
     // app: FireflyApp,
     // collisions: Firefly[][],
   ) {}
+
+  addFirefly(firefly: Firefly): void {
+    
+  }
 
   public onFramePassForSingleFirefly(/* firefly: Firefly */): void {
     // if (this.collisions.length) {

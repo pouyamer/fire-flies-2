@@ -22,15 +22,15 @@ export class FireflyServiceToggle {
   private size: boolean = false;
   private speedX: boolean = false;
   private speedY: boolean = false;
-  private speedPolarAngle: boolean = false;
-  private speedPolarAmount: boolean = false;
+  private polarSpeedAngle: boolean = false;
+  private polarSpeedAmount: boolean = false;
   private window: boolean = false;
 
   constructor() { }
 
-  public toggle(key: Key, toggle: boolean): void
-  public toggle(key: Key, toggle: (value: boolean) => boolean): void
-  public toggle(key: Key, toggle: boolean | ((value: boolean) => boolean)): void {
+  public toggle(key: FireflyServiceToggleKey, toggle: boolean): void
+  public toggle(key: FireflyServiceToggleKey, toggle: (value: boolean) => boolean): void
+  public toggle(key: FireflyServiceToggleKey, toggle: boolean | ((value: boolean) => boolean)): void {
     if (typeof toggle === 'boolean') {
       this[key] = toggle;
     }
@@ -39,25 +39,25 @@ export class FireflyServiceToggle {
     }
   }
 
-  public halt(...keys: Key[]): void {
+  public halt(...keys: FireflyServiceToggleKey[]): void {
     keys.forEach(key => {
       this[key] = false;
     })
   }
 
-  public proceed(...keys: Key[]): void {
+  public activate(...keys: FireflyServiceToggleKey[]): void {
     keys.forEach(key => {
       this[key] = true;
     })
   }
 
-  public get(key: Key): boolean {
+  public get(key: FireflyServiceToggleKey): boolean {
     return this[key]
   }
 }
 
 
-type Key= 
+export type FireflyServiceToggleKey = 
   | "bounds"
   | "collision"
   | "draw"
@@ -81,6 +81,10 @@ type Key=
   | "size"
   | "speedX"
   | "speedY"
-  | "speedPolarAngle"
-  | "speedPolarAmount"
+  | "polarSpeedAngle"
+  | "polarSpeedAmount"
   | "window"
+
+export type FireflyServiceToggleKeyNotRequiringFirefly = Extract<FireflyServiceToggleKey, 'window' | 'bounds' | 'neighbourhood'>
+
+export type FireflyServiceToggleKeyRequiringFirefly = Omit<FireflyServiceToggleKey, FireflyServiceToggleKeyNotRequiringFirefly>[]

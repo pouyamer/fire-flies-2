@@ -1,4 +1,5 @@
 import { DEFAULT_VALUE } from "../constants";
+import { Direction } from "../types";
 import { HslColor, RgbColor } from "./color.model";
 
 export class FireflyCanvas {
@@ -37,6 +38,32 @@ export class FireflyCanvas {
 
     this.setWidthAndHeight(this.width, this.height)
     this.setColor(this.color)
+  }
+
+  public setBounds(type: Direction, value: number | null): void {
+    switch(type) {
+      case "top":
+        this.topBound = value;
+      case "bottom":
+        this.bottomBound = value;
+      case "left":
+        this.leftBound = value;
+      case "right":
+        this.rightBound = value;
+    }
+  }
+
+  public getBounds(type: Direction): number | null {
+    switch(type) {
+      case "top":
+        return this.topBound;
+      case "bottom":
+        return this.bottomBound;
+      case "left":
+        return this.leftBound;
+      case "right":
+        return this.rightBound;
+    }
   }
 
   public setWidthAndHeight(

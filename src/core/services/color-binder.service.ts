@@ -1,9 +1,6 @@
-import { ServiceName } from "../enums";
-import { Firefly } from "../models";
+import { Firefly, FireflyServiceToggleKey } from "../models";
 import { ChangingValueKey, FireflyAppApiGetter } from "../types";
 import { ChangingValueService } from "./changing-value.service";
-
-type ColorServiceName = ServiceName.Hue | ServiceName.Saturation | ServiceName.Lightness | ServiceName.Alpha;
 
 const HSL_KEYS = [
   'hue', 'saturation', 'lightness', 'alpha'
@@ -15,51 +12,27 @@ const RGB_KEYS = [
 
 export class ColorBinderService {
 
-  private readonly fireflies: Firefly[];
+  private readonly fireflies: Firefly[] = [];
 
-  private readonly services: ChangingValueService[];
+  public readonly services: ChangingValueService[];
   constructor(
     private readonly appApi: FireflyAppApiGetter,
   ) {
-    this.fireflies = [...appApi('fireflies')];
-
     const colorConfig: any = appApi('app').colorConfigInfo.config;
     const textNames = appApi('app').colorConfigInfo.type === 'HSL' ? HSL_KEYS : RGB_KEYS;
 
-    this.services = textNames.map(n => new ChangingValueService(appApi, n as ChangingValueKey<Firefly>, colorConfig[n], n as ServiceName));
+    this.services = textNames.map(n => new ChangingValueService(appApi, n as ChangingValueKey<Firefly>, colorConfig[n], n as FireflyServiceToggleKey));
   }
 
   public setOnEveryFirefly(): void {
-    this.services[0].setOnEveryFirefly();
-    this.services[1].setOnEveryFirefly();
-    this.services[2].setOnEveryFirefly();
-    this.services[3].setOnEveryFirefly();
-  }
-
-  public addFireflies(ff: Firefly[]): void;
-  public addFireflies(ff: Firefly[], serviceName: ColorServiceName): void;
-  public addFireflies(ff: Firefly[], serviceName?: ColorServiceName): void {
-    if (serviceName) {
-      this.services.find(s => s.name === serviceName)?.addFireflies(ff);
-    }
-    else {
-      this.services.forEach(s => s.addFireflies(ff));
-    }
-  }
-
-  public removeFireflies(ff: Firefly[]): void;
-  public removeFireflies(ff: Firefly[], serviceName: ColorServiceName): void;
-  public removeFireflies(ff: Firefly[], serviceName?: ColorServiceName): void {
-    if (serviceName) {
-      this.services.find(s => s.name === serviceName)?.removeFireflies(ff);
-    }
-    else {
-      this.services.forEach(s => s.removeFireflies(ff));
-    }
+    this.services.forEach(s => {
+      s.setOnEveryFirefly();
+    })
   }
 
   public onFramePass(): void {
     this.services.forEach(s => s.onFramePass());
+
     const colorBinder = this.appApi('app').colorConfigInfo.config.colorBinder;
     if (colorBinder) {
       this.fireflies.forEach(

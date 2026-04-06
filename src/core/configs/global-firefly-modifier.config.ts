@@ -1,4 +1,4 @@
-import { FireflyArc } from "../models";
+import { FireflyArc, FireflyLine } from "../models";
 import { GlobalFireflyModifierConfig } from "../types";
 import { calculateDistance } from "../utilities";
 
@@ -6,32 +6,32 @@ const distance = 100
 
 export const globalFireflyModifierConfig: GlobalFireflyModifierConfig = {
   onSetModifier: () => {},
-  onFramePassModifier: ({ firefly, fireflies, arcs, app }) => {
+  onFramePassModifier: ({ firefly, fireflies, lines, app }) => {
 
     fireflies.filter(ff => ff !== firefly).filter(
       ff => calculateDistance(firefly.x, firefly.y, ff.x, ff.y) <= distance
     ).forEach(ff => {
 
-      if (arcs.find(l => (l.start === ff && l.end === firefly) || (l.start === firefly && l.end === ff))) {
+      if (lines.find(l => (l.start === ff && l.end === firefly) || (l.start === firefly && l.end === ff))) {
         return
       }
-      app.addArc(new FireflyArc({
+      app.addLine(new FireflyLine({
         start: firefly,
         end: ff,
-        lineWidth: 2
+        lineWidth: 1
       }))
     })
 
-    arcs.filter(l => l.distance <= distance).forEach(
+    lines.filter(l => l.distance <= distance).forEach(
       l => {
         l.color = `hsl(0, 70%, 65%, ${(distance - l.distance) / distance})`
       }
     )
 
 
-    arcs.filter(l => l.distance > distance).forEach(
+    lines.filter(l => l.distance > distance).forEach(
       l => {
-        app.disposeArc(l)
+        app.disposeLine(l)
       }
     )
 
