@@ -1,7 +1,8 @@
 import { Firefly, FireflyCanvas } from "../models";
-import { FireflyAppApi } from "./app-services.type";
+import { FireflyAppApiGetter } from "./app-services.type";
 
-export type ValueGeneratorParameters = FireflyAppApi & {
+export type ValueGeneratorParameters = {
+  api: FireflyAppApiGetter;
   firefly: Firefly,
 }
 

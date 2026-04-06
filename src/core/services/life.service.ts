@@ -25,7 +25,7 @@ export class LifeService
       else {
         return getNumericValue(value({
           firefly: firefly,
-          ...this.appApi(),
+          api: this.appApi,
         }));
       }
     }
@@ -55,13 +55,14 @@ export class LifeService
     
       if (this.config.nextValueFn) {
         const nextValue = this.config.nextValueFn({
-          ...this.appApi(),
+          api: this.appApi,
           firefly: firefly,
         })
 
         if (nextValue <= 0) {
           this.config.onFireflyDead?.({
-            ...this.appApi(),
+
+            api: this.appApi,
             firefly: firefly,
           });
           // this.appApi('app').removeFirefly(firefly)

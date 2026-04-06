@@ -31,7 +31,7 @@ export class ChangingValueService
     else {
       return getNumericValue(value({
         firefly,
-        ...this.appApi()
+        api: this.appApi
       }));
     }
   }
@@ -76,7 +76,7 @@ export class ChangingValueService
 
     const parameters = {
       firefly,
-      ...this.appApi(),
+      api: this.appApi,
       current: fireflyProp.value,
       iteration: fireflyProp.iteration
     }

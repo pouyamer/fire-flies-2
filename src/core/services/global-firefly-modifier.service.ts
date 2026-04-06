@@ -19,7 +19,7 @@ export class GlobalFireflyModifierService implements Service {
   onFramePassForSingleFirefly(firefly: Firefly): void {
     this.config.onFramePassModifier({
       firefly: firefly,
-      ...this.appApi(),
+      api: this.appApi
     })
   }
 
@@ -27,7 +27,7 @@ export class GlobalFireflyModifierService implements Service {
     if (this.config.onSetModifier) {
       this.config.onSetModifier({
         firefly: firefly,
-      ...this.appApi(),
+        api: this.appApi
       })
     }
   }

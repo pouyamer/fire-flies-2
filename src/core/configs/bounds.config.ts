@@ -4,8 +4,8 @@ import { BoundsConfig } from "../types";
 export const boundsConfig: BoundsConfig = {
   ...CONSTANTS.CANVAS_EDGE_BOUNDS,
   onFireflyOutOfBounds: {
-    all: ({firefly, app}) => {
-      app.resetServicesOnFireflyByKeys(firefly, 'location')
+    all: ({firefly, api}) => {
+      api('app').resetServicesOnFireflyByKeys(firefly, 'location')
     }
   }
 

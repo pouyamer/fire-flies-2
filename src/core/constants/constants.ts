@@ -21,8 +21,8 @@ export class CONSTANTS {
   }
 
   public static centerOfCanvas: LocationConfig = {
-    x: ({ canvas }) => canvas.width / 2,
-    y: ({ canvas }) => canvas.height / 2,
+    x: ({ api }) => api('canvas').width / 2,
+    y: ({ api }) => api('canvas').height / 2,
   }
 
   public static randomCanvasLocationWithSegments(
@@ -38,19 +38,19 @@ export class CONSTANTS {
   }
 
   public static createRandomValueBasedOnCanvasWidth(segment?: number): ValueGenerator<number | number[]> {
-    return ({ canvas }) => (segment)
+    return ({ api }) => (segment)
       ? segment >= 0
-        ? Array(Math.floor(segment)).fill(null).map((_, i) => i * canvas.width / Math.floor(segment))
+        ? Array(Math.floor(segment)).fill(null).map((_, i) => i * api('canvas').width / Math.floor(segment))
         : []
-      : Math.random() * canvas.width;
+      : Math.random() * api('canvas').width;
   }
 
   public static createRandomValueBasedOnCanvasHeight(segment?: number): ValueGenerator<number | number[]> {
-    return ({ canvas }) => (segment)
+    return ({ api }) => (segment)
       ? segment >= 0
-        ? Array(Math.floor(segment)).fill(null).map((_, i) => i * canvas.height / Math.floor(segment))
+        ? Array(Math.floor(segment)).fill(null).map((_, i) => i * api('canvas').height / Math.floor(segment))
         : []
-      : Math.random() * canvas.height;
+      : Math.random() * api('canvas').height;
   }
 
   public static NEIGHBOUR_PICKERS = {
@@ -81,7 +81,9 @@ export class CONSTANTS {
 
   public static EVENT_CALLBACKS = {
     BlackHole: (strength: number, safeDistance: number): EventCallBack => {
-      return ({ firefly: ff, canvas }) => {
+      return ({ firefly: ff, api }) => {
+        const canvas = api('canvas');
+        
         if (ff.neighboredBy) {
           const distanceToCandidate = calculateDistance(
             ff.x, ff.y, ff.neighboredBy.x, ff.neighboredBy.y
@@ -108,7 +110,9 @@ export class CONSTANTS {
       }
     },
     BlackHoleWithExponentialFalloff: (strength: number): EventCallBack => {
-      return ({ firefly: ff, canvas }) => {
+      return ({ firefly: ff, api }) => {
+        const canvas = api('canvas');
+
         if (ff.neighboredBy) {
           const distanceToCandidate = calculateDistance(
             ff.x, ff.y, ff.neighboredBy.x, ff.neighboredBy.y

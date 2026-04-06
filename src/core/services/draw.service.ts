@@ -26,7 +26,7 @@ export class DrawService
     else {
       return getNumericValue(value({
         firefly,
-        ...this.appApi(),
+        api: this.appApi
       }));
     }
   }
@@ -133,7 +133,7 @@ export class DrawService
       if (typeof this.config.method === 'function') {
         const valueFromFunction = this.config.method({
           firefly,
-          ...this.appApi(),
+          api: this.appApi,
         })
 
         return valueFromFunction === 'fill' ? ['fill', 0] : ['stroke', this.getValue(firefly, valueFromFunction.lineWidth)]

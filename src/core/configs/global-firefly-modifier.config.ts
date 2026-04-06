@@ -1,12 +1,16 @@
-import { FireflyArc, FireflyLine } from "../models";
+import { FireflyLine } from "../models";
 import { GlobalFireflyModifierConfig } from "../types";
 import { calculateDistance } from "../utilities";
 
-const distance = 100
+const distance = 60
 
 export const globalFireflyModifierConfig: GlobalFireflyModifierConfig = {
   onSetModifier: () => {},
-  onFramePassModifier: ({ firefly, fireflies, lines, app }) => {
+  onFramePassModifier: ({ firefly, api }) => {
+    const fireflies = api('fireflies');
+    const lines = api('lines');
+
+    const app = api('app')
 
     fireflies.filter(ff => ff !== firefly).filter(
       ff => calculateDistance(firefly.x, firefly.y, ff.x, ff.y) <= distance

@@ -43,7 +43,7 @@ export class WindowService
 
   private handleOnFireflyHovered(ff: Firefly): void {
     const parameters: ValueGeneratorParameters = {
-      ...this.appApi(),
+      api: this.appApi,
       firefly: ff,
     }
 

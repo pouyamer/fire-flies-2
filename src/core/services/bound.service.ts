@@ -124,7 +124,7 @@ export class BoundService implements Service {
 
         onOutOfBounds?.({
           firefly: firefly,
-          ...this.appApi(),
+          api: this.appApi,
         });
       }
     }
@@ -136,7 +136,7 @@ export class BoundService implements Service {
     ) {
       this.config.onFireflyOutOfBounds[direction]?.({
         firefly: firefly,
-        ...this.appApi(),
+        api: this.appApi,
       });
     }
   }
@@ -155,7 +155,7 @@ export class BoundService implements Service {
 
         onTouchedBounds?.({
           firefly: firefly,
-          ...this.appApi(),
+          api: this.appApi,
         });
       }
     }
@@ -167,7 +167,7 @@ export class BoundService implements Service {
     ) {
       this.config.onFireflyTouchedBounds[direction]?.({
         firefly: firefly,
-        ...this.appApi(),
+        api: this.appApi,
       });
     }
   }

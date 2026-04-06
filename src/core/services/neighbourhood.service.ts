@@ -32,7 +32,7 @@ export class NeighbourhoodService
   }
 
   setOnEveryFirefly(): void {
-    this.candidateFireflies = this.config.candidatePicker(this.appApi())
+    this.candidateFireflies = this.config.candidatePicker({api: this.appApi})
   }
 
   onFramePassForSingleFirefly(/* firefly: Firefly */): void {
@@ -43,7 +43,7 @@ export class NeighbourhoodService
 
     // handle candidates
     if (this.config.candidatePickingStrategy === 'reactive') {
-      this.candidateFireflies = this.config.candidatePicker(this.appApi())
+      this.candidateFireflies = this.config.candidatePicker({api: this.appApi})
     }
       const oldCondidates = this.candidateFireflies;
 
@@ -57,7 +57,7 @@ export class NeighbourhoodService
           ff.neighboredBy = null;
           this.config.onNeighbourhoodExit?.({
             firefly: ff,
-            ...this.appApi(),
+            api: this.appApi,
           })
         }
       )
@@ -66,14 +66,14 @@ export class NeighbourhoodService
       this.candidateFireflies.forEach(
         c => this.config.onCandidatePicked?.({
           firefly: c,
-          ...this.appApi(),
+            api: this.appApi,
         })
       )
 
       pastCandidates.forEach(
         pc => this.config.onCandidateDismissed?.({
           firefly: pc,
-          ...this.appApi(),
+            api: this.appApi,
         })
       )
     
@@ -109,28 +109,28 @@ export class NeighbourhoodService
       nonNeighbours.forEach(nnf => {
         this.config.onNotInNeighbourhood?.({
           firefly: nnf,
-          ...this.appApi(),
+            api: this.appApi,
         })
       })
       
       newNeighbours.forEach(nf => {
         this.config.onNeighbourhoodEnter?.({
           firefly: nf,
-          ...this.appApi(),
+            api: this.appApi,
         });
       })
       
       neighbours.forEach(nff => {
         this.config.onNeighbourhood?.({
           firefly: nff,
-          ...this.appApi(),
+            api: this.appApi,
         })
       })
 
       pastNeighbours.forEach(pf => {
         this.config.onNeighbourhoodExit?.({
           firefly: pf,
-          ...this.appApi(),
+            api: this.appApi,
         })
       })
 

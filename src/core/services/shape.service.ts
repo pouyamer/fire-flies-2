@@ -19,7 +19,7 @@ export class ShapeService
     const rawValue = typeof value === 'function' 
       ? value({
         firefly: firefly,
-        ...this.appApi(),
+        api: this.appApi
       })
       : value
 

@@ -26,7 +26,7 @@ export class LocationService
     else {
       return getNumericValue(value({
         firefly,
-        ...this.appApi(),
+        api: this.appApi
       }));
     }
   }
