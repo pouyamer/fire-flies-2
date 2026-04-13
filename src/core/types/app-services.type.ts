@@ -19,12 +19,35 @@ import { ShapeConfig } from "./shape-config.type";
 import { SpeedConfig } from "./speed-config.type";
 import { WindowConfig } from "./window-config.type";
 
+export type FireflyAppMethods = {
+  disposeLine: FireflyApp['disposeLine'];
+  addLine: FireflyApp['addLine'];
+  disposeArc: FireflyApp['disposeArc'];
+  addArc: FireflyApp['addArc'];
+  getConfig: FireflyApp['getConfig'];
+  resetServicesOnFireflyByKeys: FireflyApp['resetServicesOnFireflyByKeys'];
+  resetServicesByKeys: FireflyApp['resetServicesByKeys'];
+  haltServicesOnFireflyByKeys: FireflyApp['haltServicesOnFireflyByKeys'];
+  addFireflyToService: FireflyApp['addFireflyToService'];
+  togglePauseApplication: FireflyApp['togglePauseApplication'];
+  markFireflyAsCandidate: FireflyApp['markFireflyAsCandidate'];
+  getServiceByKey: FireflyApp['getServiceByKey']
+}
+
+export type FireflyColorInfoConfig = 
+  { type: 'HSL', config: HslColorConfig } | 
+  { type: 'RGB', config: RgbColorConfig }
+
 export interface FireflyAppApi {
-  fireflies: Firefly[],
-  canvas: FireflyCanvas,
-  app: FireflyApp,
-  lines: Line[],
-  arcs: Arc[],
+  fireflies: Firefly[];
+  canvas: FireflyCanvas;
+  lines: Line[];
+  arcs: Arc[];
+  methods: FireflyAppMethods;
+  configs: {
+    general: GeneralFireflyConfig;
+    colorInfo: FireflyColorInfoConfig
+  }
 }
 
 export type FireflyAppApiGetter =

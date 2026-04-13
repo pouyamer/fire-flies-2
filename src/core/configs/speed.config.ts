@@ -3,11 +3,10 @@ import { range } from "../utilities";
 
 export const speedConfig: SpeedConfig = {
   polarSpeedAmount: {
-    value: range(2),
+    value: 3,
   },
   polarSpeedAngle: {
     value: range(0, 2 * Math.PI),
-
   },
   speedX: {
     value: 0,

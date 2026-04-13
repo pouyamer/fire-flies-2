@@ -20,4 +20,5 @@ export * from "./draw-config.type";
 export * from "./life-config.type";
 export * from "./hsl-color-config.type";
 export * from "./rgb-color.config.type"
-export * from "./line.type"
+export * from "./line.type";
+export * from "./color.type";

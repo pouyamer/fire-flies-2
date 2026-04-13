@@ -3,9 +3,13 @@ import { HslColor } from "../models";
 import { DefaultValue, FireflyServiceConfigs } from "../types";
 
 export const DEFAULT_VALUE: DefaultValue = {
-  Color: new HslColor(),
   CanvasHeight: 1,
   CanvasWidth: 1,
+  Color: new HslColor({
+    hue: 0,
+    lightness: 0,
+    saturation: 0,
+  })
 }
 
 export const FIREFLY_SERVICE_DEFAULT_CONFIGS: FireflyServiceConfigs = {

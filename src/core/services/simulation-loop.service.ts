@@ -1,5 +1,4 @@
-import { FireflyApp } from "../app";
-import { ServiceType } from "../types";
+import { FireflyAppApiGetter, ServiceType } from "../types";
 
 export class SimulationLoopService {
 
@@ -11,7 +10,7 @@ export class SimulationLoopService {
   private running = false;
 
   constructor(
-    private readonly app: FireflyApp,
+    private readonly api: FireflyAppApiGetter,
     private readonly getServices: () => ServiceType[],
     simulationFPS: number
   ) {
@@ -19,7 +18,7 @@ export class SimulationLoopService {
   }
 
   private stepSimulation() {
-    const drawService = this.app.getServiceByKey('draw');
+    const drawService = this.api('methods').getServiceByKey('draw');
     for (let s of this.getServices()) {
       if (s !== drawService) s.onFramePass();
     }

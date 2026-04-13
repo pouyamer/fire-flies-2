@@ -9,7 +9,7 @@ export type Message = {
 };
 
 export type DefaultValue = {
-  Color: HslColor | RgbColor,
   CanvasHeight: number,
   CanvasWidth: number,
+  Color: HslColor
 }

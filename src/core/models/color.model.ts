@@ -1,4 +1,4 @@
-import { Hsl, Rgb } from "../types";
+import { Hsl, HslWithoutAlpha, Rgb, RgbWithoutAlpha } from "../types";
 
 export class HslColor implements Hsl<number> {
   hue: number;
@@ -6,10 +6,10 @@ export class HslColor implements Hsl<number> {
   lightness: number;
   alpha: number;
 
-  constructor(model: Partial<HslColor> = {}) {
-    this.hue = model.hue ?? 0;
-    this.saturation = model.saturation ?? 0;
-    this.lightness = model.lightness ?? 0;
+  constructor(model: HslWithoutAlpha<number>) {
+    this.hue = model.hue;
+    this.saturation = model.saturation;
+    this.lightness = model.lightness;
     this.alpha = model.alpha ?? 1;
   }
 
@@ -25,10 +25,10 @@ export class RgbColor implements Rgb<number> {
   blue: number;
   alpha: number;
 
-  constructor(model: Partial<RgbColor> = {}) {
-    this.red = model.red ?? 0;
-    this.green = model.green ?? 0;
-    this.blue = model.blue ?? 0;
+  constructor(model: RgbWithoutAlpha<number>) {
+    this.red = model.red;
+    this.green = model.green;
+    this.blue = model.blue;
     this.alpha = model.alpha ?? 1;
   }
 

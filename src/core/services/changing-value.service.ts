@@ -1,5 +1,5 @@
 import { Service } from "../interfaces";
-import { Firefly, FireflyServiceToggle, FireflyServiceToggleKey } from "../models";
+import { Firefly, FireflyServiceToggleKey } from "../models";
 import { ChangingValueConfig, ChangingValueKey, FireflyAppApiGetter, PossibleValue, ValueGeneratorParameters } from "../types";
 import { getNumericValue, isRange } from "../utilities";
 

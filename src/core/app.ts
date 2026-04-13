@@ -1,8 +1,8 @@
 import { ALL_SERVICE_KEYS, FIREFLY_SERVICE_DEFAULT_CONFIGS } from "./constants";
-import { Firefly, FireflyCanvas, FireflyServiceToggleKey, FireflyServiceToggleKeyNotRequiringFirefly, FireflyServiceToggleKeyRequiringFirefly } from "./models";
+import { Firefly, FireflyCanvas, FireflyServiceToggleKey, FireflyServiceToggleKeyNotRequiringFirefly, FireflyServiceToggleKeyRequiringFirefly, IFireflyCanvasProps } from "./models";
 import { BoundService, ChangingValueService, CollisionService, DrawLoopService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, ShapeService, SimulationLoopService, WindowService } from "./services";
 import { ColorBinderService } from "./services/color-binder.service";
-import { Arc, FireflyAppApi, FireflyAppApiGetter, FireflyServiceConfigs, GeneralFireflyConfig, HslColorConfig, Line, RgbColorConfig, ServiceType } from "./types";
+import { Arc, FireflyAppApi, FireflyAppApiGetter, FireflyAppMethods, FireflyColorInfoConfig, FireflyServiceConfigs, GeneralFireflyConfig, HslColorConfig, Line, RgbColorConfig, ServiceType } from "./types";
 import { deepMerge } from "./utilities";
 
 export class FireflyApp {
@@ -18,34 +18,58 @@ export class FireflyApp {
 
   private paused: boolean = false;
 
+  private readonly apiMethods: FireflyAppMethods = {
+    disposeLine: this.disposeLine.bind(this),
+    addLine: this.addLine.bind(this),
+    disposeArc: this.disposeArc.bind(this),
+    addArc: this.addArc.bind(this),
+    getConfig: this.getConfig.bind(this),
+    resetServicesOnFireflyByKeys: this.resetServicesOnFireflyByKeys.bind(this),
+    resetServicesByKeys: this.resetServicesByKeys.bind(this),
+    haltServicesOnFireflyByKeys: this.haltServicesOnFireflyByKeys.bind(this),
+    addFireflyToService: this.addFireflyToService.bind(this),
+    togglePauseApplication: this.togglePauseApplication.bind(this),
+    markFireflyAsCandidate: this.markFireflyAsCandidate.bind(this),
+    getServiceByKey: this.getServiceByKey.bind(this)
+  };
+
   private _api(): FireflyAppApi;
+  private _api(query: 'configs'): FireflyAppApi['configs'];
   private _api(query: 'fireflies'): Firefly[];
   private _api(query: 'canvas'): FireflyCanvas;
-  private _api(query: 'app'): FireflyApp;
   private _api(query: 'lines'): Line[];
   private _api(query: 'arcs'): Arc[];
+  private _api(query: 'methods'): FireflyAppMethods;
   private _api(query?: keyof FireflyAppApi): FireflyAppApi[keyof FireflyAppApi] | FireflyAppApi {
+
+    const configs: FireflyAppApi['configs'] = {
+      colorInfo: this.colorConfigInfo,
+      general: this.generalConfig,
+    }
 
     if (!query) {
       return {
         fireflies: this.fireflies,
         canvas: this.canvas,
-        app: this,
         lines: this.lines,
-        arcs: this.arcs
+        arcs: this.arcs,
+        methods: this.apiMethods,
+        configs: configs,
       }
     }
     switch (query) {
+      case "configs":
+        return configs;
       case "fireflies":
         return this.fireflies;
       case "canvas":
         return this.canvas;
-      case "app":
-        return this;
       case "lines":
         return this.lines;
       case "arcs":
-        return this.arcs
+        return this.arcs;
+      case "methods":
+        return this.apiMethods;
     }
   }
 
@@ -53,7 +77,7 @@ export class FireflyApp {
 
 
   private simLoop = new SimulationLoopService(
-    this,
+    this.api,
     () => this.services,
     this.generalConfig.simulationFPS ?? 60
   );
@@ -64,14 +88,13 @@ export class FireflyApp {
   );
 
 
-  constructor(
-    canvas: FireflyCanvas,
-    private readonly windowContext: Window & typeof globalThis,
-    configs: Partial<FireflyServiceConfigs> = FIREFLY_SERVICE_DEFAULT_CONFIGS
-  ) {
+  constructor(app: {
+    canvas: IFireflyCanvasProps,
+    configs?: Partial<FireflyServiceConfigs>
+  }) {
 
-    this.canvas = canvas;
-    this.configs = deepMerge(FIREFLY_SERVICE_DEFAULT_CONFIGS, configs);
+    this.canvas = new FireflyCanvas(app.canvas);
+    this.configs = deepMerge(FIREFLY_SERVICE_DEFAULT_CONFIGS, app.configs);
     this.createFireflies();
 
     // services will execute here
@@ -80,11 +103,11 @@ export class FireflyApp {
   }
 
 
-  public get generalConfig(): GeneralFireflyConfig {
+  private get generalConfig(): GeneralFireflyConfig {
     return this.configs.generalFirefly;
   }
 
-  public get colorConfigInfo(): { type: 'HSL', config: HslColorConfig } | { type: 'RGB', config: RgbColorConfig } {
+  private get colorConfigInfo(): FireflyColorInfoConfig {
     return this.configs.generalFirefly.colorMode === 'HSL'
       ? {
         type: 'HSL', config: this.configs.hslColor
@@ -94,23 +117,23 @@ export class FireflyApp {
       }
   }
 
-  public disposeLine(line: Line): void {
+  private disposeLine(line: Line): void {
     this.lines = this.lines.filter(l => line !== l)
   }
 
-  public addLine(line: Line): void {
+  private addLine(line: Line): void {
     this.lines.push(line)
   }
 
-  public disposeArc(arc: Arc): void {
+  private disposeArc(arc: Arc): void {
     this.arcs = this.arcs.filter(a => arc !== a)
   }
 
-  public addArc(arc: Arc): void {
+  private addArc(arc: Arc): void {
     this.arcs.push(arc)
   }
 
-  public getConfig(key: keyof FireflyServiceConfigs) {
+  private getConfig(key: keyof FireflyServiceConfigs) {
     return this.configs[key];
   }
 
@@ -121,7 +144,7 @@ export class FireflyApp {
     )
   }
 
-  public getServiceByKey(key: FireflyServiceToggleKey): Exclude<ServiceType, ColorBinderService> | undefined {
+  private getServiceByKey(key: FireflyServiceToggleKey): Exclude<ServiceType, ColorBinderService> | undefined {
     switch (key) {
       case "bounds":
         return this.services.find(s => s instanceof BoundService);
@@ -168,7 +191,24 @@ export class FireflyApp {
     }
   }
 
-  public resetServicesOnFireflyByKeys(firefly: Firefly, ...keys: FireflyServiceToggleKeyRequiringFirefly): void {
+  private getServices(): ServiceType[]
+  private getServices(type: 'exclusive', ...keys: FireflyServiceToggleKey[]): ServiceType[]
+  private getServices(type: 'inclusive', ...keys: FireflyServiceToggleKey[]): ServiceType[] 
+  private getServices(type?: 'inclusive' | 'exclusive', ...keys: FireflyServiceToggleKey[]): ServiceType[] {
+    if (!type) {
+      return this.services;
+    }
+    else {
+      switch(type) {
+        case "exclusive":
+          return ALL_SERVICE_KEYS.filter(key => !keys.includes(key)).map(k => this.getServiceByKey(k)).filter(s => s !== undefined)
+        case "inclusive":
+          return keys.map(k => this.getServiceByKey(k)).filter(s => s !== undefined)
+      }
+    }
+  }
+
+  private resetServicesOnFireflyByKeys(firefly: Firefly, ...keys: FireflyServiceToggleKeyRequiringFirefly): void {
     keys.forEach(key => {
       const service = this.getServiceByKey(key as FireflyServiceToggleKey);
 
@@ -179,7 +219,7 @@ export class FireflyApp {
     })
   }
 
-  public resetServicesByKeys(...keys: FireflyServiceToggleKeyNotRequiringFirefly[]): void {
+  private resetServicesByKeys(...keys: FireflyServiceToggleKeyNotRequiringFirefly[]): void {
     keys.forEach(key => {
       const service = this.getServiceByKey(key as FireflyServiceToggleKey);
 
@@ -190,14 +230,13 @@ export class FireflyApp {
     })
   }
 
-  public haltServicesOnFireflyByKeys(firefly: Firefly, ...keys: FireflyServiceToggleKey[]): void {
+  private haltServicesOnFireflyByKeys(firefly: Firefly, ...keys: FireflyServiceToggleKey[]): void {
     keys.forEach(key => {
-      this.fireflies.forEach(ff => firefly.serviceToggle.halt(key))
-
+       firefly.serviceToggle.halt(key);
     })
   }
 
-  public addFireflyToService(firefly: Firefly, key: FireflyServiceToggleKey): void {
+  private addFireflyToService(firefly: Firefly, key: FireflyServiceToggleKey): void {
     const service = this.getServiceByKey(key);
 
     if (service) {
@@ -229,7 +268,7 @@ export class FireflyApp {
       /* ============================ */
       new ChangingValueService(this.api, "rotation", this.configs.rotation, 'rotation'),
       new LocationService(this.api, this.configs.location),
-      new WindowService(this.api, this.configs.window, this.windowContext),
+      new WindowService(this.api, this.configs.window),
       new NeighbourhoodService(this.api, this.configs.neighbourhood),
       new CollisionService(),
       new GlobalFireflyModifierService(this.api, this.configs.globalFireflyModifier),
@@ -237,7 +276,7 @@ export class FireflyApp {
     ]
   }
 
-  public togglePauseApplication(value?: boolean): void {
+  private togglePauseApplication(value?: boolean): void {
     this.paused = value === undefined ? !this.paused : value;
 
     if (this.paused) {
@@ -249,7 +288,7 @@ export class FireflyApp {
     }
   }
 
-  public setServices() {
+  private setServices() {
     ALL_SERVICE_KEYS.forEach(
       sKey => {
         this.fireflies.forEach(ff => this.addFireflyToService(ff, sKey))
@@ -270,7 +309,7 @@ export class FireflyApp {
   }
 
 
-  public markFireflyAsCandidate(firefly: Firefly): void {
+  private markFireflyAsCandidate(firefly: Firefly): void {
     const neighbourhoodService = this.services.find(s => s instanceof NeighbourhoodService);
 
     neighbourhoodService?.markFireflyAsCandidate(firefly)

@@ -1,47 +1,69 @@
 import { DEFAULT_VALUE } from "../constants";
-import { Direction } from "../types";
+import { Direction, HslWithoutAlpha, RgbWithoutAlpha } from "../types";
 import { HslColor, RgbColor } from "./color.model";
 
+type CanvasColor = ({ type: 'hsl' } & HslWithoutAlpha<number>) | ({ type: 'rgb' } & RgbWithoutAlpha<number>);
+
+export type IFireflyCanvasProps = {
+  color?: CanvasColor;
+  hostElement: HTMLElement | null;
+  height?: number;
+  width?: number;
+}
+
 export class FireflyCanvas {
+  private _hostElement: HTMLElement | null;
+  private _canvasElement = document.createElement('canvas');
+  private _renderingContext2d: CanvasRenderingContext2D | null;
+
   height: number;
   width: number;
-  color: HslColor | RgbColor;
-  hostElement: HTMLElement | null;
-  canvasElement: HTMLCanvasElement;
-  renderingContext2d: CanvasRenderingContext2D | null;
-  leftBound: number | null;
-  rightBound: number | null;
-  topBound: number | null;
-  bottomBound: number | null;
-  mouseX: number | null;
-  mouseY: number | null;
+  color: RgbColor | HslColor;
+  leftBound: number | null = null;
+  rightBound: number | null = null;
+  topBound: number | null = null;
+  bottomBound: number | null = null;
+  mouseX: number | null = null;
+  mouseY: number | null = null;
 
-  constructor(model: Omit<Partial<FireflyCanvas>, "renderingContext"> = {}) {
+  constructor(model: IFireflyCanvasProps) {
     this.height = model.height ?? DEFAULT_VALUE.CanvasHeight;
     this.width = model.width ?? DEFAULT_VALUE.CanvasWidth;
-    this.color = model.color ?? DEFAULT_VALUE.Color;
-    this.hostElement = model.hostElement ?? null;
-    this.canvasElement = document.createElement('canvas');
-    this.canvasElement.innerHTML = 'Your Browser doesn\'t support HTML Canvas :(';
-    this.canvasElement.classList.add('canvas')
-    if (this.hostElement) {
-      this.hostElement.appendChild(this.canvasElement)
-    }
-    this.renderingContext2d = this.canvasElement.getContext('2d');
-    this.leftBound = model.leftBound ?? null;
-    this.rightBound = model.rightBound ?? null;
-    this.topBound = model.topBound ?? null;
-    this.bottomBound = model.bottomBound ?? null;
-    this.mouseX = model.mouseX ?? null
-    this.mouseY = model.mouseY ?? null
+    this.color = this.getColorByModel(model.color);
+    this._hostElement = model.hostElement ?? null;
+    this._canvasElement.innerHTML = 'Your Browser doesn\'t support HTML Canvas :(';
+    this._canvasElement.classList.add('canvas')
+    this._hostElement?.appendChild(this._canvasElement)
+    this._renderingContext2d = this._canvasElement.getContext('2d');
 
 
     this.setWidthAndHeight(this.width, this.height)
-    this.setColor(this.color)
+    this.setColor(this.color);
+  }
+
+  private getColorByModel(color: IFireflyCanvasProps['color']): HslColor | RgbColor {
+    if (!color) {
+      return DEFAULT_VALUE.Color;
+    }
+
+    const { alpha } = color;
+
+    switch (color.type) {
+      case "rgb":
+        const { red, green, blue } = color;
+        return new RgbColor({ red, green, blue, alpha });
+      case "hsl":
+        const { hue, saturation, lightness } = color;
+        return new HslColor({ hue, saturation, lightness, alpha });
+    }
+  }
+
+  public get renderingContext2d(): CanvasRenderingContext2D | null {
+    return this._renderingContext2d;
   }
 
   public setBounds(type: Direction, value: number | null): void {
-    switch(type) {
+    switch (type) {
       case "top":
         this.topBound = value;
       case "bottom":
@@ -54,7 +76,7 @@ export class FireflyCanvas {
   }
 
   public getBounds(type: Direction): number | null {
-    switch(type) {
+    switch (type) {
       case "top":
         return this.topBound;
       case "bottom":
@@ -73,12 +95,12 @@ export class FireflyCanvas {
     this.height = height;
     this.width = width;
 
-    this.canvasElement.height = height;
-    this.canvasElement.width = width;
+    this._canvasElement.height = height;
+    this._canvasElement.width = width;
   }
 
   public setColor(value: HslColor | RgbColor) {
     this.color = value;
-    this.canvasElement.style.backgroundColor = value.toString();
+    this._canvasElement.style.backgroundColor = value.toString();
   }
 }

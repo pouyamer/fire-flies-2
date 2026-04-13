@@ -10,7 +10,7 @@ export const globalFireflyModifierConfig: GlobalFireflyModifierConfig = {
     const fireflies = api('fireflies');
     const lines = api('lines');
 
-    const app = api('app')
+    const methods = api('methods')
 
     fireflies.filter(ff => ff !== firefly).filter(
       ff => calculateDistance(firefly.x, firefly.y, ff.x, ff.y) <= distance
@@ -19,7 +19,7 @@ export const globalFireflyModifierConfig: GlobalFireflyModifierConfig = {
       if (lines.find(l => (l.start === ff && l.end === firefly) || (l.start === firefly && l.end === ff))) {
         return
       }
-      app.addLine(new FireflyLine({
+      methods.addLine(new FireflyLine({
         start: firefly,
         end: ff,
         lineWidth: 1
@@ -35,7 +35,7 @@ export const globalFireflyModifierConfig: GlobalFireflyModifierConfig = {
 
     lines.filter(l => l.distance > distance).forEach(
       l => {
-        app.disposeLine(l)
+        methods.disposeLine(l)
       }
     )
 

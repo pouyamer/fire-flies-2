@@ -1,4 +1,4 @@
-import { ChangingValueConfig } from "./changing-value-config.type";
+import { ColorConfig, ColorValueWithoutAlpha } from "./color.type";
 
 export type Rgb<T> = {
   red: T;
@@ -7,6 +7,7 @@ export type Rgb<T> = {
   alpha: T;
 }
 
-export type RgbColorConfig = Rgb<ChangingValueConfig> & {
-  colorBinder?: (options: Rgb<number>) => Partial<Rgb<number>>;
-}
+
+export type RgbWithoutAlpha<T> = ColorValueWithoutAlpha<'rgb', T>;
+
+export type RgbColorConfig = ColorConfig<'rgb'>

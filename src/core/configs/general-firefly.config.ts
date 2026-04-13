@@ -1,8 +1,8 @@
 import { GeneralFireflyConfig } from "../types";
 
 export const generalFireflyConfig: GeneralFireflyConfig = {
-    count: 1,
+    count: 300,
     colorMode: "HSL",
     drawFPS: 60,
-    simulationFPS: 144
+    simulationFPS: 60
 }

@@ -151,7 +151,7 @@ export class DrawService
 
     if (ctx) {
 
-      const style = this.appApi('app').generalConfig.colorMode === 'HSL'
+      const style = this.appApi('configs').general.colorMode === 'HSL'
         ? new HslColor({
           hue: firefly.hue.value,
           saturation: firefly.saturation.value,

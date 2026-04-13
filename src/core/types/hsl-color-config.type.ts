@@ -1,4 +1,4 @@
-import { ChangingValueConfig } from "./changing-value-config.type"
+import { ColorConfig, ColorValueWithoutAlpha } from "./color.type";
 
 export type Hsl<T> = {
   hue: T;
@@ -7,6 +7,5 @@ export type Hsl<T> = {
   alpha: T;
 }
 
-export type HslColorConfig = Hsl<ChangingValueConfig> & {
-  colorBinder?: (options: Hsl<number>) => Partial<Hsl<number>>;
-}
+export type HslColorConfig = ColorConfig<'hsl'>;
+export type HslWithoutAlpha<T> = ColorValueWithoutAlpha<'hsl', T>;

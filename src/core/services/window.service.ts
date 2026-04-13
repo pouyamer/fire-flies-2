@@ -12,14 +12,13 @@ export class WindowService
   constructor(
     private readonly appApi: FireflyAppApiGetter,
     private readonly config: WindowConfig,
-    private readonly windowContext: Window,
   ) {
   }
 
   private setResizeEventListener(): void {
-    this.windowContext.addEventListener("resize", () => {
-      this.appApi('canvas').setWidthAndHeight(this.windowContext.innerWidth, this.windowContext.innerHeight)
-        this.appApi('app').resetServicesByKeys('bounds');
+    window.addEventListener("resize", () => {
+      this.appApi('canvas').setWidthAndHeight(window.innerWidth, window.innerHeight)
+        this.appApi('methods').resetServicesByKeys('bounds');
     })
   }
 
@@ -36,8 +35,8 @@ export class WindowService
   }
 
   private setMouseClickEventListener(): void {
-    this.windowContext.addEventListener("click", (/* e: MouseEvent */) => {
-      this.appApi('app').togglePauseApplication();
+    window.addEventListener("click", (/* e: MouseEvent */) => {
+      this.appApi('methods').togglePauseApplication();
     })
   }
 
@@ -66,7 +65,7 @@ export class WindowService
 
 
   private setMouseMoveEventListener(): void {
-    this.windowContext.addEventListener("mousemove", (e: MouseEvent) => {
+    window.addEventListener("mousemove", (e: MouseEvent) => {
       clearTimeout(this.timeOut);
 
       // this.timeOut = setTimeout(
@@ -83,7 +82,7 @@ export class WindowService
   }
 
   private setMouseLeaveEventListener(): void {
-    this.windowContext.addEventListener("mouseout", (e: MouseEvent) => {
+    window.addEventListener("mouseout", (e: MouseEvent) => {
       this.appApi('canvas').mouseX = null;
       this.appApi('canvas').mouseY = null;
     })

@@ -3,7 +3,7 @@ import { range } from "../utilities";
 
 export const hslColorConfig: HslColorConfig = {
   hue: {
-    value: 200,
+    value: range(0, 100),
   },
   saturation: {
     value: range(60, 80),
