@@ -27,12 +27,9 @@ export interface FireflyAppApi {
   arcs: Arc[],
 }
 
-export type FireflyAppApiGetter = (() => FireflyAppApi)
-  & ((query: 'fireflies') => Firefly[])
-  & ((query: 'canvas') => FireflyCanvas)
-  & ((query: 'app') => FireflyApp)
-  & ((query: 'lines') => Line[])
-  & ((query: 'arcs') => Arc[]);
+export type FireflyAppApiGetter =
+  (<K extends undefined>(key?: K) => FireflyAppApi) &
+  (<K extends keyof FireflyAppApi>(key: K) => FireflyAppApi[K]);
 
 export interface FireflyServiceConfigs {
   bound: BoundsConfig;

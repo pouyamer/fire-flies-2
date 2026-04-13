@@ -8,3 +8,5 @@ export * from "./global-firefly-modifier.service";
 export * from "./collision.service";
 export * from "./neighbourhood.service";
 export * from "./life.service"
+export * from "./draw-loop.service";
+export * from "./simulation-loop.service"

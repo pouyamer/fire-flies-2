@@ -1,6 +1,6 @@
 import { ALL_SERVICE_KEYS, FIREFLY_SERVICE_DEFAULT_CONFIGS } from "./constants";
 import { Firefly, FireflyCanvas, FireflyServiceToggleKey, FireflyServiceToggleKeyNotRequiringFirefly, FireflyServiceToggleKeyRequiringFirefly } from "./models";
-import { BoundService, ChangingValueService, CollisionService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, ShapeService, WindowService } from "./services";
+import { BoundService, ChangingValueService, CollisionService, DrawLoopService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, ShapeService, SimulationLoopService, WindowService } from "./services";
 import { ColorBinderService } from "./services/color-binder.service";
 import { Arc, FireflyAppApi, FireflyAppApiGetter, FireflyServiceConfigs, GeneralFireflyConfig, HslColorConfig, Line, RgbColorConfig, ServiceType } from "./types";
 import { deepMerge } from "./utilities";
@@ -50,6 +50,18 @@ export class FireflyApp {
   }
 
   private api: FireflyAppApiGetter = this._api.bind(this)
+
+
+  private simLoop = new SimulationLoopService(
+    this,
+    () => this.services,
+    this.generalConfig.simulationFPS ?? 60
+  );
+
+  private drawLoop = new DrawLoopService(
+    () => this.getServiceByKey('draw') as DrawService,
+    this.generalConfig.drawFPS ?? 60
+  );
 
 
   constructor(
@@ -225,13 +237,15 @@ export class FireflyApp {
     ]
   }
 
-  public togglePauseApplication(
-    value?: boolean
-  ): void {
+  public togglePauseApplication(value?: boolean): void {
     this.paused = value === undefined ? !this.paused : value;
 
-    if (!this.paused) {
-      requestAnimationFrame(this.run);
+    if (this.paused) {
+      this.simLoop.stop();
+      this.drawLoop.stop();
+    } else {
+      this.simLoop.start();
+      this.drawLoop.start();
     }
   }
 
@@ -239,7 +253,7 @@ export class FireflyApp {
     ALL_SERVICE_KEYS.forEach(
       sKey => {
         this.fireflies.forEach(ff => this.addFireflyToService(ff, sKey))
-        if(['bounds', 'neighbourhood', 'window'].includes(sKey)) {
+        if (['bounds', 'neighbourhood', 'window'].includes(sKey)) {
           this.getServiceByKey(sKey)?.setOnEveryFirefly();
         }
       }
@@ -263,35 +277,11 @@ export class FireflyApp {
   }
 
 
-  public run = (): void => {
 
-
-    for (let service of this.services) {
-      service.onFramePass();
-    }
-
-    // const avgSpeedX = Math.floor((this.fireflies.map(ff => ff.speedX).reduce((a, b) => a + Math.abs(b) / this.fireflies.length, 0)) * 100) / 100
-    // const avgSpeedY = Math.floor((this.fireflies.map(ff => ff.speedY).reduce((a, b) => a + Math.abs(b) / this.fireflies.length, 0)) * 100) / 100
-
-    // this.canvas.renderingContext2d!.fillStyle  = "white"
-    // this.canvas.renderingContext2d!.font = "48px serif";
-    // this.canvas.renderingContext!.fillText(`avgSpeedX: ${avgSpeedX}`, 100, 100);
-    // this.canvas.renderingContext!.fillText(`avgSpeedY: ${avgSpeedY}`, 100, 150);
-
-
-    // this.fireflies.forEach((ff, i) => {
-    //   this.canvas.renderingContext2d!.font = "30px serif";
-    //   this.canvas.renderingContext2d!.fillStyle = 'white'
-    //   // this.canvas.renderingContext!.fillText((isFinite(Math.floor(ff.life)) ? Math.floor(ff.life) : '').toString(), ff.x, ff.y);
-    // })
-
+  public run(): void {
     if (!this.paused) {
-      requestAnimationFrame(this.run);
+      this.simLoop.start();
+      this.drawLoop.start();
     }
   }
 }
-
-
-
-// currentFirefly.x = current * 2 * Math.random() - current
-// currentFirefly.y += current * 2 * Math.random() - current
