@@ -1,10 +1,10 @@
-import { Service } from "../interfaces";
+import { Mutator, Ownable } from "../interfaces";
 import { Firefly } from "../models";
 import { FireflyAppApiGetter, ShapeConfig, ShapeValue, ValueGenerator, WeightedValue } from "../types";
 import { chooseBetweenMultipleValues, getValueFromWeightedValues, isWeightedValues } from "../utilities";
 
 export class ShapeService
-  implements Service {
+  implements Mutator, Ownable {
 
   private fireflies: Firefly[] = [];
 
@@ -36,29 +36,41 @@ export class ShapeService
       }
 
   }
-
-  addFirefly(firefly: Firefly): void {
-    this.fireflies.push(firefly);
+  
+  add(firefly: Firefly): void {
+    if(!this.has(firefly)) {
+      this.fireflies.push(firefly);
+    }
   }
 
-  public setOnSingleFirefly(firefly: Firefly) {
+  remove(firefly: Firefly): void {
+    if(this.has(firefly)) {
+      this.fireflies.filter(ff => ff !== firefly)
+    }
+  }
+
+  has(firefly: Firefly): boolean {
+    return this.fireflies.includes(firefly)
+  }
+
+  public setOne(firefly: Firefly) {
     const fireFlyShapeValue = this.getValue(firefly, this.config.value);
 
     firefly.shapeValue = fireFlyShapeValue;
 
   }
 
-  public setOnEveryFirefly(): void {
+  public set(): void {
     for (let ff of this.fireflies) {
-      this.setOnSingleFirefly(ff);
+      this.setOne(ff);
     }
   }
 
-  onFramePassForSingleFirefly(firefly: Firefly): void {
-    if(firefly.serviceToggle.get('shape')) {}
+  updateOne(firefly: Firefly): void {
+    // if(firefly.serviceToggle.get('shape')) {}
   }
   
-  onFramePass() { 
+  update() { 
     
   }
 }

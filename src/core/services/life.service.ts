@@ -1,10 +1,10 @@
-import { Service } from "../interfaces";
+import { Mutator, Ownable } from "../interfaces";
 import { Firefly } from "../models";
 import { FireflyAppApiGetter, LifeConfig, PossibleValue } from "../types";
 import { getNumericValue, isRange } from "../utilities";
 
 export class LifeService 
-  implements Service {
+  implements Mutator, Ownable {
     private fireflies: Firefly[] = [];
 
     constructor(
@@ -30,28 +30,40 @@ export class LifeService
       }
     }
 
-    addFirefly(firefly: Firefly): void {
+  add(firefly: Firefly): void {
+    if(!this.has(firefly)) {
       this.fireflies.push(firefly);
     }
+  }
 
-    setOnSingleFirefly(firefly: Firefly): void {
+  remove(firefly: Firefly): void {
+    if(this.has(firefly)) {
+      this.fireflies.filter(ff => ff !== firefly)
+    }
+  }
+
+  has(firefly: Firefly): boolean {
+    return this.fireflies.includes(firefly)
+  }
+
+    setOne(firefly: Firefly): void {
       firefly.life = this.getValue(firefly, this.config.value);
       firefly.key = this.config.codeGenerator();
     }
 
-    setOnEveryFirefly(): void {
+    set(): void {
       for (let ff of this.fireflies) {
-        this.setOnSingleFirefly(ff);
+        this.setOne(ff);
       }
     }
 
-    onFramePass(): void {
+    update(): void {
       for (let ff of this.fireflies) {
-        ff.serviceToggle.get('life') && this.onFramePassForSingleFirefly(ff);
+        ff.serviceToggle.get('life') && this.updateOne(ff);
       }
     }
 
-   onFramePassForSingleFirefly(firefly: Firefly): void {
+   updateOne(firefly: Firefly): void {
     
       if (this.config.nextValueFn) {
         const nextValue = this.config.nextValueFn({

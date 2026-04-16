@@ -1,10 +1,10 @@
-import { Service } from "../interfaces";
+import { Mutator, Ownable } from "../interfaces";
 import { Firefly } from "../models";
 import { FireflyAppApiGetter, LocationConfig, PossibleValue } from "../types";
 import { getNumericValue, isRange, polarToCartesian } from "../utilities";
 
 export class LocationService
-  implements Service {
+  implements Mutator, Ownable {
 
   private fireflies: Firefly[] = [];
 
@@ -31,18 +31,30 @@ export class LocationService
     }
   }
 
-  public addFirefly(firefly: Firefly): void {
-    this.fireflies.push(firefly);
+  add(firefly: Firefly): void {
+    if(!this.has(firefly)) {
+      this.fireflies.push(firefly);
+    }
   }
 
-  public setOnSingleFirefly(firefly: Firefly) {
+  remove(firefly: Firefly): void {
+    if(this.has(firefly)) {
+      this.fireflies.filter(ff => ff !== firefly)
+    }
+  }
+
+  has(firefly: Firefly): boolean {
+    return this.fireflies.includes(firefly)
+  }
+
+  public setOne(firefly: Firefly) {
     const {x, y} = this.config;
 
     firefly.x = this.getValue(firefly, x);
     firefly.y = this.getValue(firefly, y);
   }
 
-  public onFramePassForSingleFirefly(firefly: Firefly): void {
+  public updateOne(firefly: Firefly): void {
     const cartesianFromPolarSpeedValue = polarToCartesian(
       firefly.polarSpeedAmount.value,
       firefly.polarSpeedAngle.value,
@@ -62,15 +74,15 @@ export class LocationService
     firefly.y += firefly.speedY.value + cartesianFromPolarSpeedValue.y;
   }
 
-  public setOnEveryFirefly(): void {
+  public set(): void {
     for(let ff of this.fireflies) {
-      this.setOnSingleFirefly(ff)
+      this.setOne(ff)
     }
   }
   
-  public onFramePass() {
+  public update() {
     for(let ff of this.fireflies) {
-      ff.serviceToggle.get('location') && this.onFramePassForSingleFirefly(ff)
+      ff.serviceToggle.get('location') && this.updateOne(ff)
     }
   }
 }

@@ -1,3 +1,4 @@
+import { Mutator, MutatorGroup, Ownable } from "../interfaces";
 import { Firefly, HslColor, Range, RgbColor } from "../models";
 import { CartersianCoordinates, PossibleValue, SpeedConfig, ValueGenerator, ValueGeneratorParameters, WeightedValue } from "../types";
 
@@ -357,4 +358,13 @@ export function isFirefly(
   value: Firefly | CartersianCoordinates | (() => CartersianCoordinates),
 ): value is Firefly {
   return typeof value === 'object' && !Array.isArray(value) && ("key" in value);
+}
+
+export function isOwnable(value: Mutator | MutatorGroup | Ownable): value is Ownable {
+  return (
+    "add" in value && typeof value.add === 'function' &&
+    "remove" in value && typeof value.remove === 'function' &&
+    "has" in value && typeof value.has === 'function' 
+  )
+
 }

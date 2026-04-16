@@ -1,7 +1,8 @@
-import { FireflyApp } from "../app";
+import { Loop } from "../interfaces";
 import { DrawService } from "./draw.service";
 
-export class DrawLoopService {
+export class DrawLoopService
+  implements Loop {
 
   private drawHz: number;
   private get drawStep() { return 1000 / this.drawHz; }
@@ -19,7 +20,7 @@ export class DrawLoopService {
 
   private drawStepFn() {
     const drawService = this.drawServiceResolver();
-    drawService?.onFramePass();
+    drawService?.update();
   }
 
   private loop = (ts?: number) => {

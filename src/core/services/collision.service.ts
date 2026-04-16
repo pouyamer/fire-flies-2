@@ -1,8 +1,8 @@
-import { Service } from "../interfaces";
+import { Mutator } from "../interfaces";
 import { Firefly } from "../models";
 
 export class CollisionService 
-  implements Service {
+  implements Mutator {
 
   constructor(
     // canvas: FireflyCanvas,
@@ -16,7 +16,7 @@ export class CollisionService
     
   }
 
-  public onFramePassForSingleFirefly(/* firefly: Firefly */): void {
+  public setOne(/* firefly: Firefly */): void {
     // if (this.collisions.length) {
     //   }
     // this.fireflies.forEach(
@@ -70,17 +70,17 @@ export class CollisionService
     
   }
   
-  public setOnSingleFirefly(/* firefly: Firefly */): void {
+  public set(/* firefly: Firefly */): void {
     
   }
 
-  public onFramePass(): void {
+  public updateOne(firefly: Firefly): void {
     // for(let ff of this.fireflies) {
     //   this.onFramePassForSingleFirefly()
     // }
   }
 
-  public setOnEveryFirefly(): void {
+  public update(): void {
     
   }
 }

@@ -1,10 +1,10 @@
-import { Service } from "../interfaces";
+import { Mutator, Ownable } from "../interfaces";
 import { Firefly, FireflyServiceToggleKey } from "../models";
 import { ChangingValueConfig, ChangingValueKey, FireflyAppApiGetter, PossibleValue, ValueGeneratorParameters } from "../types";
 import { getNumericValue, isRange } from "../utilities";
 
 export class ChangingValueService
-  implements Service {
+  implements Mutator, Ownable {
 
   private fireflies: Firefly[] = [];
 
@@ -36,14 +36,23 @@ export class ChangingValueService
     }
   }
 
-  public addFirefly(firefly: Firefly): void {
-    this.fireflies = [
-      ...this.fireflies,
-      firefly
-    ]
+  add(firefly: Firefly): void {
+    if(!this.has(firefly)) {
+      this.fireflies.push(firefly);
+    }
   }
 
-  public setOnSingleFirefly(firefly: Firefly) {  
+  remove(firefly: Firefly): void {
+    if(this.has(firefly)) {
+      this.fireflies.filter(ff => ff !== firefly)
+    }
+  }
+
+  has(firefly: Firefly): boolean {
+    return this.fireflies.includes(firefly)
+  }
+
+  public setOne(firefly: Firefly) {  
     firefly[this.key].resetIteration();
       
     firefly[this.key].set(this.getValue(
@@ -65,13 +74,13 @@ export class ChangingValueService
 
   }
 
-  public setOnEveryFirefly(): void {
+  public set(): void {
     for(let ff of this.fireflies) {
-      this.setOnSingleFirefly(ff)
+      this.setOne(ff)
     }
   }
 
-  public onFramePassForSingleFirefly(firefly: Firefly): void {
+  public updateOne(firefly: Firefly): void {
     const fireflyProp = firefly[this.key];
 
     const parameters = {
@@ -106,10 +115,10 @@ export class ChangingValueService
     }
   }
 
-  public onFramePass(): void {
+  public update(): void {
     for (let ff of this.fireflies) {
       if (ff.serviceToggle.get(this.serviceToggleKey)) {
-        this.onFramePassForSingleFirefly(ff)
+        this.updateOne(ff)
       }
     }
   }

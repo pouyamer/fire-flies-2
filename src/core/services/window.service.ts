@@ -1,9 +1,9 @@
-import { Service } from "../interfaces";
+import { Mutator, Ownable } from "../interfaces";
 import { Firefly } from "../models";
 import { FireflyAppApiGetter, ValueGeneratorParameters, WindowConfig } from "../types";
 
 export class WindowService
-  implements Service {
+  implements Mutator, Ownable {
 
   private fireflies: Firefly[] = [];
 
@@ -88,12 +88,24 @@ export class WindowService
     })
   }
 
-  addFirefly(firefly: Firefly): void {
-    this.fireflies.push(firefly);
+  add(firefly: Firefly): void {
+    if(!this.has(firefly)) {
+      this.fireflies.push(firefly);
+    }
+  }
+
+  remove(firefly: Firefly): void {
+    if(this.has(firefly)) {
+      this.fireflies.filter(ff => ff !== firefly)
+    }
+  }
+
+  has(firefly: Firefly): boolean {
+    return this.fireflies.includes(firefly)
   }
 
 
-  setOnEveryFirefly(): void {
+  set(): void {
     // for(let ff of this.fireflies) {
     //   this.setOnSingleFirefly(/* ff */)
     // }
@@ -103,16 +115,16 @@ export class WindowService
     this.setMouseLeaveEventListener();
   }
 
-  onFramePassForSingleFirefly(firefly: Firefly): void {
+  setOne(firefly: Firefly): void {
     this.handleOnFireflyHovered(firefly)
   }
 
-  setOnSingleFirefly(/* firefly: Firefly */): void {
+  updateOne(/* firefly: Firefly */): void {
   }
 
-  onFramePass(): void {
+  update(): void {
     this.fireflies.forEach(ff => {
-      ff.serviceToggle.get('window') && this.onFramePassForSingleFirefly(ff)
+      ff.serviceToggle.get('window') && this.updateOne()
     })
   }
 }

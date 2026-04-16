@@ -1,10 +1,10 @@
-import { Service } from "../interfaces";
+import { Mutator } from "../interfaces";
 import { Firefly } from "../models";
 import { FireflyAppApiGetter, NeighbourhoodConfig } from "../types";
 
 
 export class NeighbourhoodService
-  implements Service {
+  implements Mutator {
 
   private fireflies: Firefly[] = [];
     
@@ -27,18 +27,18 @@ export class NeighbourhoodService
     this.fireflies.push(firefly)
   }
 
-  setOnSingleFirefly(/* firefly: Firefly */): void {
+  setOne(/* firefly: Firefly */): void {
     
   }
 
-  setOnEveryFirefly(): void {
+  set(): void {
     this.candidateFireflies = this.config.candidatePicker({api: this.appApi})
   }
 
-  onFramePassForSingleFirefly(/* firefly: Firefly */): void {
+  updateOne(/* firefly: Firefly */): void {
   }
   
-  onFramePass(): void {
+  update(): void {
 
 
     // handle candidates

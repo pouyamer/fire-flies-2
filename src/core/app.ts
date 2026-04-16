@@ -1,9 +1,10 @@
 import { ALL_SERVICE_KEYS, FIREFLY_SERVICE_DEFAULT_CONFIGS } from "./constants";
+import { Mutator, MutatorGroup } from "./interfaces";
 import { Firefly, FireflyCanvas, FireflyServiceToggleKey, FireflyServiceToggleKeyNotRequiringFirefly, FireflyServiceToggleKeyRequiringFirefly, IFireflyCanvasProps } from "./models";
 import { BoundService, ChangingValueService, CollisionService, DrawLoopService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, ShapeService, SimulationLoopService, WindowService } from "./services";
 import { ColorBinderService } from "./services/color-binder.service";
 import { Arc, FireflyAppApi, FireflyAppApiGetter, FireflyAppMethods, FireflyColorInfoConfig, FireflyServiceConfigs, GeneralFireflyConfig, HslColorConfig, Line, RgbColorConfig, ServiceType } from "./types";
-import { deepMerge } from "./utilities";
+import { deepMerge, isOwnable } from "./utilities";
 
 export class FireflyApp {
 
@@ -12,7 +13,7 @@ export class FireflyApp {
   private configs: FireflyServiceConfigs = FIREFLY_SERVICE_DEFAULT_CONFIGS;
   private lines: Line[] = [];
   private arcs: Arc[] = [];
-  private services: ServiceType[] = [];
+  private services: (Mutator | MutatorGroup)[] = [];
 
 
 
@@ -144,7 +145,7 @@ export class FireflyApp {
     )
   }
 
-  private getServiceByKey(key: FireflyServiceToggleKey): Exclude<ServiceType, ColorBinderService> | undefined {
+  private getServiceByKey(key: FireflyServiceToggleKey): Mutator | undefined {
     switch (key) {
       case "bounds":
         return this.services.find(s => s instanceof BoundService);
@@ -191,10 +192,10 @@ export class FireflyApp {
     }
   }
 
-  private getServices(): ServiceType[]
-  private getServices(type: 'exclusive', ...keys: FireflyServiceToggleKey[]): ServiceType[]
-  private getServices(type: 'inclusive', ...keys: FireflyServiceToggleKey[]): ServiceType[] 
-  private getServices(type?: 'inclusive' | 'exclusive', ...keys: FireflyServiceToggleKey[]): ServiceType[] {
+  private getServices(): (Mutator | MutatorGroup)[]
+  private getServices(type: 'exclusive', ...keys: FireflyServiceToggleKey[]): (Mutator | MutatorGroup)[]
+  private getServices(type: 'inclusive', ...keys: FireflyServiceToggleKey[]): (Mutator | MutatorGroup)[] 
+  private getServices(type?: 'inclusive' | 'exclusive', ...keys: FireflyServiceToggleKey[]): (Mutator | MutatorGroup)[] {
     if (!type) {
       return this.services;
     }
@@ -213,7 +214,7 @@ export class FireflyApp {
       const service = this.getServiceByKey(key as FireflyServiceToggleKey);
 
       if (service) {
-        service.setOnSingleFirefly(firefly)
+        service.setOne(firefly)
       }
 
     })
@@ -224,7 +225,7 @@ export class FireflyApp {
       const service = this.getServiceByKey(key as FireflyServiceToggleKey);
 
       if (service) {
-        service.setOnEveryFirefly()
+        service.set()
       }
 
     })
@@ -240,9 +241,13 @@ export class FireflyApp {
     const service = this.getServiceByKey(key);
 
     if (service) {
-      service.addFirefly(firefly);
+      
+      if(isOwnable(service)) {
+        service.add(firefly);
+      }
+
       firefly.serviceToggle.activate(key);
-      service.setOnSingleFirefly(firefly);
+      service.setOne(firefly);
     }
   }
 
@@ -293,7 +298,7 @@ export class FireflyApp {
       sKey => {
         this.fireflies.forEach(ff => this.addFireflyToService(ff, sKey))
         if (['bounds', 'neighbourhood', 'window'].includes(sKey)) {
-          this.getServiceByKey(sKey)?.setOnEveryFirefly();
+          this.getServiceByKey(sKey)?.set();
         }
       }
     )

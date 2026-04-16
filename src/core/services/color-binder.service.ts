@@ -1,3 +1,4 @@
+import { MutatorGroup } from "../interfaces";
 import { Firefly, FireflyServiceToggleKey } from "../models";
 import { ChangingValueKey, FireflyAppApiGetter } from "../types";
 import { ChangingValueService } from "./changing-value.service";
@@ -10,7 +11,7 @@ const RGB_KEYS = [
   'red', 'green', 'blue', 'alpha'
 ];
 
-export class ColorBinderService {
+export class ColorBinderService implements MutatorGroup {
 
   private readonly fireflies: Firefly[] = [];
 
@@ -24,14 +25,14 @@ export class ColorBinderService {
     this.services = textNames.map(n => new ChangingValueService(appApi, n as ChangingValueKey<Firefly>, colorConfig[n], n as FireflyServiceToggleKey));
   }
 
-  public setOnEveryFirefly(): void {
+  public set(): void {
     this.services.forEach(s => {
-      s.setOnEveryFirefly();
+      s.set();
     })
   }
 
-  public onFramePass(): void {
-    this.services.forEach(s => s.onFramePass());
+  public update(): void {
+    this.services.forEach(s => s.update());
 
     const colorBinder = this.appApi('configs').colorInfo.config.colorBinder;
     if (colorBinder) {

@@ -1,9 +1,9 @@
-import { Service } from "../interfaces";
+import { Mutator } from "../interfaces";
 import { Firefly, FireflyCanvas } from "../models";
 import { BoundsConfig, Direction, FireflyAppApiGetter } from "../types";
 
 const directions: Direction[] = ["bottom", "left", "right", "top"];
-export class BoundService implements Service {
+export class BoundService implements Mutator {
 
   private fireflies: Firefly[] = [];
 
@@ -192,14 +192,14 @@ export class BoundService implements Service {
     this.fireflies.push(firefly)
   }
 
-  public setOnSingleFirefly(firefly: Firefly): void {
+  public setOne(firefly: Firefly): void {
     firefly.serviceToggle.activate('bounds')
   }
 
-  public setOnEveryFirefly() {
+  public set() {
 
     for (const ff of this.fireflies) {
-      this.setOnSingleFirefly(ff)
+      this.setOne(ff)
     }
 
     const canvas = this.appApi('canvas');
@@ -211,7 +211,7 @@ export class BoundService implements Service {
     )
   }
 
-  public onFramePassForSingleFirefly(firefly: Firefly): void {
+  public updateOne(firefly: Firefly): void {
     if (firefly.serviceToggle.get('bounds')) {
       this.handleOutOfBoundsByDirection(firefly);
       this.handleTouchedBoundByDirection(firefly);
@@ -225,9 +225,9 @@ export class BoundService implements Service {
     }
   }
 
-  public onFramePass() {
+  public update() {
     for (let ff of this.fireflies) {
-      this.onFramePassForSingleFirefly(ff);
+      this.updateOne(ff);
     }
   }
 

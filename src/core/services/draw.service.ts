@@ -1,11 +1,11 @@
 import { Shape } from "../enums";
-import { Service } from "../interfaces";
+import { Mutator, Ownable } from "../interfaces";
 import { Firefly, HslColor, RgbColor } from "../models";
 import { DrawConfig, FireflyAppApiGetter, PossibleValue } from "../types";
 import { getNumericValue, isRange } from "../utilities";
 
 export class DrawService
-  implements Service {
+  implements Mutator, Ownable {
 
   private fireflies: Firefly[] = [];
 
@@ -109,19 +109,31 @@ export class DrawService
     }
   }
   
-  public addFirefly(firefly: Firefly): void {
-    this.fireflies.push(firefly);
-  }
-
-  public setOnEveryFirefly(): void {
-
-
-    for (let ff of this.fireflies) {
-      this.setOnSingleFirefly(ff);
+  add(firefly: Firefly): void {
+    if(!this.has(firefly)) {
+      this.fireflies.push(firefly);
     }
   }
 
-  public setOnSingleFirefly(firefly: Firefly): void {
+  remove(firefly: Firefly): void {
+    if(this.has(firefly)) {
+      this.fireflies.filter(ff => ff !== firefly)
+    }
+  }
+
+  has(firefly: Firefly): boolean {
+    return this.fireflies.includes(firefly)
+  }
+
+  public set(): void {
+
+
+    for (let ff of this.fireflies) {
+      this.setOne(ff);
+    }
+  }
+
+  public setOne(firefly: Firefly): void {
 
     const [drawMethod, strokeLineWidth] = ((): [('fill' | 'stroke'), number] => {
       this.config.method
@@ -146,7 +158,7 @@ export class DrawService
     firefly.strokeLineWidth = strokeLineWidth
   }
 
-  public onFramePassForSingleFirefly(firefly: Firefly): void {
+  public updateOne(firefly: Firefly): void {
     const { renderingContext2d: ctx } = this.appApi('canvas');
 
     if (ctx) {
@@ -174,7 +186,7 @@ export class DrawService
     }
   }
 
-  public onFramePass(): void {
+  public update(): void {
     const ctx = this.appApi('canvas').renderingContext2d;
 
     if (!ctx) return;
@@ -197,7 +209,7 @@ export class DrawService
 
     for (let i = 0; i < this.config.iterationPerFrame; i++) {
       for (let ff of this.fireflies) {
-        ff.serviceToggle.get('draw') && this.onFramePassForSingleFirefly(ff);
+        ff.serviceToggle.get('draw') && this.updateOne(ff);
       }
     }
   }
