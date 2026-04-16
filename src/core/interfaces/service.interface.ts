@@ -1,4 +1,4 @@
-import { Firefly } from "../models";
+import { Firefly, FireflyServiceToggleKeyRequiringFirefly } from "../models";
 
 export declare interface Mutator {
   setOne (firefly: Firefly): void;
@@ -8,6 +8,7 @@ export declare interface Mutator {
 }
 
 export declare interface Ownable {
+  key: FireflyServiceToggleKeyRequiringFirefly;
   add (firefly: Firefly): void;
   remove (firefly: Firefly): void;
   has (firefly: Firefly): boolean;

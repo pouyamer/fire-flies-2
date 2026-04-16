@@ -1,11 +1,13 @@
 import { Mutator, Ownable } from "../interfaces";
-import { Firefly } from "../models";
+import { Firefly, FireflyServiceToggleKeyRequiringFirefly } from "../models";
 import { FireflyAppApiGetter, ValueGeneratorParameters, WindowConfig } from "../types";
 
 export class WindowService
   implements Mutator, Ownable {
 
   private fireflies: Firefly[] = [];
+
+  key: FireflyServiceToggleKeyRequiringFirefly = 'window';
 
   private mouseHoveredFirefliesKeys: Firefly["key"][] = [];
 
@@ -124,7 +126,7 @@ export class WindowService
 
   update(): void {
     this.fireflies.forEach(ff => {
-      ff.serviceToggle.get('window') && this.updateOne()
+      this.updateOne()
     })
   }
 }

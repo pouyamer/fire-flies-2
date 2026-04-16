@@ -1,10 +1,12 @@
 import { Mutator, Ownable } from "../interfaces";
-import { Firefly } from "../models";
+import { Firefly, FireflyServiceToggleKeyRequiringFirefly } from "../models";
 import { FireflyAppApiGetter, GlobalFireflyModifierConfig } from "../types";
 
 export class GlobalFireflyModifierService implements Mutator, Ownable {
   
   private fireflies: Firefly[] = [];
+
+  key: FireflyServiceToggleKeyRequiringFirefly = 'globalFireflyModifier';
 
   constructor(
     private readonly appApi: FireflyAppApiGetter,
@@ -46,7 +48,7 @@ export class GlobalFireflyModifierService implements Mutator, Ownable {
 
   update(): void {
     for(const ff of this.fireflies) {
-      ff.serviceToggle.get('globalFireflyModifier') && this.updateOne(ff);
+      this.updateOne(ff);
     }
   }
 

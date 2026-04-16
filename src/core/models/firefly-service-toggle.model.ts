@@ -1,58 +1,44 @@
-export class FireflyServiceToggle {
-  private bounds: boolean = false;
-  private collision: boolean = false;
-  private draw: boolean = false;
-  private globalFireflyModifier: boolean = false;
-  private jitterX: boolean = false;
-  private jitterY: boolean = false;
-  private jitterPolarAngle: boolean = false;
-  private jitterPolarAmount: boolean = false;
-  private life: boolean = false;
-  private location: boolean = false
-  private neighbourhood: boolean = false;
-  private red: boolean = false;
-  private green: boolean = false;
-  private blue: boolean = false;
-  private alpha: boolean = false;
-  private hue: boolean = false;
-  private saturation: boolean = false;
-  private lightness: boolean = false;
-  private rotation: boolean = false;
-  private shape: boolean = false;
-  private size: boolean = false;
-  private speedX: boolean = false;
-  private speedY: boolean = false;
-  private polarSpeedAngle: boolean = false;
-  private polarSpeedAmount: boolean = false;
-  private window: boolean = false;
+import { ALL_SERVICE_KEYS } from "../constants";
 
-  constructor() { }
+export class FireflyServiceToggle {
+  private readonly map = new Map<FireflyServiceToggleKey, boolean>();
+
+  constructor() { 
+    ALL_SERVICE_KEYS.forEach(key => this.map.set(key, true));
+  }
 
   public toggle(key: FireflyServiceToggleKey, toggle: boolean): void
   public toggle(key: FireflyServiceToggleKey, toggle: (value: boolean) => boolean): void
   public toggle(key: FireflyServiceToggleKey, toggle: boolean | ((value: boolean) => boolean)): void {
     if (typeof toggle === 'boolean') {
-      this[key] = toggle;
+      this.map.set(key, toggle);
     }
     else {
-      this[key] = toggle(this[key]);
+      const currentValue = this.map.get(key)
+
+      if (currentValue !== undefined) {
+        this.map.set(key, toggle(currentValue));
+      }
     }
   }
 
   public halt(...keys: FireflyServiceToggleKey[]): void {
     keys.forEach(key => {
-      this[key] = false;
+      this.map.set(key, false);
     })
   }
 
   public activate(...keys: FireflyServiceToggleKey[]): void {
     keys.forEach(key => {
-      this[key] = true;
+      this.map.set(key, true);
     })
   }
 
   public get(key: FireflyServiceToggleKey): boolean {
-    return this[key]
+    const value = this.map.get(key)
+
+    if (value === undefined) throw new Error();
+    return value;
   }
 }
 
@@ -87,4 +73,4 @@ export type FireflyServiceToggleKey =
 
 export type FireflyServiceToggleKeyNotRequiringFirefly = Extract<FireflyServiceToggleKey, 'window' | 'bounds' | 'neighbourhood'>
 
-export type FireflyServiceToggleKeyRequiringFirefly = Omit<FireflyServiceToggleKey, FireflyServiceToggleKeyNotRequiringFirefly>[]
+export type FireflyServiceToggleKeyRequiringFirefly = Omit<FireflyServiceToggleKey, FireflyServiceToggleKeyNotRequiringFirefly>

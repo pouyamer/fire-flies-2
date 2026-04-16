@@ -1,11 +1,13 @@
-import { Mutator } from "../interfaces";
-import { Firefly, FireflyCanvas } from "../models";
+import { Mutator, Ownable } from "../interfaces";
+import { Firefly, FireflyCanvas, FireflyServiceToggleKeyRequiringFirefly } from "../models";
 import { BoundsConfig, Direction, FireflyAppApiGetter } from "../types";
 
 const directions: Direction[] = ["bottom", "left", "right", "top"];
-export class BoundService implements Mutator {
+export class BoundService implements Mutator, Ownable {
 
   private fireflies: Firefly[] = [];
+
+  key: FireflyServiceToggleKeyRequiringFirefly = 'bounds';
 
 
   constructor(
@@ -118,6 +120,7 @@ export class BoundService implements Mutator {
         (this.config.top && this.outOfBoundFromDirection(firefly, "top")) ||
         (this.config.bottom && this.outOfBoundFromDirection(firefly, "bottom"))
       ) {
+
         const onOutOfBounds = typeof this.config.onFireflyOutOfBounds === "function"
           ? this.config.onFireflyOutOfBounds
           : this.config.onFireflyOutOfBounds?.all;
@@ -188,12 +191,24 @@ export class BoundService implements Mutator {
     canvas[`${type}Bound`] = value;
   }
 
-  public addFirefly(firefly: Firefly): void {
-    this.fireflies.push(firefly)
+  add(firefly: Firefly): void {
+    if (!this.has(firefly)) {
+      this.fireflies.push(firefly);
+    }
   }
 
+  remove(firefly: Firefly): void {
+    if (this.has(firefly)) {
+      this.fireflies.filter(ff => ff !== firefly)
+    }
+  }
+
+  has(firefly: Firefly): boolean {
+    return this.fireflies.includes(firefly)
+  }
+
+
   public setOne(firefly: Firefly): void {
-    firefly.serviceToggle.activate('bounds')
   }
 
   public set() {
@@ -212,17 +227,15 @@ export class BoundService implements Mutator {
   }
 
   public updateOne(firefly: Firefly): void {
-    if (firefly.serviceToggle.get('bounds')) {
-      this.handleOutOfBoundsByDirection(firefly);
-      this.handleTouchedBoundByDirection(firefly);
+    this.handleOutOfBoundsByDirection(firefly);
+    this.handleTouchedBoundByDirection(firefly);
 
-      directions.forEach(
-        direction => {
-          this.handleTouchedBoundByDirection(firefly, direction);
-          this.handleOutOfBoundsByDirection(firefly, direction);
-        }
-      );
-    }
+    directions.forEach(
+      direction => {
+        this.handleTouchedBoundByDirection(firefly, direction);
+        this.handleOutOfBoundsByDirection(firefly, direction);
+      }
+    );
   }
 
   public update() {

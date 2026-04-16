@@ -1,5 +1,5 @@
 import { Mutator, Ownable } from "../interfaces";
-import { Firefly } from "../models";
+import { Firefly, FireflyServiceToggleKeyRequiringFirefly } from "../models";
 import { FireflyAppApiGetter, LocationConfig, PossibleValue } from "../types";
 import { getNumericValue, isRange, polarToCartesian } from "../utilities";
 
@@ -7,6 +7,8 @@ export class LocationService
   implements Mutator, Ownable {
 
   private fireflies: Firefly[] = [];
+
+  key: FireflyServiceToggleKeyRequiringFirefly = 'shape';
 
   constructor(
     private readonly appApi: FireflyAppApiGetter,
@@ -82,7 +84,7 @@ export class LocationService
   
   public update() {
     for(let ff of this.fireflies) {
-      ff.serviceToggle.get('location') && this.updateOne(ff)
+      this.updateOne(ff)
     }
   }
 }

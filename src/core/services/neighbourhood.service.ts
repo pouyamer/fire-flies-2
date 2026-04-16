@@ -47,8 +47,6 @@ export class NeighbourhoodService
     }
       const oldCondidates = this.candidateFireflies;
 
-
-
       // candidates that are no longer candidates
       const pastCandidates = oldCondidates.filter(c => !this.candidateFireflies.includes(c))
 

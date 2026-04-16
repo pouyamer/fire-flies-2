@@ -1,6 +1,6 @@
 import { Shape } from "../enums";
 import { Mutator, Ownable } from "../interfaces";
-import { Firefly, HslColor, RgbColor } from "../models";
+import { Firefly, FireflyServiceToggleKeyRequiringFirefly, HslColor, RgbColor } from "../models";
 import { DrawConfig, FireflyAppApiGetter, PossibleValue } from "../types";
 import { getNumericValue, isRange } from "../utilities";
 
@@ -8,6 +8,8 @@ export class DrawService
   implements Mutator, Ownable {
 
   private fireflies: Firefly[] = [];
+
+  key: FireflyServiceToggleKeyRequiringFirefly = 'draw';
 
   constructor(
     private readonly appApi: FireflyAppApiGetter,
@@ -209,7 +211,7 @@ export class DrawService
 
     for (let i = 0; i < this.config.iterationPerFrame; i++) {
       for (let ff of this.fireflies) {
-        ff.serviceToggle.get('draw') && this.updateOne(ff);
+        this.updateOne(ff);
       }
     }
   }

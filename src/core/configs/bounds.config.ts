@@ -5,7 +5,7 @@ export const boundsConfig: BoundsConfig = {
   ...CONSTANTS.CANVAS_EDGE_BOUNDS,
   onFireflyOutOfBounds: {
     all: ({firefly, api}) => {
-      api('methods').resetServicesOnFireflyByKeys(firefly, 'location', 'polarSpeedAngle')
+      api('methods').resetServicesOnFireflyByKeys(firefly, 'location')
     }
   }
 

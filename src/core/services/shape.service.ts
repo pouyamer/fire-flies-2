@@ -1,5 +1,5 @@
 import { Mutator, Ownable } from "../interfaces";
-import { Firefly } from "../models";
+import { Firefly, FireflyServiceToggleKeyRequiringFirefly } from "../models";
 import { FireflyAppApiGetter, ShapeConfig, ShapeValue, ValueGenerator, WeightedValue } from "../types";
 import { chooseBetweenMultipleValues, getValueFromWeightedValues, isWeightedValues } from "../utilities";
 
@@ -7,6 +7,8 @@ export class ShapeService
   implements Mutator, Ownable {
 
   private fireflies: Firefly[] = [];
+
+  key: FireflyServiceToggleKeyRequiringFirefly = 'shape';
 
   constructor(
     private readonly appApi: FireflyAppApiGetter,

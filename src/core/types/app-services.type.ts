@@ -72,17 +72,3 @@ export interface FireflyServiceConfigs {
   hslColor: HslColorConfig,
   rgbColor: RgbColorConfig;
 }
-
-
-export type ServiceType =
-  | LifeService
-  | ShapeService
-  | ChangingValueService
-  | BoundService
-  | LocationService
-  | WindowService
-  | NeighbourhoodService
-  | GlobalFireflyModifierService
-  | DrawService
-  | ColorBinderService
-  | CollisionService

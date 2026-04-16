@@ -1,5 +1,6 @@
+import { ALL_SERVICE_KEYS } from "../constants";
 import { Mutator, MutatorGroup, Ownable } from "../interfaces";
-import { Firefly, HslColor, Range, RgbColor } from "../models";
+import { Firefly, FireflyServiceToggle, FireflyServiceToggleKeyRequiringFirefly, HslColor, Range, RgbColor } from "../models";
 import { CartersianCoordinates, PossibleValue, SpeedConfig, ValueGenerator, ValueGeneratorParameters, WeightedValue } from "../types";
 
 export function drawLineByCartesianCoordinates(
@@ -367,4 +368,36 @@ export function isOwnable(value: Mutator | MutatorGroup | Ownable): value is Own
     "has" in value && typeof value.has === 'function' 
   )
 
+}
+
+export function compareServiceToggles(prev: FireflyServiceToggle, next: FireflyServiceToggle): {
+  activated: FireflyServiceToggleKeyRequiringFirefly[],
+  halted: FireflyServiceToggleKeyRequiringFirefly[],
+} {
+  
+  // false => true
+  const activated: FireflyServiceToggleKeyRequiringFirefly[] = [];
+  const halted: FireflyServiceToggleKeyRequiringFirefly[] = [];
+  
+  ALL_SERVICE_KEYS.forEach(
+    sKey => {
+      const first = prev.get(sKey);
+      const second = next.get(sKey);
+
+      if (!first && second) {
+        activated.push(sKey);
+        return
+      }
+
+      if (first && !second) {
+        halted.push(sKey);
+        return
+      }
+    }
+  )
+
+  return {
+    activated,
+    halted,
+  }
 }

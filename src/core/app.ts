@@ -1,9 +1,8 @@
 import { ALL_SERVICE_KEYS, FIREFLY_SERVICE_DEFAULT_CONFIGS } from "./constants";
 import { Mutator, MutatorGroup } from "./interfaces";
 import { Firefly, FireflyCanvas, FireflyServiceToggleKey, FireflyServiceToggleKeyNotRequiringFirefly, FireflyServiceToggleKeyRequiringFirefly, IFireflyCanvasProps } from "./models";
-import { BoundService, ChangingValueService, CollisionService, DrawLoopService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, ShapeService, SimulationLoopService, WindowService } from "./services";
-import { ColorBinderService } from "./services/color-binder.service";
-import { Arc, FireflyAppApi, FireflyAppApiGetter, FireflyAppMethods, FireflyColorInfoConfig, FireflyServiceConfigs, GeneralFireflyConfig, HslColorConfig, Line, RgbColorConfig, ServiceType } from "./types";
+import { BoundService, ChangingValueService, CollisionService, ColorBinderService, DrawLoopService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, OwnershipService, ShapeService, SimulationLoopService, WindowService } from "./services";
+import { Arc, FireflyAppApi, FireflyAppApiGetter, FireflyAppMethods, FireflyColorInfoConfig, FireflyServiceConfigs, GeneralFireflyConfig, Line } from "./types";
 import { deepMerge, isOwnable } from "./utilities";
 
 export class FireflyApp {
@@ -76,10 +75,11 @@ export class FireflyApp {
 
   private api: FireflyAppApiGetter = this._api.bind(this)
 
+  private ownership: OwnershipService;
 
   private simLoop = new SimulationLoopService(
     this.api,
-    () => this.services,
+    () => [...this.services, this.ownership],
     this.generalConfig.simulationFPS ?? 60
   );
 
@@ -87,6 +87,7 @@ export class FireflyApp {
     () => this.getServiceByKey('draw') as DrawService,
     this.generalConfig.drawFPS ?? 60
   );
+
 
 
   constructor(app: {
@@ -98,8 +99,12 @@ export class FireflyApp {
     this.configs = deepMerge(FIREFLY_SERVICE_DEFAULT_CONFIGS, app.configs);
     this.createFireflies();
 
+    this.ownership = new OwnershipService(this.fireflies)
+
     // services will execute here
     this.buildServices();
+    this.registerOwnables();
+    this.ownership.init();
     this.setServices();
   }
 
@@ -209,7 +214,7 @@ export class FireflyApp {
     }
   }
 
-  private resetServicesOnFireflyByKeys(firefly: Firefly, ...keys: FireflyServiceToggleKeyRequiringFirefly): void {
+  private resetServicesOnFireflyByKeys(firefly: Firefly, ...keys: FireflyServiceToggleKeyRequiringFirefly[]): void {
     keys.forEach(key => {
       const service = this.getServiceByKey(key as FireflyServiceToggleKey);
 
@@ -241,11 +246,6 @@ export class FireflyApp {
     const service = this.getServiceByKey(key);
 
     if (service) {
-      
-      if(isOwnable(service)) {
-        service.add(firefly);
-      }
-
       firefly.serviceToggle.activate(key);
       service.setOne(firefly);
     }
@@ -279,6 +279,15 @@ export class FireflyApp {
       new GlobalFireflyModifierService(this.api, this.configs.globalFireflyModifier),
       new DrawService(this.api, this.configs.draw),
     ]
+
+  }
+
+  private registerOwnables(): void {
+    for (const s of this.services) {
+      if (isOwnable(s)) {
+        this.ownership.register(s)
+      }
+    }
   }
 
   private togglePauseApplication(value?: boolean): void {
@@ -303,14 +312,14 @@ export class FireflyApp {
       }
     )
 
-    this.fireflies.forEach(
-      (ff) => {
-        ff.initialFireflySnapshot = {
-          ...ff,
-          initialFireflySnapshot: null,
-        }
-      }
-    )
+    // this.fireflies.forEach(
+    //   (ff) => {
+    //     ff.initialFireflySnapshot = {
+    //       ...ff,
+    //       initialFireflySnapshot: null,
+    //     }
+    //   }
+    // )
   }
 
 

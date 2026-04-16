@@ -1,5 +1,6 @@
 import { Loop, Mutator, MutatorGroup } from "../interfaces";
-import { FireflyAppApiGetter, ServiceType } from "../types";
+import { FireflyAppApiGetter } from "../types";
+import { OwnershipService } from "./ownership.service";
 
 export class SimulationLoopService 
   implements Loop {
@@ -13,7 +14,7 @@ export class SimulationLoopService
 
   constructor(
     private readonly api: FireflyAppApiGetter,
-    private readonly getServices: () => (Mutator | MutatorGroup)[],
+    private readonly getServices: () => (Mutator | MutatorGroup | OwnershipService)[],
     simulationFPS: number
   ) {
     this.simHz = Math.max(1, simulationFPS);
@@ -21,6 +22,7 @@ export class SimulationLoopService
 
   private stepSimulation() {
     const drawService = this.api('methods').getServiceByKey('draw');
+    
     for (let s of this.getServices()) {
       if (s !== drawService) s.update();
     }

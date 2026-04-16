@@ -10,3 +10,5 @@ export * from "./neighbourhood.service";
 export * from "./life.service"
 export * from "./draw-loop.service";
 export * from "./simulation-loop.service"
+export * from "./color-binder.service";
+export * from "./ownership.service";
