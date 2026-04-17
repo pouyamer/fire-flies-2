@@ -1,6 +1,6 @@
 import { Firefly } from "../models";
-import { EventCallBack } from "./event-callback.type";
-import { ValueGeneratorParameters } from "./genarator-callback.type";
+import { FireflyAppApiGetter } from "./app-services.type";
+import { EventCallBackWithFirefly } from "./event-callback.type";
 
 export type FireflyNeighbourhoodPicker = (
   candidate: Firefly,
@@ -12,7 +12,7 @@ export type NeighbourhoodConfig  = {
   // type static: once the set runs
   // type reactive: runs every tick
   candidatePickingStrategy: 'static' | 'reactive';
-  candidatePicker: (parameters: Omit<ValueGeneratorParameters, "firefly">) => Firefly[];
+  candidatePicker: (api: FireflyAppApiGetter) => Firefly[];
   // how candidates select their neighbourhood
   neighbourPicker: FireflyNeighbourhoodPicker;
   // default value: false, 
@@ -20,12 +20,12 @@ export type NeighbourhoodConfig  = {
   // default value: false
   canPickNeighboursFromOtherCandidates: boolean;
   // events:
-  onNeighbourhoodEnter?: EventCallBack;
-  onNeighbourhood?: EventCallBack;
-  onNeighbourhoodExit?: EventCallBack;
+  onNeighbourhoodEnter?: EventCallBackWithFirefly;
+  onNeighbourhood?: EventCallBackWithFirefly;
+  onNeighbourhoodExit?: EventCallBackWithFirefly;
   // it's recommended not to use it and handle a global case in where its defined
-  onNotInNeighbourhood?: EventCallBack;
+  onNotInNeighbourhood?: EventCallBackWithFirefly;
 
-  onCandidatePicked?: EventCallBack;
-  onCandidateDismissed?: EventCallBack
+  onCandidatePicked?: EventCallBackWithFirefly;
+  onCandidateDismissed?: EventCallBackWithFirefly
 }

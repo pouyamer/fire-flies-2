@@ -1,3 +1,5 @@
-import { ValueGeneratorParameters } from "./genarator-callback.type";
+import { FireflyAppApiGetter } from "./app-services.type";
+import { ValueGeneratorWithFireflyParameters } from "./genarator-callback.type";
 
-export type EventCallBack = (parameters: ValueGeneratorParameters) => void;
+export type EventCallBackWithFirefly = (parameters: ValueGeneratorWithFireflyParameters) => void;
+export type EventCallBack = (api: FireflyAppApiGetter) => void

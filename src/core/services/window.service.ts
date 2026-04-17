@@ -1,6 +1,6 @@
 import { Mutator, Ownable } from "../interfaces";
 import { Firefly, FireflyServiceToggleKeyRequiringFirefly } from "../models";
-import { FireflyAppApiGetter, ValueGeneratorParameters, WindowConfig } from "../types";
+import { FireflyAppApiGetter, ValueGeneratorWithFireflyParameters, WindowConfig } from "../types";
 
 export class WindowService
   implements Mutator, Ownable {
@@ -43,7 +43,7 @@ export class WindowService
   }
 
   private handleOnFireflyHovered(ff: Firefly): void {
-    const parameters: ValueGeneratorParameters = {
+    const parameters: ValueGeneratorWithFireflyParameters = {
       api: this.appApi,
       firefly: ff,
     }

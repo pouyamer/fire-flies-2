@@ -1,4 +1,4 @@
-import { EventCallBack } from "./event-callback.type";
+import { EventCallBackWithFirefly } from "./event-callback.type";
 import { GeneratorValueOnCanvasCallback } from "./genarator-callback.type";
 
 type DirectionalTyped<T> = {
@@ -8,8 +8,8 @@ type DirectionalTyped<T> = {
   bottom?: T;
 }
 
-type BoundsConfigEvent = (Partial<DirectionalTyped<EventCallBack>> & {all?: EventCallBack}) |
-  EventCallBack
+type BoundsConfigEvent = (Partial<DirectionalTyped<EventCallBackWithFirefly>> & {all?: EventCallBackWithFirefly}) |
+  EventCallBackWithFirefly
 
 export type Direction = 'top' | 'bottom' | 'left' | 'right'
 

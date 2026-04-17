@@ -32,7 +32,7 @@ export class NeighbourhoodService
   }
 
   set(): void {
-    this.candidateFireflies = this.config.candidatePicker({api: this.appApi})
+    this.candidateFireflies = this.config.candidatePicker(this.appApi)
   }
 
   updateOne(/* firefly: Firefly */): void {
@@ -43,7 +43,7 @@ export class NeighbourhoodService
 
     // handle candidates
     if (this.config.candidatePickingStrategy === 'reactive') {
-      this.candidateFireflies = this.config.candidatePicker({api: this.appApi})
+      this.candidateFireflies = this.config.candidatePicker(this.appApi)
     }
       const oldCondidates = this.candidateFireflies;
 

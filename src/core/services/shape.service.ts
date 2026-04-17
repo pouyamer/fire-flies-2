@@ -1,6 +1,6 @@
 import { Mutator, Ownable } from "../interfaces";
 import { Firefly, FireflyServiceToggleKeyRequiringFirefly } from "../models";
-import { FireflyAppApiGetter, ShapeConfig, ShapeValue, ValueGenerator, WeightedValue } from "../types";
+import { FireflyAppApiGetter, ShapeConfig, ShapeValue, ValueGeneratorWithFirefly, WeightedValue } from "../types";
 import { chooseBetweenMultipleValues, getValueFromWeightedValues, isWeightedValues } from "../utilities";
 
 export class ShapeService
@@ -17,7 +17,7 @@ export class ShapeService
   }
 
     // the inner get value sets args for Utilities.getNumericValue in valueGenerator mode
-  private getValue(firefly: Firefly, value: ShapeValue | ShapeValue[] | ValueGenerator<ShapeValue | ShapeValue[]> | WeightedValue<ShapeValue>[]): ShapeValue {
+  private getValue(firefly: Firefly, value: ShapeValue | ShapeValue[] | ValueGeneratorWithFirefly<ShapeValue | ShapeValue[]> | WeightedValue<ShapeValue>[]): ShapeValue {
     const rawValue = typeof value === 'function' 
       ? value({
         firefly: firefly,

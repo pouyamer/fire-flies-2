@@ -31,19 +31,17 @@ export class GlobalFireflyModifierService implements Mutator, Ownable {
   }
   
   updateOne(firefly: Firefly): void {
-    this.config.onFramePassModifier({
+    this.config.updateOne?.({
       firefly: firefly,
       api: this.appApi
     })
   }
 
   setOne(firefly: Firefly): void {
-    if (this.config.onSetModifier) {
-      this.config.onSetModifier({
+      this.config.setOne?.({
         firefly: firefly,
         api: this.appApi
       })
-    }
   }
 
   update(): void {

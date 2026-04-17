@@ -10,7 +10,7 @@ export * from "./event-callback.type";
 export * from "./genarator-callback.type";
 export * from "./bounds-config.type";
 export * from "./window-config.type";
-export * from "./general-firefly-config.type";
+export * from "./general-config.type";
 export * from "./jitter-config.type";
 export * from "./possible-value.type";
 export * from "./global-firefly-modifier-config.type";

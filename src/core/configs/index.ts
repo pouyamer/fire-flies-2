@@ -4,7 +4,7 @@ export * from "./location.config";
 export * from "./shape.config";
 export * from "./bounds.config";
 export * from "./window.config";
-export * from "./general-firefly.config";
+export * from "./general.config";
 export * from "./rotation.config"
 export * from "./jitter.config";
 export * from "./collision.config";

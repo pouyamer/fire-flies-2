@@ -1,7 +1,7 @@
 import { ALL_SERVICE_KEYS } from "../constants";
 import { Mutator, MutatorGroup, Ownable } from "../interfaces";
 import { Firefly, FireflyServiceToggle, FireflyServiceToggleKeyRequiringFirefly, HslColor, Range, RgbColor } from "../models";
-import { CartersianCoordinates, PossibleValue, SpeedConfig, ValueGenerator, ValueGeneratorParameters, WeightedValue } from "../types";
+import { CartersianCoordinates, PossibleValue, SpeedConfig, ValueGeneratorWithFirefly, ValueGeneratorWithFireflyParameters, WeightedValue } from "../types";
 
 export function drawLineByCartesianCoordinates(
   ctx: CanvasRenderingContext2D,
@@ -99,7 +99,7 @@ export function randomBetween(
     : Math.random() * (max - min) + min
 }
 
-export function getNumberSign(input: number): number {
+export function getSign(input: number): number {
   if (input < 0) return -1
   if (input > 0) return 1
   return 0
@@ -160,18 +160,18 @@ export function getNonNumericValue<T>(
   rawValue: T | T[]
 ): T;
 export function getNonNumericValue<T>(
-  rawValue: ValueGenerator<T>,
-  valueGeneratorArgs: ValueGeneratorParameters
+  rawValue: ValueGeneratorWithFirefly<T>,
+  valueGeneratorArgs: ValueGeneratorWithFireflyParameters
 ): T
 export function getNonNumericValue<T>(
   rawValue: PossibleValue<T>,
-  valueGeneratorArgs?: ValueGeneratorParameters
+  valueGeneratorArgs?: ValueGeneratorWithFireflyParameters
 ): T {
   if (Array.isArray(rawValue)) {
     return chooseBetweenMultipleValues(rawValue);
   }
   else if (typeof rawValue === "function") {
-    return rawValue(valueGeneratorArgs as ValueGeneratorParameters);
+    return rawValue(valueGeneratorArgs as ValueGeneratorWithFireflyParameters);
   }
   else {
     return rawValue as T;
@@ -186,12 +186,12 @@ export function getNumericValue(
   getAsInteger: boolean,
 ): number
 export function getNumericValue(
-  rawValue: ValueGenerator<number>,
-  valueGeneratorArgs: ValueGeneratorParameters
+  rawValue: ValueGeneratorWithFirefly<number>,
+  valueGeneratorArgs: ValueGeneratorWithFireflyParameters
 ): number;
 export function getNumericValue(
   rawValue: PossibleValue<number>,
-  secondArgument?: boolean | ValueGeneratorParameters
+  secondArgument?: boolean | ValueGeneratorWithFireflyParameters
 ): number {
   if (typeof rawValue === "number") {
     return rawValue;
@@ -240,17 +240,14 @@ export function getValueFromWeightedValues<T>(values: WeightedValue<T>[]): T {
     throw new Error('Cannot select from empty array');
   }
 
-  // Calculate total weight
   const totalWeight = values.reduce((sum, item) => sum + item.weight, 0);
 
   if (totalWeight <= 0) {
     throw new Error('Total weight must be greater than 0');
   }
 
-  // Generate random number between 0 and totalWeight
   const random = Math.random() * totalWeight;
 
-  // Find the selected item
   let accumulatedWeight = 0;
 
   for (const item of values) {
@@ -260,7 +257,6 @@ export function getValueFromWeightedValues<T>(values: WeightedValue<T>[]): T {
     }
   }
 
-  // Fallback (should theoretically never reach here)
   return values[values.length - 1].value;
 }
 

@@ -1,4 +1,4 @@
-import { ValueGenerator } from "./genarator-callback.type";
+import { ValueGeneratorWithFirefly } from "./genarator-callback.type";
 import { PossibleValue } from "./possible-value.type";
 
 type StrokeValue = {
@@ -10,6 +10,6 @@ export type DrawConfig = {
   // default value: 1
   iterationPerFrame: number;
   clearBeforeDrawing: boolean;
-  method: StrokeValue | 'fill' | ValueGenerator<StrokeValue | 'fill'>;
+  method: StrokeValue | 'fill' | ValueGeneratorWithFirefly<StrokeValue | 'fill'>;
   // strokeLineWidth: PossibleValue<number>
 }

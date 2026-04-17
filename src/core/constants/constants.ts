@@ -1,5 +1,5 @@
 import { FireflyCanvas, FireflyServiceToggleKey } from "../models";
-import { ChangingValueConfig, EventCallBack, FireflyNeighbourhoodPicker, LocationConfig, ValueGenerator } from "../types";
+import { ChangingValueConfig, EventCallBack, EventCallBackWithFirefly, FireflyNeighbourhoodPicker, LocationConfig, ValueGeneratorWithFirefly } from "../types";
 import { calculateDistance } from "../utilities";
 
 export class CONSTANTS {
@@ -28,8 +28,8 @@ export class CONSTANTS {
   public static randomCanvasLocationWithSegments(
     xSegment?: number,
     ySegment?: number): {
-      x: ValueGenerator<number | number[]>,
-      y: ValueGenerator<number | number[]>
+      x: ValueGeneratorWithFirefly<number | number[]>,
+      y: ValueGeneratorWithFirefly<number | number[]>
     } {
     return {
       x: this.createRandomValueBasedOnCanvasWidth(xSegment),
@@ -37,7 +37,7 @@ export class CONSTANTS {
     }
   }
 
-  public static createRandomValueBasedOnCanvasWidth(segment?: number): ValueGenerator<number | number[]> {
+  public static createRandomValueBasedOnCanvasWidth(segment?: number): ValueGeneratorWithFirefly<number | number[]> {
     return ({ api }) => (segment)
       ? segment >= 0
         ? Array(Math.floor(segment)).fill(null).map((_, i) => i * api('canvas').width / Math.floor(segment))
@@ -45,7 +45,7 @@ export class CONSTANTS {
       : Math.random() * api('canvas').width;
   }
 
-  public static createRandomValueBasedOnCanvasHeight(segment?: number): ValueGenerator<number | number[]> {
+  public static createRandomValueBasedOnCanvasHeight(segment?: number): ValueGeneratorWithFirefly<number | number[]> {
     return ({ api }) => (segment)
       ? segment >= 0
         ? Array(Math.floor(segment)).fill(null).map((_, i) => i * api('canvas').height / Math.floor(segment))
@@ -80,7 +80,7 @@ export class CONSTANTS {
   }
 
   public static EVENT_CALLBACKS = {
-    BlackHole: (strength: number, safeDistance: number): EventCallBack => {
+    BlackHole: (strength: number, safeDistance: number): EventCallBackWithFirefly => {
       return ({ firefly: ff, api }) => {
         const canvas = api('canvas');
         
@@ -109,7 +109,7 @@ export class CONSTANTS {
         }
       }
     },
-    BlackHoleWithExponentialFalloff: (strength: number): EventCallBack => {
+    BlackHoleWithExponentialFalloff: (strength: number): EventCallBackWithFirefly => {
       return ({ firefly: ff, api }) => {
         const canvas = api('canvas');
 

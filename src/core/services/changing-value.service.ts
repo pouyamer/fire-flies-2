@@ -1,6 +1,6 @@
 import { Mutator, Ownable } from "../interfaces";
 import { Firefly, FireflyServiceToggleKey, FireflyServiceToggleKeyRequiringFirefly } from "../models";
-import { ChangingValueConfig, ChangingValueKey, FireflyAppApiGetter, PossibleValue, ValueGeneratorParameters } from "../types";
+import { ChangingValueConfig, ChangingValueKey, FireflyAppApiGetter, PossibleValue, ValueGeneratorWithFireflyParameters } from "../types";
 import { getNumericValue, isRange } from "../utilities";
 
 export class ChangingValueService
@@ -15,7 +15,7 @@ export class ChangingValueService
     private readonly cvKey: ChangingValueKey<Firefly>,
     private readonly config: ChangingValueConfig,
     public readonly serviceToggleKey: FireflyServiceToggleKey,
-    private readonly sideEffect?: (parameters: ValueGeneratorParameters & {
+    private readonly sideEffect?: (parameters: ValueGeneratorWithFireflyParameters & {
       current: number;
     }) => void
   ) {

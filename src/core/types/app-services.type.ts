@@ -1,17 +1,15 @@
-import { FireflyApp } from "../app"
-import { Firefly, FireflyCanvas } from "../models"
-import { BoundService, ChangingValueService, CollisionService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, ShapeService, WindowService } from "../services";
-import { ColorBinderService } from "../services/color-binder.service";
+import { FireflyApp } from "../app";
+import { Firefly, FireflyCanvas } from "../models";
 import { BoundsConfig } from "./bounds-config.type";
 import { ChangingValueConfig } from "./changing-value-config.type";
 import { CollisionConfig } from "./collision-config.type";
 import { DrawConfig } from "./draw-config.type";
-import { GeneralFireflyConfig } from "./general-firefly-config.type";
+import { GeneralConfig } from "./general-config.type";
 import { GlobalFireflyModifierConfig } from "./global-firefly-modifier-config.type";
 import { HslColorConfig } from "./hsl-color-config.type";
 import { JitterConfig } from "./jitter-config.type";
 import { LifeConfig } from "./life-config.type";
-import { Arc, Line } from "./line.type"
+import { Arc, Line } from "./line.type";
 import { LocationConfig } from "./location-config.type";
 import { NeighbourhoodConfig } from "./neighbourhood-config.type";
 import { RgbColorConfig } from "./rgb-color.config.type";
@@ -45,7 +43,7 @@ export interface FireflyAppApi {
   arcs: Arc[];
   methods: FireflyAppMethods;
   configs: {
-    general: GeneralFireflyConfig;
+    general: GeneralConfig;
     colorInfo: FireflyColorInfoConfig
   }
 }
@@ -57,7 +55,7 @@ export type FireflyAppApiGetter =
 export interface FireflyServiceConfigs {
   bound: BoundsConfig;
   collision: CollisionConfig;
-  generalFirefly: GeneralFireflyConfig;
+  general: GeneralConfig;
   globalFireflyModifier: GlobalFireflyModifierConfig;
   jitter: JitterConfig;
   location: LocationConfig;

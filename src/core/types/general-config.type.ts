@@ -1,4 +1,4 @@
-export type GeneralFireflyConfig = {
+export type GeneralConfig = {
     count: number;
     colorMode: 'HSL' | 'RGB';
     drawFPS?: number;

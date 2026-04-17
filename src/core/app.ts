@@ -2,7 +2,7 @@ import { ALL_SERVICE_KEYS, FIREFLY_SERVICE_DEFAULT_CONFIGS } from "./constants";
 import { Mutator, MutatorGroup } from "./interfaces";
 import { Firefly, FireflyCanvas, FireflyServiceToggleKey, FireflyServiceToggleKeyNotRequiringFirefly, FireflyServiceToggleKeyRequiringFirefly, IFireflyCanvasProps } from "./models";
 import { BoundService, ChangingValueService, CollisionService, ColorBinderService, DrawLoopService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, OwnershipService, ShapeService, SimulationLoopService, WindowService } from "./services";
-import { Arc, FireflyAppApi, FireflyAppApiGetter, FireflyAppMethods, FireflyColorInfoConfig, FireflyServiceConfigs, GeneralFireflyConfig, Line } from "./types";
+import { Arc, FireflyAppApi, FireflyAppApiGetter, FireflyAppMethods, FireflyColorInfoConfig, FireflyServiceConfigs, GeneralConfig, Line } from "./types";
 import { deepMerge, isOwnable } from "./utilities";
 
 export class FireflyApp {
@@ -109,12 +109,12 @@ export class FireflyApp {
   }
 
 
-  private get generalConfig(): GeneralFireflyConfig {
-    return this.configs.generalFirefly;
+  private get generalConfig(): GeneralConfig {
+    return this.configs.general;
   }
 
   private get colorConfigInfo(): FireflyColorInfoConfig {
-    return this.configs.generalFirefly.colorMode === 'HSL'
+    return this.configs.general.colorMode === 'HSL'
       ? {
         type: 'HSL', config: this.configs.hslColor
       }
@@ -145,7 +145,7 @@ export class FireflyApp {
 
 
   private createFireflies(): void {
-    this.fireflies = Array.from({ length: this.configs.generalFirefly.count }).map(
+    this.fireflies = Array.from({ length: this.configs.general.count }).map(
       _ => new Firefly()
     )
   }
@@ -311,15 +311,6 @@ export class FireflyApp {
         }
       }
     )
-
-    // this.fireflies.forEach(
-    //   (ff) => {
-    //     ff.initialFireflySnapshot = {
-    //       ...ff,
-    //       initialFireflySnapshot: null,
-    //     }
-    //   }
-    // )
   }
 
 
