@@ -12,3 +12,4 @@ export * from "./draw-loop.service";
 export * from "./simulation-loop.service"
 export * from "./color-binder.service";
 export * from "./ownership.service";
+export * from "./trailing.service";

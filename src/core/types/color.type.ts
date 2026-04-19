@@ -22,3 +22,7 @@ export type ColorValueWithoutAlpha<
   TColorSpace extends ColorSpace,
   T
 > = Omit<ColorValue<TColorSpace, T>, 'alpha'> & { alpha?: T }
+
+export type DescriminatedColor<T> =
+  ({type: 'rgb'} & Rgb<T>) |
+  ({type: 'hsl'} & Hsl<T>) 

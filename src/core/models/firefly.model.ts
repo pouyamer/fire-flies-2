@@ -2,6 +2,7 @@ import { Shape } from "../enums";
 import { ShapeValue } from "../types";
 import { ChangingNumericalValueItem } from "./changing-numerical-value-item.model";
 import { FireflyServiceToggle } from "./firefly-service-toggle.model";
+import { FireflyTrail } from "./firefly-trail.model";
 
 export class Firefly {
   key: string | null;
@@ -34,6 +35,7 @@ export class Firefly {
   beforeEnteringNeighborhoodSnapshot: Firefly | null;
   strokeLineWidth: number;
   serviceToggle = new FireflyServiceToggle();
+  trails: FireflyTrail[] = [];
   // Read & Write to an object that you can use its value later
   private _info: Record<string, any> = {}
   // Assign a tag that can be later used for filtering or doing certain operations

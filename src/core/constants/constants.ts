@@ -188,4 +188,5 @@ export const ALL_SERVICE_KEYS: FireflyServiceToggleKey[] = [
   "polarSpeedAngle",
   "polarSpeedAmount",
   "rotation",
+  "trailing"
 ]

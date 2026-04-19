@@ -1,8 +1,9 @@
 import { Shape } from "../enums";
 import { Mutator, Ownable } from "../interfaces";
-import { Firefly, FireflyServiceToggleKeyRequiringFirefly, HslColor, RgbColor } from "../models";
+import { ChangingNumericalValueItem, Firefly, FireflyServiceToggleKeyRequiringFirefly, HslColor, RgbColor } from "../models";
+import { FireflyTrail } from "../models/firefly-trail.model";
 import { DrawConfig, FireflyAppApiGetter, PossibleValue } from "../types";
-import { getNumericValue, isRange } from "../utilities";
+import { getNumericValue, getTrailOrFireflyValue, isRange } from "../utilities";
 
 export class DrawService
   implements Mutator, Ownable {
@@ -34,27 +35,49 @@ export class DrawService
   }
 
   private drawFirefly(
-    firefly: Firefly,
+    firefly: Firefly | FireflyTrail,
     ctx: CanvasRenderingContext2D,
   ): void {
 
-    const { x, y, size } = firefly;
+    const style = this.appApi('configs').general.colorMode === 'HSL'
+      ? new HslColor({
+        hue: getTrailOrFireflyValue(firefly.hue),
+        saturation: getTrailOrFireflyValue(firefly.saturation),
+        lightness: getTrailOrFireflyValue(firefly.lightness),
+        alpha: getTrailOrFireflyValue(firefly.alpha),
+      }).toString()
+      : new RgbColor({
+        red: getTrailOrFireflyValue(firefly.red),
+        green: getTrailOrFireflyValue(firefly.green),
+        blue: getTrailOrFireflyValue(firefly.blue),
+        alpha: getTrailOrFireflyValue(firefly.alpha),
+      }).toString();
+
+    ctx.lineWidth = firefly.strokeLineWidth;
+    firefly.drawMethod === "fill"
+      ? ctx.fillStyle = style
+      : ctx.strokeStyle = style
+
+    const { x, y } = firefly;
+
+    const size = getTrailOrFireflyValue(firefly.size)
+    const rotation = getTrailOrFireflyValue(firefly.rotation);
 
 
     if (typeof firefly.shapeValue === "string") {
       switch (firefly.shapeValue) {
         case Shape.Circle:
           ctx.beginPath()
-          ctx.arc(x, y, size.value, 0, 2 * Math.PI)
+          ctx.arc(x, y, size, 0, 2 * Math.PI)
           ctx.moveTo(x, y)
           firefly.drawMethod === "stroke" ? ctx.stroke() : ctx.fill()
           break;
 
         case Shape.Square:
-          ctx.fillRect(x, y, size.value, size.value);
+          ctx.fillRect(x, y, size, size);
           firefly.drawMethod === "stroke"
-            ? ctx.strokeRect(x, y, size.value, size.value)
-            : ctx.fillRect(x, y, size.value, size.value)
+            ? ctx.strokeRect(x, y, size, size)
+            : ctx.fillRect(x, y, size, size)
           break;
         case Shape.QuarterCircle:
           break;
@@ -63,10 +86,10 @@ export class DrawService
     else {
       switch (firefly.shapeValue.shape) {
         case Shape.RegularPolygram:
-          const angle = ((firefly.shapeValue.parameter - 2) * Math.PI) / (2 * firefly.shapeValue.parameter) + firefly.rotation.value
+          const angle = ((firefly.shapeValue.parameter - 2) * Math.PI) / (2 * firefly.shapeValue.parameter) + rotation
 
-          const innerRadius = firefly.size.value / 2
-          const outerRadius = firefly.size.value
+          const innerRadius = size / 2
+          const outerRadius = size
 
           ctx.beginPath()
           for (let i = 0; i < firefly.shapeValue.parameter; i++) {
@@ -88,12 +111,12 @@ export class DrawService
 
           break;
         case Shape.RegularPolygon:
-          const halfSize = firefly.size.value
+          const halfSize = size
 
           ctx.beginPath();
 
           for (let i = 0; i < firefly.shapeValue.parameter; i++) {
-            const angle = ((firefly.shapeValue.parameter - 2) * Math.PI) / (2 * firefly.shapeValue.parameter) + firefly.rotation.value
+            const angle = ((firefly.shapeValue.parameter - 2) * Math.PI) / (2 * firefly.shapeValue.parameter) + rotation
             let dx = halfSize * Math.cos((i * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
             let dy = halfSize * Math.sin((i * 2 * Math.PI) / firefly.shapeValue.parameter + angle)
             let outerX = x + +dx
@@ -110,15 +133,15 @@ export class DrawService
       }
     }
   }
-  
+
   add(firefly: Firefly): void {
-    if(!this.has(firefly)) {
+    if (!this.has(firefly)) {
       this.fireflies.push(firefly);
     }
   }
 
   remove(firefly: Firefly): void {
-    if(this.has(firefly)) {
+    if (this.has(firefly)) {
       this.fireflies.filter(ff => ff !== firefly)
     }
   }
@@ -165,24 +188,11 @@ export class DrawService
 
     if (ctx) {
 
-      const style = this.appApi('configs').general.colorMode === 'HSL'
-        ? new HslColor({
-          hue: firefly.hue.value,
-          saturation: firefly.saturation.value,
-          lightness: firefly.lightness.value,
-          alpha: firefly.alpha.value,
-        }).toString()
-        : new RgbColor({
-          red: firefly.red.value,
-          green: firefly.green.value,
-          blue: firefly.blue.value,
-          alpha: firefly.alpha.value,
-        }).toString();
-
-      ctx.lineWidth = firefly.strokeLineWidth;
-      firefly.drawMethod === "fill"
-        ? ctx.fillStyle = style
-        : ctx.strokeStyle = style
+      firefly.trails.forEach(
+        trail => {
+          this.drawFirefly(trail as any, ctx)
+        }
+      )
 
       this.drawFirefly(firefly, ctx)
     }

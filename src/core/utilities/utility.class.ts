@@ -1,6 +1,6 @@
 import { ALL_SERVICE_KEYS } from "../constants";
 import { Mutator, MutatorGroup, Ownable } from "../interfaces";
-import { Firefly, FireflyServiceToggle, FireflyServiceToggleKeyRequiringFirefly, HslColor, Range, RgbColor } from "../models";
+import { ChangingNumericalValueItem, Firefly, FireflyServiceToggle, FireflyServiceToggleKeyRequiringFirefly, HslColor, Range, RgbColor } from "../models";
 import { CartersianCoordinates, PossibleValue, SpeedConfig, ValueGeneratorWithFirefly, ValueGeneratorWithFireflyParameters, WeightedValue } from "../types";
 
 export function drawLineByCartesianCoordinates(
@@ -397,3 +397,7 @@ export function compareServiceToggles(prev: FireflyServiceToggle, next: FireflyS
     halted,
   }
 }
+
+  export function getTrailOrFireflyValue(v: number | ChangingNumericalValueItem) {
+    return (v && typeof v === 'object' && 'value' in v) ? v.value : v;
+  }

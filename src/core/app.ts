@@ -1,7 +1,7 @@
 import { ALL_SERVICE_KEYS, FIREFLY_SERVICE_DEFAULT_CONFIGS } from "./constants";
 import { Mutator, MutatorGroup } from "./interfaces";
 import { Firefly, FireflyCanvas, FireflyServiceToggleKey, FireflyServiceToggleKeyNotRequiringFirefly, FireflyServiceToggleKeyRequiringFirefly, IFireflyCanvasProps } from "./models";
-import { BoundService, ChangingValueService, CollisionService, ColorBinderService, DrawLoopService, DrawService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, OwnershipService, ShapeService, SimulationLoopService, WindowService } from "./services";
+import { BoundService, ChangingValueService, CollisionService, ColorBinderService, DrawLoopService, DrawService, FireflyTrailingService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, OwnershipService, ShapeService, SimulationLoopService, WindowService } from "./services";
 import { Arc, FireflyAppApi, FireflyAppApiGetter, FireflyAppMethods, FireflyColorInfoConfig, FireflyServiceConfigs, GeneralConfig, Line } from "./types";
 import { deepMerge, isOwnable } from "./utilities";
 
@@ -192,6 +192,8 @@ export class FireflyApp {
       case "polarSpeedAmount":
       case "rotation":
         return this.services.find(s => s instanceof ChangingValueService && s.serviceToggleKey === key) as ChangingValueService;
+      case "trailing":
+        return this.services.find(s => s instanceof FireflyTrailingService);
       default:
         throw new Error(`handle ${key} situation`)
     }
@@ -257,14 +259,11 @@ export class FireflyApp {
       new ShapeService(this.api, this.configs.shape),
       new ChangingValueService(this.api, "size", this.configs.size, 'size'),
       new ColorBinderService(this.api),
-      new BoundService(this.api, this.configs.bound),
-      // new CollisionService(this.api, this.configs.collision, this, this.collision),
       /* ========= Speed ============ */
       new ChangingValueService(this.api, "speedX", this.configs.speed.speedX, 'speedX'),
       new ChangingValueService(this.api, "speedY", this.configs.speed.speedY, 'speedY'),
       new ChangingValueService(this.api, "polarSpeedAngle", this.configs.speed.polarSpeedAngle, 'polarSpeedAngle'),
       new ChangingValueService(this.api, "polarSpeedAmount", this.configs.speed.polarSpeedAmount, 'polarSpeedAmount'),
-      /* ============================ */
       /* ========= Jitter ============ */
       new ChangingValueService(this.api, "jitterX", this.configs.jitter.jitterX, 'jitterX'),
       new ChangingValueService(this.api, "jitterY", this.configs.jitter.jitterY, 'jitterY'),
@@ -276,7 +275,9 @@ export class FireflyApp {
       new WindowService(this.api, this.configs.window),
       new NeighbourhoodService(this.api, this.configs.neighbourhood),
       new CollisionService(),
+      new BoundService(this.api, this.configs.bound),
       new GlobalFireflyModifierService(this.api, this.configs.globalFireflyModifier),
+      new FireflyTrailingService(this.api),
       new DrawService(this.api, this.configs.draw),
     ]
 
@@ -284,6 +285,15 @@ export class FireflyApp {
 
   private registerOwnables(): void {
     for (const s of this.services) {
+      if (s instanceof ColorBinderService) {
+        s.services.forEach(
+          ss => {
+            this.ownership.register(ss)
+          }
+        )
+        continue;
+      }
+      
       if (isOwnable(s)) {
         this.ownership.register(s)
       }

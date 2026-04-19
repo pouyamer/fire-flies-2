@@ -70,6 +70,7 @@ export type FireflyServiceToggleKey =
   | "polarSpeedAngle"
   | "polarSpeedAmount"
   | "window"
+  | "trailing"
 
 export type FireflyServiceToggleKeyNotRequiringFirefly = Extract<FireflyServiceToggleKey, 'window' | 'bounds' | 'neighbourhood'>
 
