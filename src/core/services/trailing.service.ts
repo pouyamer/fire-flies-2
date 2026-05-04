@@ -39,14 +39,14 @@ export class FireflyTrailingService
     }
 
     updateOne(firefly: Firefly): void {
-      Math.random() < .3 && firefly.trails.push(new FireflyTrail(firefly))
+      firefly.trails.push(new FireflyTrail(firefly))
 
-      if (firefly.trails.length > 20) {
+      if (firefly.trails.length > firefly.size.value) {
         firefly.trails.shift();
       }
 
       firefly.trails.forEach((ft, i) => {
-        ft.size = Math.min(3 * firefly.size.value / (firefly.trails.length - i), firefly.size.value)
+        ft.size = i
       })
     }
 

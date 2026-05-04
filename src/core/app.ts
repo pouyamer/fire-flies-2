@@ -1,7 +1,7 @@
 import { ALL_SERVICE_KEYS, FIREFLY_SERVICE_DEFAULT_CONFIGS } from "./constants";
 import { Mutator, MutatorGroup } from "./interfaces";
-import { Firefly, FireflyCanvas, FireflyServiceToggleKey, FireflyServiceToggleKeyNotRequiringFirefly, FireflyServiceToggleKeyRequiringFirefly, IFireflyCanvasProps } from "./models";
-import { BoundService, ChangingValueService, CollisionService, ColorBinderService, DrawLoopService, DrawService, FireflyTrailingService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, OwnershipService, ShapeService, SimulationLoopService, WindowService } from "./services";
+import { Boundary, Firefly, FireflyCanvas, FireflyServiceToggleKey, FireflyServiceToggleKeyNotRequiringFirefly, FireflyServiceToggleKeyRequiringFirefly, IFireflyCanvasProps } from "./models";
+import { BoundaryControlService, ChangingValueService, CollisionService, ColorBinderService, DrawLoopService, DrawService, FireflyTrailingService, GlobalFireflyModifierService, LifeService, LocationService, NeighbourhoodService, OwnershipService, ShapeService, SimulationLoopService, WindowService } from "./services";
 import { Arc, FireflyAppApi, FireflyAppApiGetter, FireflyAppMethods, FireflyColorInfoConfig, FireflyServiceConfigs, GeneralConfig, Line } from "./types";
 import { deepMerge, isOwnable } from "./utilities";
 
@@ -13,6 +13,7 @@ export class FireflyApp {
   private lines: Line[] = [];
   private arcs: Arc[] = [];
   private services: (Mutator | MutatorGroup)[] = [];
+  private boundaries: Boundary[] = [];
 
 
 
@@ -40,6 +41,7 @@ export class FireflyApp {
   private _api(query: 'lines'): Line[];
   private _api(query: 'arcs'): Arc[];
   private _api(query: 'methods'): FireflyAppMethods;
+  private _api(query: 'boundaries'): Boundary[];
   private _api(query?: keyof FireflyAppApi): FireflyAppApi[keyof FireflyAppApi] | FireflyAppApi {
 
     const configs: FireflyAppApi['configs'] = {
@@ -55,6 +57,7 @@ export class FireflyApp {
         arcs: this.arcs,
         methods: this.apiMethods,
         configs: configs,
+        boundaries: this.boundaries,
       }
     }
     switch (query) {
@@ -68,6 +71,8 @@ export class FireflyApp {
         return this.lines;
       case "arcs":
         return this.arcs;
+        case "boundaries":
+          return this.boundaries
       case "methods":
         return this.apiMethods;
     }
@@ -153,7 +158,7 @@ export class FireflyApp {
   private getServiceByKey(key: FireflyServiceToggleKey): Mutator | undefined {
     switch (key) {
       case "bounds":
-        return this.services.find(s => s instanceof BoundService);
+        return this.services.find(s => s instanceof BoundaryControlService);
       case "collision":
         return this.services.find(s => s instanceof CollisionService)
       case "draw":
@@ -275,8 +280,8 @@ export class FireflyApp {
       new WindowService(this.api, this.configs.window),
       new NeighbourhoodService(this.api, this.configs.neighbourhood),
       new CollisionService(),
-      new BoundService(this.api, this.configs.bound),
       new GlobalFireflyModifierService(this.api, this.configs.globalFireflyModifier),
+      new BoundaryControlService(this.api, this.configs.bound),
       new FireflyTrailingService(this.api),
       new DrawService(this.api, this.configs.draw),
     ]

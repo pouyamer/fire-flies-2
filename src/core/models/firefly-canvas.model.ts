@@ -1,5 +1,5 @@
 import { DEFAULT_VALUE } from "../constants";
-import { Direction, HslWithoutAlpha, RgbWithoutAlpha } from "../types";
+import { CartersianCoordinates, CartesianType, HslWithoutAlpha, RgbWithoutAlpha } from "../types";
 import { HslColor, RgbColor } from "./color.model";
 
 type CanvasColor = ({ type: 'hsl' } & HslWithoutAlpha<number>) | ({ type: 'rgb' } & RgbWithoutAlpha<number>);
@@ -62,31 +62,37 @@ export class FireflyCanvas {
     return this._renderingContext2d;
   }
 
-  public setBounds(type: Direction, value: number | null): void {
-    switch (type) {
-      case "top":
-        this.topBound = value;
-      case "bottom":
-        this.bottomBound = value;
-      case "left":
-        this.leftBound = value;
-      case "right":
-        this.rightBound = value;
-    }
+  public setMousePosition(value: Partial<CartesianType<number | null>>): void {
+    if (value.x !== undefined) this.mouseX = value.x;
+    if (value.y !== undefined) this.mouseY = value.y;
+
   }
 
-  public getBounds(type: Direction): number | null {
-    switch (type) {
-      case "top":
-        return this.topBound;
-      case "bottom":
-        return this.bottomBound;
-      case "left":
-        return this.leftBound;
-      case "right":
-        return this.rightBound;
-    }
-  }
+  // public setBounds(type: Direction, value: number | null): void {
+  //   switch (type) {
+  //     case "top":
+  //       this.topBound = value;
+  //     case "bottom":
+  //       this.bottomBound = value;
+  //     case "left":
+  //       this.leftBound = value;
+  //     case "right":
+  //       this.rightBound = value;
+  //   }
+  // }
+
+  // public getBounds(type: Direction): number | null {
+  //   switch (type) {
+  //     case "top":
+  //       return this.topBound;
+  //     case "bottom":
+  //       return this.bottomBound;
+  //     case "left":
+  //       return this.leftBound;
+  //     case "right":
+  //       return this.rightBound;
+  //   }
+  // }
 
   public setWidthAndHeight(
     width: number,

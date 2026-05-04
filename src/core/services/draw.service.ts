@@ -68,7 +68,7 @@ export class DrawService
       switch (firefly.shapeValue) {
         case Shape.Circle:
           ctx.beginPath()
-          ctx.arc(x, y, size, 0, 2 * Math.PI)
+          ctx.arc(x, y, size / 2, 0, 2 * Math.PI)
           ctx.moveTo(x, y)
           firefly.drawMethod === "stroke" ? ctx.stroke() : ctx.fill()
           break;

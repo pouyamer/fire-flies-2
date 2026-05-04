@@ -8,7 +8,7 @@ export * from "./shape-config.type";
 export * from "./event-config.type";
 export * from "./event-callback.type";
 export * from "./genarator-callback.type";
-export * from "./bounds-config.type";
+export * from "./boundary-control-config.type";
 export * from "./window-config.type";
 export * from "./general-config.type";
 export * from "./jitter-config.type";

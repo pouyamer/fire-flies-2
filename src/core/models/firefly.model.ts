@@ -25,7 +25,6 @@ export class Firefly {
   jitterPolarAmount: ChangingNumericalValueItem;
   x: number;
   y: number;
-  initialFireflySnapshot: unknown | null;
   rotation: ChangingNumericalValueItem;
   firefliesInCollision: Firefly[];
   drawMethod: 'fill' | 'stroke';
@@ -35,6 +34,7 @@ export class Firefly {
   beforeEnteringNeighborhoodSnapshot: Firefly | null;
   strokeLineWidth: number;
   serviceToggle = new FireflyServiceToggle();
+  snapshot: FireflyTrail | null = null;
   trails: FireflyTrail[] = [];
   // Read & Write to an object that you can use its value later
   private _info: Record<string, any> = {}
@@ -51,11 +51,6 @@ export class Firefly {
     this.alpha = model.alpha ?? new ChangingNumericalValueItem();
     this.x = model.x ?? 0;
     this.y = model.y ?? 0;
-    this.initialFireflySnapshot = {
-      ...this,
-      initialFireflySnapshot: null,
-      _tags: []
-    }
     this.speedX = model.speedX ?? new ChangingNumericalValueItem();
     this.speedY = model.speedY ?? new ChangingNumericalValueItem();
     this.polarSpeedAngle = model.polarSpeedAngle ?? new ChangingNumericalValueItem();

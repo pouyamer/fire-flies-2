@@ -1,6 +1,6 @@
 import { FireflyApp } from "../app";
-import { Firefly, FireflyCanvas } from "../models";
-import { BoundsConfig } from "./bounds-config.type";
+import { Boundary, Firefly, FireflyCanvas } from "../models";
+import { BoundaryControlConfig } from "./boundary-control-config.type";
 import { ChangingValueConfig } from "./changing-value-config.type";
 import { CollisionConfig } from "./collision-config.type";
 import { DrawConfig } from "./draw-config.type";
@@ -42,6 +42,7 @@ export interface FireflyAppApi {
   lines: Line[];
   arcs: Arc[];
   methods: FireflyAppMethods;
+  boundaries: Boundary[];
   configs: {
     general: GeneralConfig;
     colorInfo: FireflyColorInfoConfig
@@ -53,7 +54,7 @@ export type FireflyAppApiGetter =
   (<K extends keyof FireflyAppApi>(key: K) => FireflyAppApi[K]);
 
 export interface FireflyServiceConfigs {
-  bound: BoundsConfig;
+  bound: BoundaryControlConfig;
   collision: CollisionConfig;
   general: GeneralConfig;
   globalFireflyModifier: GlobalFireflyModifierConfig;

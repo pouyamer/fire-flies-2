@@ -20,12 +20,13 @@ export class WindowService
   private setResizeEventListener(): void {
     window.addEventListener("resize", () => {
       this.appApi('canvas').setWidthAndHeight(window.innerWidth, window.innerHeight)
-        this.appApi('methods').resetServicesByKeys('bounds');
+      this.appApi('methods').resetServicesByKeys('bounds');
     })
   }
 
   private isMouseInsideFirefly(ff: Firefly): boolean {
-    const canvas = this.appApi('canvas')
+    const canvas = this.appApi('canvas');
+
     return (
       !!canvas.mouseX &&
       !!canvas.mouseY &&
@@ -68,36 +69,46 @@ export class WindowService
 
   private setMouseMoveEventListener(): void {
     window.addEventListener("mousemove", (e: MouseEvent) => {
+      const canvas = this.appApi('canvas');
+
       clearTimeout(this.timeOut);
 
-      // this.timeOut = setTimeout(
-      //   () => {
-      //     this.canvas.mouseX = null;
-      //     this.canvas.mouseY = null;
+      this.timeOut = setTimeout(
+        () => {
 
-      //   }, 200
-      // )
+          canvas.setMousePosition({
+            x: null,
+            y: null
+          })
 
-      this.appApi('canvas').mouseX = e.x;
-      this.appApi('canvas').mouseY = e.y;
+        }, 200
+      )
+
+      canvas.setMousePosition({
+        x: e.x,
+        y: e.y
+      })
+
     })
   }
 
   private setMouseLeaveEventListener(): void {
     window.addEventListener("mouseout", (e: MouseEvent) => {
-      this.appApi('canvas').mouseX = null;
-      this.appApi('canvas').mouseY = null;
+      this.appApi('canvas').setMousePosition({
+        x: null,
+        y: null
+      })
     })
   }
 
   add(firefly: Firefly): void {
-    if(!this.has(firefly)) {
+    if (!this.has(firefly)) {
       this.fireflies.push(firefly);
     }
   }
 
   remove(firefly: Firefly): void {
-    if(this.has(firefly)) {
+    if (this.has(firefly)) {
       this.fireflies.filter(ff => ff !== firefly)
     }
   }
@@ -108,9 +119,9 @@ export class WindowService
 
 
   set(): void {
-    // for(let ff of this.fireflies) {
-    //   this.setOnSingleFirefly(/* ff */)
-    // }
+    for(let ff of this.fireflies) {
+      this.setOne(ff)
+    }
     this.setResizeEventListener();
     this.setMouseClickEventListener();
     this.setMouseMoveEventListener();
@@ -118,15 +129,17 @@ export class WindowService
   }
 
   setOne(firefly: Firefly): void {
-    this.handleOnFireflyHovered(firefly)
+    // this.handleOnFireflyHovered(firefly)
   }
 
-  updateOne(/* firefly: Firefly */): void {
+  updateOne(firefly: Firefly): void {
+    this.handleOnFireflyHovered(firefly)
+
   }
 
   update(): void {
     this.fireflies.forEach(ff => {
-      this.updateOne()
+      this.updateOne(ff)
     })
   }
 }

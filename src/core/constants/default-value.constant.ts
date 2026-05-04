@@ -1,5 +1,4 @@
-import { boundsConfig, collisionConfig, drawConfig, globalFireflyModifierConfig, hslColorConfig, jitterConfig, lifeConfig, locationConfig, neighbourhoodConfig, rgbColorConfig, rotationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "../configs";
-import { generalConfig } from "../configs/general.config";
+import { boundaryControlConfig, collisionConfig, drawConfig, generalConfig, globalFireflyModifierConfig, hslColorConfig, jitterConfig, lifeConfig, locationConfig, neighbourhoodConfig, rgbColorConfig, rotationConfig, shapeConfig, sizeConfig, speedConfig, windowConfig } from "../configs";
 import { HslColor } from "../models";
 import { DefaultValue, FireflyServiceConfigs } from "../types";
 
@@ -14,7 +13,7 @@ export const DEFAULT_VALUE: DefaultValue = {
 }
 
 export const FIREFLY_SERVICE_DEFAULT_CONFIGS: FireflyServiceConfigs = {
-    bound: boundsConfig,
+    bound: boundaryControlConfig,
     collision: collisionConfig,
     draw: drawConfig,
     globalFireflyModifier: globalFireflyModifierConfig,

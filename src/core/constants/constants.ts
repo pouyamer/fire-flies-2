@@ -1,15 +1,8 @@
 import { FireflyCanvas, FireflyServiceToggleKey } from "../models";
-import { ChangingValueConfig, EventCallBack, EventCallBackWithFirefly, FireflyNeighbourhoodPicker, LocationConfig, ValueGeneratorWithFirefly } from "../types";
+import { BoundaryConfig, BoundaryControlConfig, ChangingValueConfig, EventCallBack, EventCallBackWithFirefly, FireflyNeighbourhoodPicker, LocationConfig, ValueGeneratorWithFirefly } from "../types";
 import { calculateDistance } from "../utilities";
 
 export class CONSTANTS {
-
-  public static CANVAS_EDGE_BOUNDS = {
-    bottom: (canvas: FireflyCanvas) => canvas.height,
-    top: () => 0,
-    left: () => 0,
-    right: (canvas: FireflyCanvas) => canvas.width
-  }
 
   public static randomXCanvasWidth = this.createRandomValueBasedOnCanvasWidth();
 
@@ -83,7 +76,7 @@ export class CONSTANTS {
     BlackHole: (strength: number, safeDistance: number): EventCallBackWithFirefly => {
       return ({ firefly: ff, api }) => {
         const canvas = api('canvas');
-        
+
         if (ff.neighboredBy) {
           const distanceToCandidate = calculateDistance(
             ff.x, ff.y, ff.neighboredBy.x, ff.neighboredBy.y
@@ -160,6 +153,92 @@ export const DEFAULT_COORDINATES = {
   x: 0,
   y: 0,
 }
+
+const TOP_BOUNDARY_CONFIG_RULES: BoundaryConfig['rules'] = {
+  out: ({
+    yPlusHalfSize,
+  }) => yPlusHalfSize <= 0,
+  touched: ({ yMinusHalfSize }) => yMinusHalfSize <= 0,
+}
+
+const LEFT_BOUNDARY_CONFIG_RULES: BoundaryConfig['rules'] = {
+  out: ({
+    xPlusHalfSize,
+  }) => xPlusHalfSize <= 0,
+  touched: ({ xMinusHalfSize }) => xMinusHalfSize <= 0,
+}
+
+const BOTTOM_BOUNDARY_CONFIG_RULES: BoundaryConfig['rules'] = {
+  out: ({
+    yMinusHalfSize,
+    canvasHeight
+  }) => yMinusHalfSize >= canvasHeight,
+  touched: ({ yPlusHalfSize, canvasHeight }) => yPlusHalfSize >= canvasHeight,
+}
+
+const RIGHT_BOUNDARY_CONFIG_RULES: BoundaryConfig['rules'] = {
+  out: ({
+    xMinusHalfSize,
+    canvasWidth
+  }) => xMinusHalfSize >= canvasWidth,
+  touched: ({ xPlusHalfSize, canvasWidth }) => xPlusHalfSize >= canvasWidth,
+}
+
+export const DIRECTIONAL_BOUNDARY_CONFIGS: Record<
+  | 'topWithPC'
+  | 'topWithoutPC'
+  | 'bottomWithPC'
+  | 'bottomWithoutPC'
+  | 'leftWithPC'
+  | 'leftWithoutPC'
+  | 'rightWithPC'
+  | 'rightWithoutPC'
+  , BoundaryConfig> = {
+    topWithPC: {
+      key: 'top',
+      rules: TOP_BOUNDARY_CONFIG_RULES,
+      touchedPositionCorrector: ({ firefly, api }) => {
+        firefly.y = firefly.size.value / 2
+      }
+    },
+    topWithoutPC: {
+      key: 'top',
+      rules: TOP_BOUNDARY_CONFIG_RULES,
+    },
+    bottomWithPC: {
+      key: 'bottom',
+      rules: BOTTOM_BOUNDARY_CONFIG_RULES,
+      touchedPositionCorrector: ({ firefly, api }) => {
+        firefly.y = api('canvas').height - firefly.size.value / 2
+      }
+    },
+    bottomWithoutPC: {
+      key: 'bottom',
+      rules: BOTTOM_BOUNDARY_CONFIG_RULES,
+    },
+    leftWithPC: {
+      key: 'left',
+      rules: LEFT_BOUNDARY_CONFIG_RULES,
+      touchedPositionCorrector: ({ firefly }) => {
+        firefly.x = firefly.size.value / 2
+      }
+    },
+    leftWithoutPC: {
+      key: 'left',
+      rules: LEFT_BOUNDARY_CONFIG_RULES,
+    },
+        rightWithPC: {
+      key: 'right',
+      rules: RIGHT_BOUNDARY_CONFIG_RULES,
+      touchedPositionCorrector: ({ firefly, api }) => {
+        firefly.x = api('canvas').width - firefly.size.value / 2
+      }
+    },
+    rightWithoutPC: {
+      key: 'right',
+      rules: RIGHT_BOUNDARY_CONFIG_RULES,
+    },
+  } as const;
 
 export const ALL_SERVICE_KEYS: FireflyServiceToggleKey[] = [
   "bounds",

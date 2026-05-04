@@ -7,3 +7,4 @@ export * from "./firefly-service-toggle.model"
 export * from "./simple-connectors.model";
 export * from "./interactive-connectors.model";
 export * from "./firefly-connectors.model";
+export * from "./boundary.model";

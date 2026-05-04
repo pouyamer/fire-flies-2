@@ -1,19 +1,21 @@
+import { Range } from "../models";
 import { SpeedConfig } from "../types";
 import { range } from "../utilities";
 
 export const speedConfig: SpeedConfig = {
   polarSpeedAmount: {
-    value: 3,
-    nextValueFn: ({current}) => current + .01
+    value: 0,
+    // nextValueFn: ({current}) => current + .01
   },
   polarSpeedAngle: {
-    value: range(0, 2 * Math.PI),
+    value: 0,
   },
   speedX: {
     value: 0,
   },
   speedY: {
-    value: 0,
+    value:range(3),
+    nextValueFn: ({current}) => current + .07
 
   },
 }
