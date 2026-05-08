@@ -332,24 +332,42 @@ export function drawArcByCartesianCoordinates(
   ctx: CanvasRenderingContext2D,
   start: CartersianCoordinates,
   end: CartersianCoordinates,
+  perpendicularOffset: number,
+  counterClockWise: boolean,
   color: string,
   lineWidth: number,
-  counterClockWise?: boolean
 ): void {
   ctx.lineWidth = lineWidth;
   ctx.strokeStyle = color;
 
+  const midX = (start.x + end.x) / 2;
+  const midY = (start.y + end.y) / 2;
+
+  // Direction vector from start → end
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+
+  // Perpendicular unit vector (normalized)
+  const length = Math.hypot(dx, dy);
+  const perpX = -dy / length;
+  const perpY = dx / length;
+
+  // Compute circle center: midpoint + offset along perpendicular
+  const cX = midX + perpX * perpendicularOffset;
+  const cY = midY + perpY * perpendicularOffset;
+
+  // Calculate radius as distance from center to start (or end)
+  const radius = Math.hypot(start.x - cX, start.y - cY);
+
+  // Get start and end angles relative to circle center
+  const startAngle = Math.atan2(start.y - cY, start.x - cX);
+  const endAngle = Math.atan2(end.y - cY, end.x - cX);
+
   ctx.beginPath();
-  const radius = calculateDistance(start.x, start.y, end.x, end.y) / 2;
-  const cX = (start.x + end.x) / 2
-  const cY = (start.y + end.y) / 2
-
-  const startAngle = Math.atan2(cY - start.y, cX - start.x);
-  const endAngle = Math.atan2(cY - end.y, cX - end.x);
-
-  ctx.arc(cX, cY, radius, startAngle, endAngle, counterClockWise)
+  ctx.arc(cX, cY, radius, startAngle, endAngle, counterClockWise);
   ctx.stroke();
 }
+
 
 export function isFirefly(
   value: Firefly | CartersianCoordinates | (() => CartersianCoordinates),

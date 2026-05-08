@@ -45,12 +45,16 @@ export class GlobalFireflyModifierService implements Mutator, Ownable {
   }
 
   update(): void {
+    this.config.update?.(this.appApi);
+
     for(const ff of this.fireflies) {
       this.updateOne(ff);
     }
   }
 
   set(): void {
+    this.config.set?.(this.appApi);
+    
     for(const ff of this.fireflies) {
       this.setOne(ff);
     }

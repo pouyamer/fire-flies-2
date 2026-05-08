@@ -10,6 +10,12 @@ type ConstructorModel = {
   lineWidth?: number,
 }
 
+interface ArcConstructorModel extends ConstructorModel {
+  perpendicularOffset?: number;
+  counterClockWise?: boolean;
+}
+
+
 export abstract class FireflyConnector extends InteractiveConnector {
 
   // if Firefly is used in start and / or end they'll be saved as Firefly as well
@@ -57,9 +63,14 @@ export class FireflyLine extends FireflyConnector {
   }
 }
 
-export class FireflyArc extends FireflyConnector {
-  constructor(model: ConstructorModel) {
+export class FireflyArc extends FireflyConnector implements ArcConstructorModel {
+  perpendicularOffset: number;
+  counterClockWise: boolean;
+  
+  constructor(model: ArcConstructorModel) {
     super(model);
+    this.perpendicularOffset = model.perpendicularOffset ?? 0;
+    this.counterClockWise = model.counterClockWise ?? false;
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
@@ -67,6 +78,8 @@ export class FireflyArc extends FireflyConnector {
       ctx,
       this.start,
       this.end,
+      this.perpendicularOffset,
+      this.counterClockWise,
       this.color,
       this.lineWidth,
     )
