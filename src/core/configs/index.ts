@@ -14,3 +14,4 @@ export * from "./draw.config";
 export * from "./life.config";
 export * from "./hsl-color.config"
 export * from "./rgb-color.config";
+export * from "./trailing.config";

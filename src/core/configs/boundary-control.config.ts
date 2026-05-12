@@ -1,4 +1,4 @@
-import { DIRECTIONAL_BOUNDARY_CONFIGS } from "../constants";
+import { DIRECTIONAL_BOUNDARY_CONFIGS } from "../constants/boundary.constants";
 import { BoundaryControlConfig } from "../types";
 
 export const boundaryControlConfig: BoundaryControlConfig = {
@@ -6,25 +6,25 @@ export const boundaryControlConfig: BoundaryControlConfig = {
     {
       ...DIRECTIONAL_BOUNDARY_CONFIGS.topWithPC,
       onTouched: ({firefly}) => {
-        firefly.speedY.set(v => -v / 1.5)
+        firefly.speedY.set(v => -v * Math.random() * 1.4)
       }
     },
     {
       ...DIRECTIONAL_BOUNDARY_CONFIGS.rightWithPC,
       onTouched: ({firefly}) => {
-        firefly.speedX.set(v => -v / 1.5)
+        firefly.speedX.set(v => -v * Math.random() * 1.4)
       }
     },
     {
       ...DIRECTIONAL_BOUNDARY_CONFIGS.bottomWithPC,
       onTouched: ({firefly}) => {
-        firefly.speedY.set(v => -v / 1.1)
+        firefly.speedY.set(v => -v * Math.random() * 1.4)
       }
     },
     {
       ...DIRECTIONAL_BOUNDARY_CONFIGS.leftWithPC,
       onTouched: ({firefly}) => {
-        firefly.speedX.set(v => -v / 1.5)
+        firefly.speedX.set(v => -v * Math.random() * 1.4)
       }
     },
   ]

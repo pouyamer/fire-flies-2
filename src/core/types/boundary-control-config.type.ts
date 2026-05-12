@@ -30,12 +30,14 @@ export type BoundaryRuleParameters = {
 
 export type BoundaryRule = ((parameters: BoundaryRuleParameters) => boolean) | false;
 
-export type BoundaryConfig = {
-  key: string;
-  rules: {
+export type BoundaryRules = {
     out: BoundaryRule;
     touched: BoundaryRule;
-  }
+  };
+
+export type BoundaryConfig = {
+  key: string;
+  rules: BoundaryRules
   onOut?: EventCallBackWithFirefly;
   onTouched?: EventCallBackWithFirefly;
   touchedPositionCorrector?: EventCallBackWithFirefly

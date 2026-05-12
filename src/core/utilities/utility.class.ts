@@ -7,16 +7,33 @@ export function drawLineByCartesianCoordinates(
   ctx: CanvasRenderingContext2D,
   start: CartersianCoordinates,
   end: CartersianCoordinates,
+  extensionFromStart: number,
+  extensionFromEnd: number,
   color: string,
-  lineWidth: number
+  lineWidth: number,
 ): void {
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+
+  const length = Math.hypot(dx, dy);
+  const ux = dx / length;
+  const uy = dy / length;
+
+  const extendedStartX = start.x - ux * extensionFromStart;
+  const extendedStartY = start.y - uy * extensionFromStart;
+
+  const extendedEndX = end.x + ux * extensionFromEnd;
+  const extendedEndY = end.y + uy * extensionFromEnd;
+
   ctx.lineWidth = lineWidth;
   ctx.strokeStyle = color;
+
   ctx.beginPath();
-  ctx.moveTo(start.x, start.y)
-  ctx.lineTo(end.x, end.y)
+  ctx.moveTo(extendedStartX, extendedStartY);
+  ctx.lineTo(extendedEndX, extendedEndY);
   ctx.stroke();
 }
+
 
 export function isRange(target: unknown): target is Range {
   return (
@@ -104,6 +121,7 @@ export function getSign(input: number): number {
   if (input > 0) return 1
   return 0
 }
+
 
 export function isNumberArray(target: unknown): target is number[] {
   return (

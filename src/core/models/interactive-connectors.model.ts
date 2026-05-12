@@ -1,4 +1,4 @@
-import { CartersianCoordinates } from "../types";
+import { CartersianCoordinates, ExtraArcConnectorConstructorModel, ExtraLineConnectorConstructorModel } from "../types";
 import { calculateDistance, drawArcByCartesianCoordinates, drawLineByCartesianCoordinates } from "../utilities";
 import { SimpleConnector } from "./simple-connectors.model";
 
@@ -9,10 +9,10 @@ interface ConstructorModel {
   lineWidth?: number;
 };
 
-interface ArcConstructorModel extends ConstructorModel {
-  perpendicularOffset?: number;
-  counterClockWise?: boolean;
-}
+
+type ArcConstructorModel = ConstructorModel & ExtraArcConnectorConstructorModel;
+
+type LineConstructorModel = ConstructorModel & ExtraLineConnectorConstructorModel;
 
 export abstract class InteractiveConnector extends SimpleConnector {
   private _startValueOrCallback: CartersianCoordinates | (() => CartersianCoordinates);
@@ -52,10 +52,15 @@ export abstract class InteractiveConnector extends SimpleConnector {
 
 }
 
-export class InteractiveLine extends InteractiveConnector {
+export class InteractiveLine extends InteractiveConnector implements LineConstructorModel {
 
-  constructor(model: ConstructorModel) {
-    super(model)
+  extendStartBy: number;
+  extendEndBy: number;
+
+  constructor(model: LineConstructorModel) {
+    super(model);
+    this.extendStartBy = model.extendStartBy ?? 0;
+this.extendEndBy = model.extendEndBy ?? 0;
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
@@ -63,6 +68,8 @@ export class InteractiveLine extends InteractiveConnector {
       ctx,
       this.start,
       this.end,
+      this.extendStartBy,
+      this.extendEndBy,
       this.color,
       this.lineWidth,
     )

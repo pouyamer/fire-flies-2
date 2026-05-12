@@ -1,6 +1,18 @@
 import { DEFAULT_COORDINATES } from "../constants";
-import { CartersianCoordinates } from "../types";
-import { calculateDistance, drawLineByCartesianCoordinates } from "../utilities";
+import { CartersianCoordinates, ExtraArcConnectorConstructorModel, ExtraLineConnectorConstructorModel } from "../types";
+import { calculateDistance, drawArcByCartesianCoordinates, drawLineByCartesianCoordinates } from "../utilities";
+
+type ConstructorModel = {
+  start?: CartersianCoordinates;
+  end?: CartersianCoordinates;
+  color?: string;
+  lineWidth?: number;
+};
+
+
+type ArcConstructorModel = ConstructorModel & ExtraArcConnectorConstructorModel;
+
+type LineConstructorModel = ConstructorModel & ExtraLineConnectorConstructorModel;
 
 export abstract class SimpleConnector {
   private _start: CartersianCoordinates;
@@ -8,12 +20,7 @@ export abstract class SimpleConnector {
   color: string;
   lineWidth: number;
 
-  constructor(model: {
-    start?: CartersianCoordinates;
-    end?: CartersianCoordinates;
-    color?: string;
-    lineWidth?: number;
-  }) {
+  constructor(model: ConstructorModel) {
     this._start = model.start ?? DEFAULT_COORDINATES;
     this._end = model.end ?? DEFAULT_COORDINATES;
     this.color = model.color ?? 'white';
@@ -39,33 +46,50 @@ export abstract class SimpleConnector {
 }
 
 
-export class SimpleLine extends SimpleConnector {
+export class SimpleLine extends SimpleConnector implements LineConstructorModel {
+  extendStartBy: number = 0;
+  extendEndBy: number = 0;
 
-  constructor(model: {
-    start?: CartersianCoordinates;
-    end?: CartersianCoordinates;
-    color?: string;
-    lineWidth?: number;
-  }) {
-    super(model)
+
+  constructor(model: LineConstructorModel) {
+    super(model);
+    this.extendStartBy = model.extendStartBy ?? 0;
+    this.extendEndBy = model.extendEndBy ?? 0;
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    drawLineByCartesianCoordinates(ctx, this.start, this.end, this.color, this.lineWidth);
+    drawLineByCartesianCoordinates(
+      ctx,
+      this.start,
+      this.end,
+      this.extendStartBy,
+      this.extendEndBy,
+      this.color,
+      this.lineWidth
+    );
   }
 }
 
-export class SimpleArc extends SimpleConnector {
-  constructor(model: {
-    start?: CartersianCoordinates;
-    end?: CartersianCoordinates;
-    color?: string;
-    lineWidth?: number;
-  }) {
-    super(model)
+export class SimpleArc extends SimpleConnector implements ArcConstructorModel {
+
+  perpendicularOffset: number = 0;
+  counterClockWise: boolean = false;
+
+  constructor(model: ArcConstructorModel) {
+    super(model);
+    this.perpendicularOffset = model.perpendicularOffset ?? 0;
+    this.counterClockWise = model.counterClockWise ?? false;
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    drawLineByCartesianCoordinates(ctx, this.start, this.end, this.color, this.lineWidth);
+    drawArcByCartesianCoordinates(
+      ctx,
+      this.start,
+      this.end,
+      this.perpendicularOffset,
+      this.counterClockWise,
+      this.color,
+      this.lineWidth
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { CartersianCoordinates } from "../types";
+import { CartersianCoordinates, ExtraArcConnectorConstructorModel, ExtraLineConnectorConstructorModel } from "../types";
 import { calculateDistance, drawArcByCartesianCoordinates, drawLineByCartesianCoordinates, isFirefly } from "../utilities";
 import { Firefly } from "./firefly.model";
 import { InteractiveConnector } from "./interactive-connectors.model";
@@ -10,10 +10,9 @@ type ConstructorModel = {
   lineWidth?: number,
 }
 
-interface ArcConstructorModel extends ConstructorModel {
-  perpendicularOffset?: number;
-  counterClockWise?: boolean;
-}
+type ArcConstructorModel = ConstructorModel & ExtraArcConnectorConstructorModel;
+
+type LineConstructorModel = ConstructorModel & ExtraLineConnectorConstructorModel
 
 
 export abstract class FireflyConnector extends InteractiveConnector {
@@ -47,9 +46,14 @@ export abstract class FireflyConnector extends InteractiveConnector {
 
 }
 
-export class FireflyLine extends FireflyConnector {
-  constructor(model: ConstructorModel) {
+export class FireflyLine extends FireflyConnector implements LineConstructorModel {
+  extendStartBy: number = 0;
+  extendEndBy: number = 0;
+  
+  constructor(model: LineConstructorModel) {
     super(model);
+    this.extendStartBy = model.extendStartBy ?? 0;
+    this.extendEndBy = model.extendEndBy ?? 0;
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
@@ -57,6 +61,8 @@ export class FireflyLine extends FireflyConnector {
       ctx,
       this.start,
       this.end,
+      this.extendStartBy,
+      this.extendEndBy,
       this.color,
       this.lineWidth,
     )

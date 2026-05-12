@@ -22,3 +22,5 @@ export * from "./hsl-color-config.type";
 export * from "./rgb-color.config.type"
 export * from "./line.type";
 export * from "./color.type";
+export * from "./trailing-config.type";
+export * from "./connectors.type"

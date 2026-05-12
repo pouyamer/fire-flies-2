@@ -1,4 +1,4 @@
-import { Range } from "../models";
+import { TWO_PI } from "../constants/angles.constants";
 import { SpeedConfig } from "../types";
 import { range } from "../utilities";
 
@@ -11,11 +11,11 @@ export const speedConfig: SpeedConfig = {
     value: 0,
   },
   speedX: {
-    value: 0,
+    value: 3,
+
   },
   speedY: {
-    value:range(3),
-    nextValueFn: ({current}) => current + .07
+    value:3,
 
   },
 }

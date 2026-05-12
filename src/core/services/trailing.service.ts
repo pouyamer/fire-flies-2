@@ -41,12 +41,13 @@ export class FireflyTrailingService
     updateOne(firefly: Firefly): void {
       firefly.trails.push(new FireflyTrail(firefly))
 
-      if (firefly.trails.length > firefly.size.value) {
+      if (firefly.trails.length > 0) {
         firefly.trails.shift();
       }
 
-      firefly.trails.forEach((ft, i) => {
-        ft.size = i
+      firefly.trails.forEach((ft, i, fts) => {
+        // ft.size = i
+        ft.alpha = i / fts.length;
       })
     }
 
